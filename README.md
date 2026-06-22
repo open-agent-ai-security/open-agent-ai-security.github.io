@@ -1,6 +1,6 @@
 # open-agent-ai-security.github.io
 
-Landing site for the **Open Agentic and AI Security Community**, served at
+Landing site for the **Open Agent and AI Security Community**, served at
 <https://open-agent-ai-security.github.io/>.
 
 A single self-contained page: `index.html` (inline CSS) plus `assets/` (logos,
