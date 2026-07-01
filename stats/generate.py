@@ -32,7 +32,7 @@ Regenerate:
      With no export present it renders from built-in SAMPLE data, clearly
      marked, so the layout can be previewed before real data exists.
 """
-import json, collections, datetime, glob, os
+import json, collections, datetime, glob, os, urllib.request
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(SCRIPT_DIR, "index.html")
@@ -45,6 +45,15 @@ PROJECTS = [
     ("observra", "Observra", "/observra", "#37c2f0"),
 ]
 COMMUNITY = ("community", "Community", "", "#5b8def")  # everything not under a project
+
+# Public repo per project, for the GitHub-stars section (star count fetched live
+# at build time; the trend chart is committed as community-stars.svg). A project
+# with no entry here simply doesn't appear in the stars section.
+REPO = {
+    "praxen":   "open-agent-ai-security/praxen",
+    "observra": "open-agent-ai-security/observra",
+}
+STARS_SVG = os.path.join(SCRIPT_DIR, "community-stars.svg")  # combined star-history chart
 
 
 def bucket_of(path):
@@ -171,6 +180,28 @@ top_bucket = max((k for k, _l, _p, _c in PROJECTS), key=lambda k: bucket_total[k
 today = datetime.date.today().isoformat()
 
 
+def fetch_stars(repo):
+    """Live stargazer count via the public GitHub API; None if offline/unavailable."""
+    try:
+        req = urllib.request.Request(
+            f"https://api.github.com/repos/{repo}",
+            headers={"Accept": "application/vnd.github+json", "User-Agent": "oaas-stats"})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            return json.load(r).get("stargazers_count")
+    except Exception:
+        return None
+
+
+stars = {k: fetch_stars(REPO[k]) for k, _l, _p, _c in PROJECTS if k in REPO}
+stars_svg = ""
+if os.path.exists(STARS_SVG):
+    with open(STARS_SVG, encoding="utf-8") as _svg:
+        stars_svg = _svg.read().replace(
+            'width="800" height="533.333" style="stroke-width:3;font-family:xkcd;background:#fff"',
+            'viewBox="0 0 800 533.333" width="100%" style="stroke-width:3;font-family:xkcd;'
+            'background:#fff;max-width:760px;height:auto;display:block;margin:0 auto;border-radius:10px"')
+
+
 # ── Render ───────────────────────────────────────────────────────────────────
 CSS = """:root{--bg:#0a1020;--panel:rgba(255,255,255,.04);--bd:rgba(255,255,255,.09);--tx:#e9eff8;--mut:#9aabc0;--mut2:#6f819a;--ac:#5b8def;--ac2:#7aa5f2}
 *{box-sizing:border-box}html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -274,11 +305,28 @@ for loc, c in toploc:
     P.append(bar(loc, c, lmax, color="#4db6ac"))
 P.append('</div>')
 
+# GitHub stars (counts fetched live; combined trend chart from star-history.com)
+P.append('<h2>GitHub stars</h2>')
+P.append('<p class="sub">Live stargazer counts per project (GitHub API), with the '
+         'combined star-history trend below.</p>')
+P.append('<div class="cards" style="grid-template-columns:repeat(2,1fr)">')
+for key, label, _prefix, color in PROJECTS:
+    if key in REPO:
+        n = stars.get(key)
+        val = f'&#9733; {n:,}' if n is not None else '&mdash;'
+        P.append(f'<div class="card"><b style="color:{color}">{val}</b>'
+                 f'<span>{label} &middot; <code>{REPO[key]}</code></span></div>')
+P.append('</div>')
+if stars_svg:
+    P.append(f'<div class="sec" style="background:#fff;padding:14px 14px 6px;overflow:hidden">{stars_svg}</div>')
+    P.append(f'<p class="sub" style="margin:10px 0 0">Chart: star-history.com &middot; snapshot {today}. '
+             'A launch is a spike; the slope over the following weeks is the real adoption signal.</p>')
+
 P.append(f'<p class="foot">Generated {today} by <code>stats/generate.py</code>. '
-         f'Source: GoatCounter export (open-agent-ai-security community account). '
-         f'{"SAMPLE placeholder data. " if IS_SAMPLE else ""}'
-         f'GitHub repo traffic (stars, clones) is a separate property and not '
-         f'included here.</p>')
+         f'Sources: GoatCounter export (open-agent-ai-security community account)'
+         f'{" — SAMPLE placeholder data" if IS_SAMPLE else ""} &middot; stars via GitHub API '
+         f'&middot; star-history.com. GitHub repo <i>traffic</i> (clones, views) is a '
+         f'separate property and not included here.</p>')
 P.append('</div></body></html>')
 
 with open(OUT, "w", encoding="utf-8") as fh:
@@ -289,3 +337,4 @@ print(f"Wrote {OUT}")
 print(f"  {kind}: {total:,} pageviews · {len(days)} days ({days[0]}→{days[-1]})")
 for key, label, _prefix, _color in BUCKETS:
     print(f"  {label:<12} {bucket_total.get(key, 0):>7,}  {pct(bucket_total.get(key, 0))}")
+print("  stars: " + ", ".join(f"{LABEL[k]} {v if v is not None else '—'}" for k, v in stars.items()))

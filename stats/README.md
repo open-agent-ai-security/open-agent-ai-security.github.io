@@ -17,6 +17,7 @@ traffic doing across everything" dashboard.
 |---|---|
 | `generate.py` | The generator. Reads a GoatCounter export → writes `index.html`. |
 | `index.html` | The self-contained report, served at `/stats/`. Regenerated, not hand-edited. |
+| `community-stars.svg` | Combined star-history.com chart (both repos), embedded inline. Refresh via `curl` (below). |
 
 ## How the breakout works
 
@@ -37,7 +38,18 @@ PROJECTS = [
     ("observra", "Observra", "/observra", "#37c2f0"),
     ("newproj",  "NewProj",  "/newproj",  "#a06bff"),   # ← new
 ]
+# ...and, for the GitHub-stars section, its repo:
+REPO = {
+    "praxen":   "open-agent-ai-security/praxen",
+    "observra": "open-agent-ai-security/observra",
+    "newproj":  "open-agent-ai-security/newproj",       # ← new
+}
 ```
+
+The **GitHub stars** section shows a live stargazer count per project (fetched
+from the GitHub API at build time; shows `—` if offline) plus a combined
+star-history trend chart. Add the repo to `community-stars.svg` when you refresh
+it (see below).
 
 ## Data source
 
@@ -56,7 +68,11 @@ PROJECTS = [
 # 1. Download a fresh export from GoatCounter and unzip it into stats/
 #    (creates stats/goatcounter-export.../ — gitignored, keep local).
 
-# 2. Build the report.
+# 2. (optional) refresh the combined star-history chart.
+curl -sL "https://api.star-history.com/svg?repos=open-agent-ai-security/praxen,open-agent-ai-security/observra&type=Date" \
+  -o stats/community-stars.svg
+
+# 3. Build the report (fetches live star counts from the GitHub API).
 python3 stats/generate.py
 ```
 
