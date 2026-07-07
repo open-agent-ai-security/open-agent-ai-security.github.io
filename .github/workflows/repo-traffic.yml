@@ -1,0 +1,70 @@
+# Daily GitHub repo-traffic snapshot.
+#
+# GitHub's traffic API keeps only a 14-day rolling window and purges older data.
+# This job pulls it every day and commits the result, so stats/repo-traffic.json
+# ACCUMULATES history past that 14-day horizon (fetch_repo_traffic.py merges each
+# day's buckets), and refreshes the star-trend chart. The rendered stats page
+# (stats/index.html) still needs a manual `generate.py` run with a fresh
+# GoatCounter export — that analytics data isn't available in CI.
+#
+# ── One-time setup ───────────────────────────────────────────────────────────
+# The default GITHUB_TOKEN can only read THIS repo's traffic. Reading praxen +
+# observra traffic needs a token with access to those repos. Create a
+# fine-grained PAT and add it as the repo secret `TRAFFIC_PAT`:
+#
+#   github.com → Settings → Developer settings → Personal access tokens →
+#     Fine-grained tokens → Generate new token
+#     • Resource owner: open-agent-ai-security
+#     • Repository access: praxen AND observra (and this repo)
+#     • Permissions: Administration → Read-only, Metadata → Read-only
+#   Then: this repo → Settings → Secrets and variables → Actions →
+#     New repository secret → name: TRAFFIC_PAT, value: <the token>
+#
+# Trigger manually once (Actions tab → this workflow → Run workflow) to verify.
+
+name: Daily repo traffic snapshot
+
+on:
+  schedule:
+    - cron: "17 6 * * *"   # 06:17 UTC daily
+  workflow_dispatch: {}      # manual trigger (use to test after adding TRAFFIC_PAT)
+
+permissions:
+  contents: write            # commit the snapshot back to the repo
+
+concurrency:
+  group: repo-traffic
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Pull repo traffic + refresh star chart
+        env:
+          GH_TOKEN: ${{ secrets.TRAFFIC_PAT }}   # cross-repo traffic + stargazer reads
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::TRAFFIC_PAT secret not set — skipping pull. Add it (see workflow header) to enable the daily snapshot."
+            exit 0
+          fi
+          python3 stats/fetch_repo_traffic.py
+          python3 stats/make_stars_svg.py
+
+      - name: Commit snapshot if changed
+        run: |
+          git config user.name "oaas-stats-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add stats/repo-traffic.json stats/community-stars.svg
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -s -m "stats: daily GitHub repo-traffic + stars snapshot [skip ci]"
+            git push
+          fi

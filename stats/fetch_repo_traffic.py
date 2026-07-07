@@ -60,19 +60,44 @@ def snapshot(repo):
     }
 
 
+def _merge_days(old, new):
+    """Union of daily buckets by timestamp; the newer pull wins for a given day
+    (a still-open day gets more complete on later pulls). This is how we ACCUMULATE
+    history past GitHub's 14-day purge — old days survive, new days append."""
+    by_ts = {d["timestamp"]: d for d in old}
+    for d in new:
+        by_ts[d["timestamp"]] = d
+    return sorted(by_ts.values(), key=lambda d: d["timestamp"])
+
+
 def main():
+    # Load any prior snapshot so daily history accumulates instead of being lost.
+    existing = {}
+    if os.path.exists(OUT):
+        with open(OUT, encoding="utf-8") as fh:
+            existing = json.load(fh).get("repos", {})
+
+    repos = {}
+    for key, repo in REPOS.items():
+        snap = snapshot(repo)
+        if key in existing:                       # keep + extend the daily history
+            for metric in ("views", "clones"):
+                snap[metric]["days"] = _merge_days(
+                    existing[key].get(metric, {}).get("days", []), snap[metric]["days"])
+        repos[key] = snap
+
     data = {
-        "snapshot_utc": datetime.date.today().isoformat(),
-        "window_days": 14,
-        "repos": {key: snapshot(repo) for key, repo in REPOS.items()},
+        "snapshot_utc": datetime.datetime.utcnow().date().isoformat(),
+        "window_days": 14,          # top-level count/uniques = trailing-14d totals
+        "repos": repos,             # views/clones .days = accumulated full history
     }
     with open(OUT, "w", encoding="utf-8") as fh:
         json.dump(data, fh, indent=2)
     print(f"Wrote {OUT}  (snapshot {data['snapshot_utc']})")
     for key, r in data["repos"].items():
         print(f"  {key:<10} views {r['views']['count']:>5} "
-              f"({r['views']['uniques']} uniq) · clones {r['clones']['count']:>5} "
-              f"({r['clones']['uniques']} uniq)")
+              f"({r['views']['uniques']} uniq, {len(r['views']['days'])}d hist) · "
+              f"clones {r['clones']['count']:>5} ({r['clones']['uniques']} uniq)")
 
 
 if __name__ == "__main__":
