@@ -1,0 +1,504 @@
+{
+  "snapshot_utc": "2026-07-06",
+  "window_days": 14,
+  "repos": {
+    "praxen": {
+      "repo": "open-agent-ai-security/praxen",
+      "views": {
+        "count": 640,
+        "uniques": 260,
+        "days": [
+          {
+            "timestamp": "2026-06-22T00:00:00Z",
+            "count": 30,
+            "uniques": 7
+          },
+          {
+            "timestamp": "2026-06-23T00:00:00Z",
+            "count": 51,
+            "uniques": 18
+          },
+          {
+            "timestamp": "2026-06-24T00:00:00Z",
+            "count": 148,
+            "uniques": 67
+          },
+          {
+            "timestamp": "2026-06-25T00:00:00Z",
+            "count": 181,
+            "uniques": 100
+          },
+          {
+            "timestamp": "2026-06-26T00:00:00Z",
+            "count": 42,
+            "uniques": 24
+          },
+          {
+            "timestamp": "2026-06-27T00:00:00Z",
+            "count": 29,
+            "uniques": 10
+          },
+          {
+            "timestamp": "2026-06-28T00:00:00Z",
+            "count": 25,
+            "uniques": 9
+          },
+          {
+            "timestamp": "2026-06-29T00:00:00Z",
+            "count": 41,
+            "uniques": 20
+          },
+          {
+            "timestamp": "2026-06-30T00:00:00Z",
+            "count": 29,
+            "uniques": 13
+          },
+          {
+            "timestamp": "2026-07-01T00:00:00Z",
+            "count": 31,
+            "uniques": 14
+          },
+          {
+            "timestamp": "2026-07-02T00:00:00Z",
+            "count": 9,
+            "uniques": 8
+          },
+          {
+            "timestamp": "2026-07-03T00:00:00Z",
+            "count": 13,
+            "uniques": 8
+          },
+          {
+            "timestamp": "2026-07-04T00:00:00Z",
+            "count": 7,
+            "uniques": 6
+          },
+          {
+            "timestamp": "2026-07-05T00:00:00Z",
+            "count": 4,
+            "uniques": 2
+          }
+        ]
+      },
+      "clones": {
+        "count": 619,
+        "uniques": 207,
+        "days": [
+          {
+            "timestamp": "2026-06-22T00:00:00Z",
+            "count": 240,
+            "uniques": 79
+          },
+          {
+            "timestamp": "2026-06-23T00:00:00Z",
+            "count": 12,
+            "uniques": 3
+          },
+          {
+            "timestamp": "2026-06-24T00:00:00Z",
+            "count": 25,
+            "uniques": 13
+          },
+          {
+            "timestamp": "2026-06-25T00:00:00Z",
+            "count": 175,
+            "uniques": 59
+          },
+          {
+            "timestamp": "2026-06-26T00:00:00Z",
+            "count": 18,
+            "uniques": 14
+          },
+          {
+            "timestamp": "2026-06-27T00:00:00Z",
+            "count": 2,
+            "uniques": 2
+          },
+          {
+            "timestamp": "2026-06-28T00:00:00Z",
+            "count": 7,
+            "uniques": 5
+          },
+          {
+            "timestamp": "2026-06-29T00:00:00Z",
+            "count": 59,
+            "uniques": 25
+          },
+          {
+            "timestamp": "2026-06-30T00:00:00Z",
+            "count": 47,
+            "uniques": 23
+          },
+          {
+            "timestamp": "2026-07-01T00:00:00Z",
+            "count": 10,
+            "uniques": 9
+          },
+          {
+            "timestamp": "2026-07-02T00:00:00Z",
+            "count": 7,
+            "uniques": 6
+          },
+          {
+            "timestamp": "2026-07-03T00:00:00Z",
+            "count": 5,
+            "uniques": 5
+          },
+          {
+            "timestamp": "2026-07-04T00:00:00Z",
+            "count": 9,
+            "uniques": 3
+          },
+          {
+            "timestamp": "2026-07-05T00:00:00Z",
+            "count": 3,
+            "uniques": 2
+          }
+        ]
+      },
+      "referrers": [
+        {
+          "referrer": "open-agent-ai-security.github.io",
+          "count": 218,
+          "uniques": 70
+        },
+        {
+          "referrer": "helpnetsecurity.com",
+          "count": 67,
+          "uniques": 55
+        },
+        {
+          "referrer": "github.com",
+          "count": 63,
+          "uniques": 25
+        },
+        {
+          "referrer": "t.co",
+          "count": 38,
+          "uniques": 30
+        },
+        {
+          "referrer": "Bing",
+          "count": 16,
+          "uniques": 7
+        },
+        {
+          "referrer": "teams.public.onecdn.static.microsoft",
+          "count": 5,
+          "uniques": 3
+        },
+        {
+          "referrer": "statics.teams.cdn.office.net",
+          "count": 4,
+          "uniques": 4
+        },
+        {
+          "referrer": "DuckDuckGo",
+          "count": 4,
+          "uniques": 3
+        },
+        {
+          "referrer": "Google",
+          "count": 4,
+          "uniques": 3
+        },
+        {
+          "referrer": "m.facebook.com",
+          "count": 2,
+          "uniques": 2
+        }
+      ],
+      "paths": [
+        {
+          "path": "/open-agent-ai-security/praxen",
+          "count": 378,
+          "uniques": 244
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/tree/main",
+          "count": 12,
+          "uniques": 9
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/commits",
+          "count": 11,
+          "uniques": 7
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/tree/main/skills/behavior-verifier",
+          "count": 10,
+          "uniques": 7
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/pulse",
+          "count": 10,
+          "uniques": 2
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/blob/main/PRAXEN_SPEC.md",
+          "count": 9,
+          "uniques": 8
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/graphs/traffic",
+          "count": 9,
+          "uniques": 1
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/blob/main/docs/installation.md",
+          "count": 8,
+          "uniques": 7
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/blob/main/skills/behavior-verifier/SKILL.md",
+          "count": 8,
+          "uniques": 5
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/stargazers",
+          "count": 8,
+          "uniques": 2
+        }
+      ]
+    },
+    "observra": {
+      "repo": "open-agent-ai-security/observra",
+      "views": {
+        "count": 487,
+        "uniques": 62,
+        "days": [
+          {
+            "timestamp": "2026-06-22T00:00:00Z",
+            "count": 32,
+            "uniques": 6
+          },
+          {
+            "timestamp": "2026-06-23T00:00:00Z",
+            "count": 58,
+            "uniques": 15
+          },
+          {
+            "timestamp": "2026-06-24T00:00:00Z",
+            "count": 95,
+            "uniques": 10
+          },
+          {
+            "timestamp": "2026-06-25T00:00:00Z",
+            "count": 66,
+            "uniques": 5
+          },
+          {
+            "timestamp": "2026-06-26T00:00:00Z",
+            "count": 41,
+            "uniques": 6
+          },
+          {
+            "timestamp": "2026-06-27T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-06-28T00:00:00Z",
+            "count": 24,
+            "uniques": 1
+          },
+          {
+            "timestamp": "2026-06-29T00:00:00Z",
+            "count": 28,
+            "uniques": 5
+          },
+          {
+            "timestamp": "2026-06-30T00:00:00Z",
+            "count": 16,
+            "uniques": 4
+          },
+          {
+            "timestamp": "2026-07-01T00:00:00Z",
+            "count": 56,
+            "uniques": 14
+          },
+          {
+            "timestamp": "2026-07-02T00:00:00Z",
+            "count": 32,
+            "uniques": 15
+          },
+          {
+            "timestamp": "2026-07-03T00:00:00Z",
+            "count": 31,
+            "uniques": 8
+          },
+          {
+            "timestamp": "2026-07-04T00:00:00Z",
+            "count": 5,
+            "uniques": 4
+          },
+          {
+            "timestamp": "2026-07-05T00:00:00Z",
+            "count": 3,
+            "uniques": 2
+          }
+        ]
+      },
+      "clones": {
+        "count": 1507,
+        "uniques": 445,
+        "days": [
+          {
+            "timestamp": "2026-06-22T00:00:00Z",
+            "count": 231,
+            "uniques": 75
+          },
+          {
+            "timestamp": "2026-06-23T00:00:00Z",
+            "count": 457,
+            "uniques": 122
+          },
+          {
+            "timestamp": "2026-06-24T00:00:00Z",
+            "count": 220,
+            "uniques": 86
+          },
+          {
+            "timestamp": "2026-06-25T00:00:00Z",
+            "count": 157,
+            "uniques": 72
+          },
+          {
+            "timestamp": "2026-06-26T00:00:00Z",
+            "count": 115,
+            "uniques": 54
+          },
+          {
+            "timestamp": "2026-06-27T00:00:00Z",
+            "count": 6,
+            "uniques": 3
+          },
+          {
+            "timestamp": "2026-06-28T00:00:00Z",
+            "count": 74,
+            "uniques": 32
+          },
+          {
+            "timestamp": "2026-06-29T00:00:00Z",
+            "count": 93,
+            "uniques": 45
+          },
+          {
+            "timestamp": "2026-06-30T00:00:00Z",
+            "count": 20,
+            "uniques": 10
+          },
+          {
+            "timestamp": "2026-07-01T00:00:00Z",
+            "count": 17,
+            "uniques": 11
+          },
+          {
+            "timestamp": "2026-07-02T00:00:00Z",
+            "count": 34,
+            "uniques": 24
+          },
+          {
+            "timestamp": "2026-07-03T00:00:00Z",
+            "count": 74,
+            "uniques": 36
+          },
+          {
+            "timestamp": "2026-07-04T00:00:00Z",
+            "count": 3,
+            "uniques": 3
+          },
+          {
+            "timestamp": "2026-07-05T00:00:00Z",
+            "count": 6,
+            "uniques": 3
+          }
+        ]
+      },
+      "referrers": [
+        {
+          "referrer": "open-agent-ai-security.github.io",
+          "count": 79,
+          "uniques": 20
+        },
+        {
+          "referrer": "github.com",
+          "count": 76,
+          "uniques": 17
+        },
+        {
+          "referrer": "statics.teams.cdn.office.net",
+          "count": 9,
+          "uniques": 4
+        },
+        {
+          "referrer": "linkedin.com",
+          "count": 3,
+          "uniques": 3
+        },
+        {
+          "referrer": "Google",
+          "count": 2,
+          "uniques": 1
+        },
+        {
+          "referrer": "teams.public.onecdn.static.microsoft",
+          "count": 2,
+          "uniques": 1
+        }
+      ],
+      "paths": [
+        {
+          "path": "/open-agent-ai-security/observra",
+          "count": 149,
+          "uniques": 51
+        },
+        {
+          "path": "/open-agent-ai-security/observra/pulls",
+          "count": 86,
+          "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/observra/issues",
+          "count": 45,
+          "uniques": 9
+        },
+        {
+          "path": "/open-agent-ai-security/observra/tree/main",
+          "count": 15,
+          "uniques": 4
+        },
+        {
+          "path": "/open-agent-ai-security/observra/graphs/contributors",
+          "count": 10,
+          "uniques": 4
+        },
+        {
+          "path": "/open-agent-ai-security/observra/pull/36",
+          "count": 9,
+          "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/observra/pull/63",
+          "count": 6,
+          "uniques": 2
+        },
+        {
+          "path": "/open-agent-ai-security/observra/issues/32",
+          "count": 5,
+          "uniques": 2
+        },
+        {
+          "path": "/open-agent-ai-security/observra/tree/main/src",
+          "count": 4,
+          "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/observra/pull/37",
+          "count": 4,
+          "uniques": 2
+        }
+      ]
+    }
+  }
+}
