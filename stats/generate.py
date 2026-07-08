@@ -536,10 +536,24 @@ def trend_svg(points, color="#37c2f0", markers=None, avg_window=7,
     pts = [(d, v) for d, v in points if v is not None]
     if len(pts) < 2:
         return ""
+    # Sort markers chronologically (ISO dates sort lexically) so the left-to-right
+    # label-collision logic below works regardless of input order.
+    markers = sorted((m for m in (markers or []) if m and m[0]), key=lambda m: m[0])
     W, H = 720, height
     x0, x1, y0, y1 = 40, W - 12, 24, H - 22
     d0 = datetime.date.fromisoformat(pts[0][0])
-    span = max((datetime.date.fromisoformat(pts[-1][0]) - d0).days, 1)
+    dN = datetime.date.fromisoformat(pts[-1][0])
+    # Extend the right edge to include a marker at/just past the last data point —
+    # e.g. a release tagged today when GitHub's clone traffic still lags a day — but
+    # not markers far past the data. (Markers before d0 stay clamped out below.)
+    for _md, _lbl in (markers or []):
+        try:
+            _mdt = datetime.date.fromisoformat(_md)
+        except ValueError:
+            continue
+        if dN < _mdt <= dN + datetime.timedelta(days=7):
+            dN = _mdt
+    span = max((dN - d0).days, 1)
     sx = lambda ds: x0 + (x1 - x0) * (datetime.date.fromisoformat(ds) - d0).days / span
 
     # round-number y-axis (~5 ticks) so heights are readable, not just the peak
