@@ -56,10 +56,10 @@ jobs:
       - name: Pull PyPI downloads (no auth)
         run: python3 stats/fetch_pypi_downloads.py || echo "::warning::PyPI pull failed — keeping prior snapshot."
 
-      - name: Refresh star chart (public data, default token)
+      - name: Refresh star chart (cross-repo stargazers; uses TRAFFIC_PAT)
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 stats/make_stars_svg.py || echo "::warning::star-chart refresh failed — keeping prior SVG."
+          GH_TOKEN: ${{ secrets.TRAFFIC_PAT }}
+        run: python3 stats/make_stars_svg.py || echo "::warning::star-chart refresh failed (needs TRAFFIC_PAT — default GITHUB_TOKEN can't read cross-repo stargazers) — keeping prior SVG."
 
       # ── Cross-repo traffic: needs TRAFFIC_PAT; fails SOFT ────────────────────
       # A missing or unapproved token warns and the job continues, so the no-auth
