@@ -42,6 +42,15 @@ def gh(path):
     return json.loads(out.stdout)
 
 
+def releases(repo):
+    """Published release tags (tag + date) — milestone markers for the charts.
+    Public data; drafts excluded. Oldest first."""
+    rels = gh(f"/repos/{repo}/releases?per_page=100")
+    return sorted(({"tag": r["tag_name"], "date": (r.get("published_at") or "")[:10]}
+                   for r in rels if not r.get("draft") and r.get("published_at")),
+                  key=lambda x: x["date"])
+
+
 def snapshot(repo):
     v = gh(f"/repos/{repo}/traffic/views")
     c = gh(f"/repos/{repo}/traffic/clones")
@@ -57,6 +66,7 @@ def snapshot(repo):
                        "uniques": r["uniques"]} for r in refs],
         "paths": [{"path": p["path"], "count": p["count"],
                    "uniques": p["uniques"]} for p in paths],
+        "releases": releases(repo),
     }
 
 
