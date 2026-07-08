@@ -116,6 +116,11 @@ REPO = {
 }
 STARS_SVG = os.path.join(SCRIPT_DIR, "community-stars.svg")  # combined star-history chart
 
+# project-key → PyPI package, for the downloads section. No entry ⇒ not shown.
+# observra only; Praxen ships as a plugin, not a pip package. Download windows are
+# derived from the accumulated daily series in pypi-downloads.json (all-inclusive).
+PYPI = {"observra": "observra"}
+
 
 def bucket_of(path):
     """Map a GoatCounter path to a project key, or 'community' if it matches none."""
@@ -199,6 +204,15 @@ if os.path.exists(REPO_TRAFFIC):
         _rt = json.load(_fh)
     repo_traffic = _rt.get("repos", {})
     repo_snapshot = _rt.get("snapshot_utc")
+
+# PyPI downloads (accumulated daily series; windows derived below). observra only.
+PYPI_DL = os.path.join(SCRIPT_DIR, "pypi-downloads.json")
+pypi_dl, pypi_snapshot = {}, None
+if os.path.exists(PYPI_DL):
+    with open(PYPI_DL, encoding="utf-8") as _fh:
+        _pd = json.load(_fh)
+    pypi_dl = _pd.get("packages", {})
+    pypi_snapshot = _pd.get("snapshot_utc")
 
 # Key dates (launches, events) annotated on the Daily Views chart. Edit
 # key-dates.json: {"YYYY-MM-DD": "label"}; keys starting with "_" are ignored.
@@ -405,7 +419,7 @@ toppages = sorted(((paths.get(pid, ""), c) for pid, c in bypath.items()),
                   key=lambda x: -x[1])[:12]
 byloc = collections.Counter()
 for l in locs:
-    if l["path_id"] in BOT_PIDS:                        # keep scanner tokens out of geo
+    if l.get("path_id") in BOT_PIDS:                    # keep scanner tokens out of geo
         continue
     byloc[l["location"]] += l["count"]
 toploc = byloc.most_common(15)
@@ -500,6 +514,125 @@ def bar(label, val, vmax, sub="", color="#5b8def"):
             f'<span class="rv">{val}{(" · " + sub) if sub else ""}</span></div>')
 
 
+def esc(s):
+    """Minimal XML-text escape for values injected into SVG <text>/<title> nodes."""
+    return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def trend_svg(points, color="#37c2f0", markers=None, avg_window=7,
+              height=180, unit=""):
+    """Self-contained inline-SVG trend chart for a daily time-series (no JS).
+
+    Reusable for any daily series (PyPI downloads, pageviews, …). Draws per-day
+    BARS against a labelled, round-number y-axis so individual daily counts stay
+    readable at a glance, a smoothed `avg_window`-day moving-average LINE in `color`
+    for the trend, optional amber annotation `markers` (e.g. releases / key dates),
+    the latest value labelled, and a per-day <title> for hover read-out.
+
+      points  : [(date 'YYYY-MM-DD', value)] ascending
+      markers : [(date 'YYYY-MM-DD', label)]  (e.g. version ships)
+    """
+    import math
+    pts = [(d, v) for d, v in points if v is not None]
+    if len(pts) < 2:
+        return ""
+    W, H = 720, height
+    x0, x1, y0, y1 = 40, W - 12, 24, H - 22
+    d0 = datetime.date.fromisoformat(pts[0][0])
+    span = max((datetime.date.fromisoformat(pts[-1][0]) - d0).days, 1)
+    sx = lambda ds: x0 + (x1 - x0) * (datetime.date.fromisoformat(ds) - d0).days / span
+
+    # round-number y-axis (~5 ticks) so heights are readable, not just the peak
+    vmax = max(v for _, v in pts) or 1
+    raw = vmax / 5
+    mag = 10 ** math.floor(math.log10(raw)) if raw > 0 else 1
+    step = next(m * mag for m in (1, 2, 2.5, 5, 10) if m * mag >= raw)
+    nmax = math.ceil(vmax / step) * step
+    ticks, _t = [], 0.0
+    while _t <= nmax + 1e-6:
+        ticks.append(int(round(_t)))
+        _t += step
+    ticks = sorted(set(ticks))          # dedupe (fractional steps on tiny peaks)
+    sy = lambda v: y1 - (y1 - y0) * (v / nmax)
+
+    svg = [f'<svg viewBox="0 0 {W} {H}" width="100%" role="img" '
+           f'style="display:block;font-family:Inter,system-ui,sans-serif">']
+    # CSS-only hover: full-column hit target lights up and reveals a styled tooltip
+    # (no JS — keeps the page self-contained).
+    svg.append('<style>'
+               '.col .hit{fill:transparent}'
+               '.col:hover .hit{fill:rgba(255,255,255,.05)}'
+               '.col .tip{opacity:0;transition:opacity .1s}'
+               '.col:hover .tip{opacity:1}'
+               '.tip{pointer-events:none}</style>')
+    # y gridlines + labels (baseline solid, rest faint)
+    for t in ticks:
+        gy = sy(t)
+        svg.append(f'<line x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}" '
+                   f'stroke="var(--bd)" stroke-width="1" opacity="{0.85 if t == 0 else 0.33}"/>')
+        svg.append(f'<text x="{x0 - 6}" y="{gy + 3:.1f}" fill="var(--mut2)" '
+                   f'font-size="9" text-anchor="end">{t:,}</text>')
+    # first/last date labels
+    svg.append(f'<text x="{x0}" y="{H - 5}" fill="var(--mut)" font-size="10">{pts[0][0]}</text>')
+    svg.append(f'<text x="{x1}" y="{H - 5}" fill="var(--mut)" font-size="10" '
+               f'text-anchor="end">{pts[-1][0]}</text>')
+    # per-day bars (the daily counts, readable against the axis) + hover
+    slot = (x1 - x0) / span
+    bw = max(min(slot * 0.7, 13), 2)
+    for d, v in pts:
+        bx, by = sx(d), sy(v)
+        svg.append(f'<rect x="{bx - bw / 2:.1f}" y="{by:.1f}" width="{bw:.1f}" '
+                   f'height="{max(y1 - by, 0):.1f}" rx="1.5" fill="{color}" '
+                   f'opacity="0.32"/>')
+    # moving-average line (the trend)
+    vals = [v for _, v in pts]
+    ma = [(d, sum(vals[max(0, i - avg_window + 1):i + 1]) /
+              len(vals[max(0, i - avg_window + 1):i + 1]))
+          for i, (d, _v) in enumerate(pts)]
+    ma_path = "M " + " L ".join(f'{sx(d):.1f} {sy(v):.1f}' for d, v in ma)
+    svg.append(f'<path d="{ma_path}" fill="none" stroke="{color}" stroke-width="2.2" '
+               f'stroke-linejoin="round" stroke-linecap="round"/>')
+    # annotation markers (dashed tick + triangle; label only when it won't collide)
+    last_lx = -999
+    for md, ml in (markers or []):
+        try:
+            mx = sx(md)
+        except ValueError:
+            continue
+        if not (x0 - 1 <= mx <= x1 + 1):
+            continue
+        svg.append(f'<line x1="{mx:.1f}" y1="{y0 - 6:.1f}" x2="{mx:.1f}" y2="{y1:.1f}" '
+                   f'stroke="#e0a52e" stroke-width="1" stroke-dasharray="2 3" opacity="0.5"/>')
+        svg.append(f'<path d="M {mx - 3:.1f} {y0 - 9:.1f} L {mx + 3:.1f} {y0 - 9:.1f} '
+                   f'L {mx:.1f} {y0 - 3:.1f} Z" fill="#e0a52e"><title>{esc(ml)} · {md}</title></path>')
+        if mx - last_lx > 30:
+            svg.append(f'<text x="{mx:.1f}" y="{y0 - 12:.1f}" fill="#e0a52e" font-size="9" '
+                       f'font-weight="600" text-anchor="middle">{esc(ml)}</text>')
+            last_lx = mx
+    # latest daily value, labelled above its bar
+    ld, lv = pts[-1]
+    svg.append(f'<text x="{sx(ld):.1f}" y="{sy(lv) - 5:.1f}" fill="var(--tx)" '
+               f'font-size="11" font-weight="600" text-anchor="end">{lv:,}</text>')
+    # hover layer (topmost): a full-height hit column per day + its CSS tooltip
+    hitw = max(slot, 6)
+    for d, v in pts:
+        cx = sx(d)
+        txt = f'{d} · {v:,}{unit}'
+        tw = len(txt) * 6.0 + 14
+        tx = min(max(cx, x0 + tw / 2), x1 - tw / 2)          # clamp inside plot
+        ty = max(sy(v) - 10, y0 + 16)                        # above bar, never clipped
+        svg.append('<g class="col">'
+                   f'<rect class="hit" x="{cx - hitw / 2:.1f}" y="{y0}" '
+                   f'width="{hitw:.1f}" height="{y1 - y0}"/>'
+                   f'<g class="tip"><rect x="{tx - tw / 2:.1f}" y="{ty - 14:.1f}" '
+                   f'width="{tw:.1f}" height="17" rx="4" fill="#0f1830" '
+                   f'stroke="var(--bd)" stroke-width="1"/>'
+                   f'<text x="{tx:.1f}" y="{ty - 2:.1f}" text-anchor="middle" '
+                   f'fill="var(--tx)" font-size="11">{esc(txt)}</text></g></g>')
+    svg.append('</svg>')
+    return "".join(svg)
+
+
 def pct(v):
     return f"{round(v / total * 100)}%" if total else "0%"
 
@@ -544,19 +677,20 @@ for key, label, _prefix, color in BUCKETS:
     P.append(bar(f'{label}', c, vmax, sub=pct(c), color=color))
 P.append('</div>')
 
-# daily pageviews (site, real only, full window) — key dates labelled on the left
+# daily pageviews (site, real only, full window) — key dates as trend markers
 P.append('<h2>Daily views — site</h2>')
-P.append('<div class="sec">')
-dmax = max(byday.values()) if byday else 0
-for d in days:
-    w = max(2, round(byday[d] / dmax * 100)) if dmax else 2
-    mile = key_dates.get(d)
-    lab = d if not mile else (
-        f'{d} <span style="color:#e0a52e;font-weight:600">&#9670; {mile}</span>')
-    P.append(f'<div class="row"><span class="rl" style="flex-basis:238px">{lab}</span>'
-             f'<span class="rbar"><i style="width:{w}%;background:#5b8def"></i></span>'
-             f'<span class="rv">{byday[d]}</span></div>')
-P.append('</div>')
+dv_chart = trend_svg([(d, byday[d]) for d in days], color="#5b8def",
+                     markers=[(d, lbl) for d, lbl in key_dates.items()],
+                     unit=" views")
+if dv_chart:
+    P.append(f'<div class="sec" style="padding:16px 18px 10px">'
+             f'<div style="font-size:12.5px;font-weight:600;color:var(--tx);'
+             f'margin:0 0 8px">Community sites &middot; real views per day</div>{dv_chart}'
+             f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
+             f'<b style="color:#5b8def">━</b> 7-day average &nbsp;·&nbsp; '
+             f'<b style="color:#5b8def">▮</b> daily views &nbsp;·&nbsp; '
+             f'<b style="color:#e0a52e">▲</b> key date. '
+             f'Real site views only — email-campaign scanners excluded.</p></div>')
 
 # top referrers (site + repo, merged)
 P.append('<h2>Top referrers</h2>')
@@ -649,6 +783,45 @@ if stars_svg:
     P.append(f'<p class="sub" style="margin:10px 0 0">Cumulative stargazers from the '
              f'GitHub API &middot; snapshot {today}. '
              'A launch is a spike; the slope over the following weeks is the real adoption signal.</p>')
+
+# PyPI downloads (pip installs; accumulated daily, all-inclusive; observra only)
+if pypi_dl:
+    pypi_labels = [label for key, label, _p, _c in PROJECTS
+                   if key in PYPI and key in pypi_dl]
+    P.append(f'<h2>PyPI downloads &middot; {", ".join(pypi_labels)}</h2>')
+    P.append('<p class="sub"><b style="color:var(--tx)">Observra only.</b> Installs of '
+             'the <code>observra</code> Python package via <code>pip</code>, from the '
+             'public pypistats.org dataset — Praxen ships as a Claude Code / Codex '
+             'plugin, not a pip package, so it has no PyPI footprint. Counts are '
+             'all-inclusive (they include CI and mirror pulls), so the smoothed line, '
+             'not any single spiky day, is the signal.</p>')
+    for key, label, _prefix, color in PROJECTS:
+        if key not in PYPI or key not in pypi_dl:
+            continue
+        dl = sorted(pypi_dl[key].get("days", []), key=lambda d: d["date"])
+        n = [d["downloads"] for d in dl]
+        tot, last_30, last_7 = sum(n), sum(n[-30:]), sum(n[-7:])
+        P.append('<div class="cards" style="grid-template-columns:repeat(3,1fr)">')
+        for val, cap in ((last_30, f"{label} &middot; last 30 days"),
+                         (last_7, "last 7 days"),
+                         (tot, "tracked total")):
+            P.append(f'<div class="card"><b style="color:{color}">{val:,}</b>'
+                     f'<span>{cap}</span></div>')
+        P.append('</div>')
+        chart = trend_svg([(d["date"], d["downloads"]) for d in dl], color=color,
+                          markers=[(r["date"], r["version"])
+                                   for r in pypi_dl[key].get("releases", [])],
+                          unit=" downloads")
+        if chart:
+            P.append(f'<div class="sec" style="padding:16px 18px 10px">'
+                     f'<div style="font-size:12.5px;font-weight:600;color:var(--tx);'
+                     f'margin:0 0 8px"><b style="color:{color}">{label}</b> '
+                     f'<code>{PYPI[key]}</code> &middot; downloads per day</div>{chart}'
+                     f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
+                     f'<b style="color:{color}">━</b> 7-day average &nbsp;·&nbsp; '
+                     f'<b style="color:{color}">▮</b> daily downloads &nbsp;·&nbsp; '
+                     f'<b style="color:#e0a52e">▲</b> version ship'
+                     f'{f" · snapshot {pypi_snapshot}" if pypi_snapshot else ""}.</p></div>')
 
 # Marketo campaign tracking (ongoing — each detected send is logged as it lands)
 _bot = CLASS["campaign_bot"]
