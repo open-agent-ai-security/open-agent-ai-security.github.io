@@ -30,10 +30,12 @@ Data sources:
   - repo-traffic.json ..... GitHub repo views/clones, written by fetch_repo_traffic.py
 
 "Reach" combines the two: real site views (the full GoatCounter export window) +
-GitHub repo views (GitHub's trailing 14 days — all it retains; the repo slice
-fills in going forward once the snapshot job accumulates history). We keep the
-full site window rather than truncating to GitHub's — no reason to drop real data
-we have. Repo CLONES are never in reach (they're CI/mirror-bot heavy). Missing
+GitHub repo views — ACCUMULATED daily (fetch_repo_traffic.py snapshots GitHub's
+trailing-14-day window each day and merges the buckets, so the history survives
+GitHub's purge). Reach sums the whole accumulated series, NOT the 14-day count,
+so total reach is cumulative and never drops as launch days age out. We keep the
+full site window too rather than truncating to GitHub's — no reason to drop real
+data we have. Repo CLONES are never in reach (they're CI/mirror-bot heavy). Missing
 repo-traffic.json → repo figures just omit.
 
 Regenerate:
@@ -427,11 +429,16 @@ for l in locs:
     byloc[l["location"]] += l["count"]
 toploc = byloc.most_common(15)
 
-# ── Fold in GitHub repo traffic (14d): VIEWS join reach + referrers; CLONES
-#    stay a separate developer-signal stat. ────────────────────────────────────
+# ── Fold in GitHub repo traffic: VIEWS join reach + referrers; CLONES stay a
+#    separate developer-signal stat. Use the ACCUMULATED daily views (every day
+#    we've snapshotted, kept past GitHub's 14-day purge) — NOT the 14-day rolling
+#    `count` — so total reach is cumulative and never drops as launch days age
+#    out of the trailing window. (Only explicitly-rolling stats may decrease.)
 repo_views = {}
 for key, r in repo_traffic.items():
-    repo_views[key] = r.get("views", {}).get("count", 0)
+    vdays = r.get("views", {}).get("days", [])
+    repo_views[key] = sum(d.get("count", 0) for d in vdays) if vdays \
+        else r.get("views", {}).get("count", 0)         # fall back to 14d if no history yet
     for rf in r.get("referrers", []):                  # merge repo referrers into chart
         refcat[catf(rf["referrer"])] += rf["count"]
 
@@ -938,8 +945,8 @@ P.append(f'<p class="foot">Generated {today} by <code>stats/generate.py</code>. 
          f'{" — SAMPLE placeholder data" if IS_SAMPLE else ""} &middot; GitHub repo '
          f'traffic API (repo views/clones, 14-day window) &middot; stars via GitHub '
          f'API. <b>Reach ({reach_total:,})</b> = {pages_real:,} real site views '
-         f'({days[0]}→{days[-1]}) + {repo_views_total:,} repo views (GitHub\'s '
-         f'trailing 14 days); a further {CLASS["campaign_bot"]:,} automated '
+         f'({days[0]}→{days[-1]}) + {repo_views_total:,} repo views (accumulated '
+         f'daily, kept past GitHub\'s 14-day purge); a further {CLASS["campaign_bot"]:,} automated '
          f'email-campaign scanner pageviews were tracked separately (see Marketo '
          f'campaign tracking). Method documented in <code>stats/generate.py</code>.</p>')
 P.append('</div></body></html>')
@@ -950,7 +957,7 @@ with open(OUT, "w", encoding="utf-8") as fh:
 kind = "SAMPLE" if IS_SAMPLE else "real export"
 print(f"Wrote {OUT}")
 print(f"  {kind}: REACH {reach_total:,} = {pages_real:,} site ({days[0]}→{days[-1]})"
-      f" + {repo_views_total:,} repo (GitHub 14d)")
+      f" + {repo_views_total:,} repo (GitHub, accumulated)")
 for key, label, _prefix, _color in BUCKETS:
     print(f"  {label:<12} reach {reach_bucket.get(key, 0):>6,}"
           f"  (site {bucket_total.get(key,0):,} + repo {repo_views.get(key,0):,})")
