@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600&family=Space+Grotesk:wght@500;600&display=swap');
+
+  :root{
+    --bg:#0b0a18; --bg-2:#0e0d20;
+    --violet-deep:#8300d8; --violet:#8366f5; --violet-lite:#8389ff;
+    --text:#e9ecf8; --muted:#a0a6c0; --border:rgba(255,255,255,0.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1128px;height:191px;overflow:hidden;}
+  .banner{
+    position:relative;width:1128px;height:191px;
+    background:
+      radial-gradient(120% 200% at 50% -40%, rgba(131,102,245,0.22), transparent 60%),
+      linear-gradient(120deg, var(--bg) 0%, var(--bg-2) 55%, #12102a 100%);
+    font-family:"Space Grotesk",system-ui,sans-serif;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+    overflow:hidden;
+  }
+  .grid{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size:34px 34px;
+    -webkit-mask-image:radial-gradient(circle at 50% 30%, #000 5%, transparent 65%);
+            mask-image:radial-gradient(circle at 50% 30%, #000 5%, transparent 65%);
+  }
+  .edge{position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(100deg, var(--violet-lite), var(--violet) 50%, var(--violet-deep));}
+
+  h1{position:relative;font-weight:600;font-size:37px;line-height:1;
+    letter-spacing:-0.02em;color:var(--text);white-space:nowrap;}
+  h1 .g{
+    background:linear-gradient(100deg, var(--violet-lite), var(--violet-deep));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  .marks{position:relative;display:flex;align-items:center;gap:30px;}
+  .marks img{height:30px;display:block;}
+  .marks .div{width:1px;height:26px;background:var(--border);}
+
+  /* subtle sponsor line, lower-right (clear of LinkedIn's avatar at lower-left) */
+  .sponsor{position:absolute;right:26px;bottom:17px;
+    display:flex;align-items:center;gap:9px;opacity:0.85;}
+  .sponsor span{font-family:"Inter",system-ui,sans-serif;font-size:10px;
+    letter-spacing:0.14em;text-transform:uppercase;color:#c3c8de;font-weight:500;}
+  .sponsor img{height:14px;width:auto;display:block;}
+</style>
+</head>
+<body>
+  <div class="banner">
+    <div class="grid"></div>
+    <div class="edge"></div>
+
+    <h1>Securing agentic and AI applications&nbsp;<span class="g">— together.</span></h1>
+
+    <div class="marks">
+      <img src="observra-wordmark-dark-background.svg" alt="Observra">
+      <span class="div"></span>
+      <img src="praxen-wordmark-dark-background.svg" alt="Praxen">
+    </div>
+
+    <div class="sponsor">
+      <span>Proudly sponsored by</span>
+      <img src="exabeam-logo-white.svg" alt="Exabeam">
+    </div>
+  </div>
+</body>
+</html>
