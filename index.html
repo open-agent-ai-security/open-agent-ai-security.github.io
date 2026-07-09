@@ -100,6 +100,10 @@
     .btn-primary {
       color: #ffffff;
       background: linear-gradient(100deg, var(--violet-lite), var(--violet-deep));
+      /* Clip the gradient to the padding box so it isn't painted under the 1px
+         transparent border — that border-box paint leaves a light seam on the
+         dark (right) end of the gradient. Border kept for sizing parity w/ .btn-ghost. */
+      background-clip: padding-box;
       box-shadow: 0 6px 22px -6px rgba(131,102,245,0.6);
     }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -8px rgba(131,102,245,0.78); color: #ffffff; }
