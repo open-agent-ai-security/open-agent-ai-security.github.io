@@ -1,4 +1,9 @@
-# Raw GoatCounter export — per-account analytics, keep local, never commit.
+# Raw GoatCounter export (manual zip) — per-account analytics with raw
+# per-recipient mkt_tok tokens; keep local, never commit.
 goatcounter-export*/
+# Merged feed built each run by fetch_goatcounter.py (baseline + live per-hit).
+# Transient/regenerated; not committed. (goatcounter-baseline/ IS committed —
+# it's the frozen, token-hashed historical record.)
+goatcounter-merged/
 # PDFs are regenerated on demand (see README), not committed.
 *.pdf

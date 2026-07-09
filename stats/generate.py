@@ -139,9 +139,12 @@ COLOR = {k: c for k, _l, _p, c in BUCKETS}
 
 # ── Load data (real export, else built-in sample) ────────────────────────────
 def find_export():
-    # Only accept a directory that actually holds an export (has paths.jsonl),
-    # so stray/empty goatcounter-* dirs don't get picked up.
-    cands = (glob.glob(os.path.join(SCRIPT_DIR, "goatcounter-export*", ""))
+    # Prefer the automated merged feed (fetch_goatcounter.py: baseline + live
+    # per-hit API export). Fall back to a manually-unzipped export dir. Only
+    # accept a dir that actually holds an export (has paths.jsonl), so stray/
+    # empty goatcounter-* dirs don't get picked up.
+    cands = ([os.path.join(SCRIPT_DIR, "goatcounter-merged", "")]
+             + glob.glob(os.path.join(SCRIPT_DIR, "goatcounter-export*", ""))
              + glob.glob("/tmp/gc*/goatcounter-*/"))
     for c in cands:
         if os.path.exists(os.path.join(c, "paths.jsonl")):

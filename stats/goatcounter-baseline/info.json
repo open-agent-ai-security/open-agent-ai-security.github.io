@@ -1,0 +1,13 @@
+{
+  "export_version": "1.0",
+  "goatcounter_version": "a5095629",
+  "created_for": "open-agent-ai-security.goatcounter.com",
+  "created_by": "user_id=72416 <steve.wilson@exabeam.com>",
+  "created_at": "2026-07-08T23:34:06Z",
+  "_baseline": {
+    "note": "frozen historical aggregate; mkt_tok values hashed",
+    "source_export": "goatcounter-export-open-agent-ai-security-20260708T233406Z",
+    "first_day": "2026-06-17",
+    "cutoff_day": "2026-07-08"
+  }
+}
