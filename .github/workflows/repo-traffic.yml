@@ -75,14 +75,41 @@ jobs:
             echo "::warning::repo-traffic pull failed (HTTP 403 usually means the fine-grained token is not yet org-approved, or lacks Administration:read on the repos) — keeping prior snapshot; PyPI + stars still refreshed below."
           fi
 
+      # ── GoatCounter site traffic: per-hit CSV export merged with the committed
+      # baseline (fetch_goatcounter.py → stats/goatcounter-merged/, gitignored).
+      # Needs GOATCOUNTER_API_TOKEN. Fails SOFT — on any error (rate-limit,
+      # token/API issue) no merged dir is written, and the regen step below is
+      # GATED on that dir, so a failed pull keeps the prior index.html instead of
+      # falling back to generate.py's sample data. (Export is once/hour; the
+      # daily schedule is well within that.)
+      - name: Pull GoatCounter site traffic (needs GOATCOUNTER_API_TOKEN)
+        env:
+          GOATCOUNTER_API_TOKEN: ${{ secrets.GOATCOUNTER_API_TOKEN }}
+        run: |
+          if [ -z "$GOATCOUNTER_API_TOKEN" ]; then
+            echo "::warning::GOATCOUNTER_API_TOKEN not set — skipping GoatCounter pull; index.html left as-is."
+          elif ! python3 stats/fetch_goatcounter.py; then
+            echo "::warning::GoatCounter pull failed (once/hour rate limit, or API/token issue) — keeping prior index.html."
+          fi
+
+      # Regenerate the whole page — GATED on a successful GoatCounter merge, so
+      # we never render generate.py's sample fallback into the committed page.
+      - name: Regenerate dashboard (only if the GoatCounter feed is present)
+        run: |
+          if [ -f stats/goatcounter-merged/paths.jsonl ]; then
+            python3 stats/generate.py
+          else
+            echo "::warning::no goatcounter-merged/ — skipping generate.py; keeping the committed index.html."
+          fi
+
       - name: Commit snapshot if changed
         run: |
           git config user.name "oaas-stats-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add stats/repo-traffic.json stats/community-stars.svg stats/pypi-downloads.json
+          git add stats/repo-traffic.json stats/community-stars.svg stats/pypi-downloads.json stats/index.html
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -s -m "stats: daily GitHub repo-traffic + stars + PyPI snapshot [skip ci]"
+            git commit -s -m "stats: daily snapshot — GoatCounter + repo-traffic + stars + PyPI, page regenerated [skip ci]"
             git push
           fi
