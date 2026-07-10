@@ -40,13 +40,33 @@ def pull_csv():
     if not tok:
         sys.exit("GOATCOUNTER_API_TOKEN not set")
 
-    def api(method, path):
+    # A transient failure (5xx, 429, timeout, connection reset) shouldn't cost the
+    # whole daily refresh — the export gates page regeneration, so one blip freezes
+    # /stats for ~24h until the next run. Retry the export/poll/download calls with
+    # exponential backoff; non-retryable HTTP errors (401/403/400) still fail fast.
+    RETRYABLE = {429, 500, 502, 503, 504}
+    def api(method, path, _tries=4):
         req = urllib.request.Request(
             SITE + "/api/v0" + path, method=method,
             data=(b'{"format":"csv"}' if method == "POST" else None),
             headers={"Authorization": "Bearer " + tok, "Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=120) as r:
-            return r.status, r.read()
+        last = None
+        for attempt in range(_tries):
+            try:
+                with urllib.request.urlopen(req, timeout=120) as r:
+                    return r.status, r.read()
+            except urllib.error.HTTPError as e:
+                last = e
+                if e.code not in RETRYABLE:
+                    raise
+            except OSError as e:            # URLError, socket timeout, conn reset
+                last = e
+            if attempt < _tries - 1:
+                wait = min(30, 2 ** (attempt + 1))
+                print(f"  {method} {path} failed ({last}); retry "
+                      f"{attempt + 1}/{_tries - 1} in {wait}s", file=sys.stderr)
+                time.sleep(wait)
+        raise last
 
     code, b = api("POST", "/export")
     if code != 202:
