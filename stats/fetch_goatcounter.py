@@ -56,11 +56,18 @@ def pull_csv():
                 with urllib.request.urlopen(req, timeout=120) as r:
                     return r.status, r.read()
             except urllib.error.HTTPError as e:
-                last = e
+                try:
+                    # Collapse whitespace so the message is always one line — the
+                    # CI warning greps the last line, and GoatCounter can return a
+                    # multi-line HTML body on some failures.
+                    detail = " ".join(e.read().decode("utf-8", "replace").split())[:500]
+                except Exception:
+                    detail = "(no body)"
+                last = RuntimeError(f"{method} /api/v0{path} -> HTTP {e.code} {e.reason}: {detail}")
                 if e.code not in RETRYABLE:
-                    raise
+                    raise last
             except OSError as e:            # URLError, socket timeout, conn reset
-                last = e
+                last = RuntimeError(f"{method} /api/v0{path} -> {type(e).__name__}: {e}")
             if attempt < _tries - 1:
                 wait = min(30, 2 ** (attempt + 1))
                 print(f"  {method} {path} failed ({last}); retry "
