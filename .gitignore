@@ -1,3 +1,7 @@
 # macOS
 .DS_Store
 **/.DS_Store
+
+# LinkedIn analytics: raw manual .xls exports are local inputs to
+# stats/make_linkedin.py; only the generated stats/linkedin.html is committed.
+stats/linkedin-exports/
