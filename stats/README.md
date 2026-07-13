@@ -18,6 +18,8 @@ traffic doing across everything" dashboard.
 | `generate.py` | The generator. Reads a GoatCounter export → writes `index.html`. |
 | `index.html` | The self-contained report, served at `/stats/`. Regenerated, not hand-edited. |
 | `community-stars.svg` | Combined star-history.com chart (both repos), embedded inline. Refresh via `curl` (below). |
+| `make_linkedin.py` | Generator for the **separate** LinkedIn page. Reads three manual `.xls` exports → writes `linkedin.html`. See [LinkedIn Community stats](#linkedin-community-stats-separate-page). |
+| `linkedin.html` | The self-contained LinkedIn report. Regenerated, not hand-edited. Its own page — not linked from the main dashboard yet. |
 
 ## How the breakout works
 
@@ -87,3 +89,60 @@ To make a PDF for emailing (not committed — regenerate on demand):
   --no-pdf-header-footer --print-to-pdf=stats/community-traffic.pdf \
   "file://$PWD/stats/index.html"
 ```
+
+## LinkedIn Community stats (separate page)
+
+`linkedin.html` is a **companion** page for the [LinkedIn company page](https://www.linkedin.com/company/open-agent-and-ai-security-community/)
+— audience, content, and page-visitor stats. It is **deliberately kept separate**
+from the main Community Traffic dashboard (its own page, not in the nav) until
+there's enough history to be worth folding in. Same house style as `generate.py`,
+accent retinted LinkedIn blue.
+
+**Why it's manual:** LinkedIn has no analytics API on our plan yet, so — exactly
+like the pre-automation GoatCounter baseline — the page is fed by hand-exported
+`.xls` reports and refreshed weekly-ish. When API access lands, this becomes an
+automated feed.
+
+### The three exports
+
+From the company page → **Analytics**, export each tab. LinkedIn emits old-BIFF
+`.xls`, each suffixed with a millisecond timestamp:
+
+| Tab → file | What it gives |
+|---|---|
+| **Followers** (`*_followers_*.xls`) | New-followers time series + follower demographics (seniority, industry, company size, location, job function) |
+| **Content** (`*_content_*.xls`) | Post-impressions time series + per-post engagement (`All posts` sheet) |
+| **Visitors** (`*_visitors_*.xls`) | Page-view traffic (desktop/mobile, unique) + visitor demographics |
+
+These are three **different** dimensions (audience / content / traffic), not
+supersets of each other — together they form a reach → visits → follows funnel.
+
+### Regenerate
+
+```bash
+# 1. Export all three tabs; drop the .xls files into stats/linkedin-exports/
+#    (gitignored — raw exports are local inputs, only linkedin.html is committed).
+#    The generator auto-picks the NEWEST of each type by timestamp, so you can
+#    just keep dropping fresh files in.
+
+# 2. One-time: install the only non-stdlib dependency (reads LinkedIn's .xls).
+python3 -m pip install xlrd
+
+# 3. Build the page, then commit the regenerated stats/linkedin.html.
+python3 stats/make_linkedin.py
+```
+
+### What the page shows (all derived from the exports — nothing hand-entered)
+
+- Headline cards + a **reach → visits → follows** signal strip (labeled as
+  separate LinkedIn surfaces, not a strict subset).
+- **Cumulative total-followers line chart** with a "page live" launch marker —
+  the LinkedIn analog of the GitHub-stars chart.
+- Full **follower** and **visitor** demographics — every bucket its own bar (no
+  rollups); long lists pack in a masonry grid.
+- Per-post cards (Top-reach / Best-rate / Video badges, linked to each post).
+- Stacked **desktop vs mobile** daily page-views chart.
+
+All numbers, the date window, the active-day count, y-axis scaling, and the
+launch-marker placement are computed from the data, so it keeps working as the
+history grows past the launch week.
