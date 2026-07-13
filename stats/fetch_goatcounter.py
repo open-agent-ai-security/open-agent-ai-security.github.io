@@ -57,7 +57,10 @@ def pull_csv():
                     return r.status, r.read()
             except urllib.error.HTTPError as e:
                 try:
-                    detail = e.read().decode("utf-8", "replace")[:500]
+                    # Collapse whitespace so the message is always one line — the
+                    # CI warning greps the last line, and GoatCounter can return a
+                    # multi-line HTML body on some failures.
+                    detail = " ".join(e.read().decode("utf-8", "replace").split())[:500]
                 except Exception:
                     detail = "(no body)"
                 last = RuntimeError(f"{method} /api/v0{path} -> HTTP {e.code} {e.reason}: {detail}")
