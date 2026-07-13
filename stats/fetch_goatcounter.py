@@ -44,7 +44,10 @@ def pull_csv():
     # whole daily refresh — the export gates page regeneration, so one blip freezes
     # /stats for ~24h until the next run. Retry the export/poll/download calls with
     # exponential backoff; non-retryable HTTP errors (401/403/400) still fail fast.
-    RETRYABLE = {429, 500, 502, 503, 504}
+    # 404 is retryable here on purpose: GoatCounter has been observed returning a
+    # transient `404 {"error":"not found"}` on POST /export that clears on retry
+    # (2026-07-13 — a scheduled run 404'd, a manual re-run minutes later succeeded).
+    RETRYABLE = {404, 429, 500, 502, 503, 504}
     def api(method, path, _tries=4):
         req = urllib.request.Request(
             SITE + "/api/v0" + path, method=method,
