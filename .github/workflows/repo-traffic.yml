@@ -88,8 +88,14 @@ jobs:
         run: |
           if [ -z "$GOATCOUNTER_API_TOKEN" ]; then
             echo "::warning::GOATCOUNTER_API_TOKEN not set — skipping GoatCounter pull; index.html left as-is."
-          elif ! python3 stats/fetch_goatcounter.py; then
-            echo "::warning::GoatCounter pull failed (once/hour rate limit, or API/token issue) — keeping prior index.html."
+          elif ! out=$(python3 stats/fetch_goatcounter.py 2>&1); then
+            echo "$out"                        # full output still lands in the log
+            # Surface the actual cause in the run-summary annotation, not a generic
+            # guess — fetch_goatcounter.py's api() prints the method/URL/status/body
+            # on the last line, so a stale /stats page is legible from the summary.
+            echo "::warning::GoatCounter pull failed — keeping prior /stats page (frozen until the next good run). Cause: $(printf '%s\n' "$out" | tail -1)"
+          else
+            echo "$out"
           fi
 
       # Regenerate the whole page — GATED on a successful GoatCounter merge, so
