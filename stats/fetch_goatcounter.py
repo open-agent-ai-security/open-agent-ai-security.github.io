@@ -56,11 +56,15 @@ def pull_csv():
                 with urllib.request.urlopen(req, timeout=120) as r:
                     return r.status, r.read()
             except urllib.error.HTTPError as e:
-                last = e
+                try:
+                    detail = e.read().decode("utf-8", "replace")[:500]
+                except Exception:
+                    detail = "(no body)"
+                last = RuntimeError(f"{method} /api/v0{path} -> HTTP {e.code} {e.reason}: {detail}")
                 if e.code not in RETRYABLE:
-                    raise
+                    raise last
             except OSError as e:            # URLError, socket timeout, conn reset
-                last = e
+                last = RuntimeError(f"{method} /api/v0{path} -> {type(e).__name__}: {e}")
             if attempt < _tries - 1:
                 wait = min(30, 2 ** (attempt + 1))
                 print(f"  {method} {path} failed ({last}); retry "
