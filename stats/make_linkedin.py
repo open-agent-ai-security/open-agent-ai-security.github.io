@@ -22,8 +22,7 @@ its own page. Weekly-ish cadence: re-export, drop in, re-run, commit linkedin.ht
 Only dependency beyond the stdlib is `xlrd` (reads the old-BIFF .xls LinkedIn
 emits): `python3 -m pip install xlrd`.
 """
-import os, sys, glob, math, argparse, datetime, html
-from collections import OrderedDict
+import os, sys, re, glob, math, argparse, datetime, html
 
 try:
     import xlrd
@@ -36,17 +35,17 @@ LI_BLUE = "#0a66c2"
 
 # ── low-level xls helpers ────────────────────────────────────────────────────
 def _newest(indir, kind):
-    """Newest export of a given kind (followers/content/visitors) in `indir`.
+    """Most recently modified export of a given kind in `indir`.
 
-    LinkedIn suffixes each file with a millisecond timestamp, so lexical max on
-    the name is newest-wins; fall back to mtime if the names ever change shape.
+    LinkedIn names each file <slug>_<kind>_<timestamp>.xls; we pick by mtime
+    (newest download wins) rather than parsing the name, so a rename or a
+    differently-shaped timestamp can't shadow the actual latest file.
     """
-    hits = glob.glob(os.path.join(indir, f"*_{kind}_*.xls")) + \
-           glob.glob(os.path.join(indir, f"*{kind}*.xls"))
-    hits = sorted(set(hits))
+    hits = set(glob.glob(os.path.join(indir, f"*_{kind}_*.xls"))) | \
+           set(glob.glob(os.path.join(indir, f"*{kind}*.xls")))
     if not hits:
         return None
-    return max(hits, key=lambda p: (os.path.basename(p), os.path.getmtime(p)))
+    return max(hits, key=os.path.getmtime)
 
 
 def _header_row(sheet):
@@ -66,11 +65,30 @@ def _num(v):
 
 
 def _pdate(s):
-    """LinkedIn dates are MM/DD/YYYY."""
+    """Parse LinkedIn's text dates (MM/DD/YYYY)."""
     try:
         return datetime.datetime.strptime(str(s).strip(), "%m/%d/%Y").date()
     except ValueError:
         return None
+
+
+def _cell(sheet, r, c):
+    """cell_value with an out-of-range guard — LinkedIn could drop/reorder a
+    column, and we'd rather read a blank than crash the whole run."""
+    return sheet.cell_value(r, c) if c < sheet.ncols else ""
+
+
+def _row_date(sheet, r):
+    """Date in column 0, whether LinkedIn stored it as MM/DD/YYYY text (current)
+    or a native Excel date serial (defensive — would otherwise silently drop
+    every row and emit an all-zero page)."""
+    if sheet.cell_type(r, 0) == xlrd.XL_CELL_DATE:
+        try:
+            return xlrd.xldate_as_datetime(
+                sheet.cell_value(r, 0), sheet.book.datemode).date()
+        except Exception:
+            return None
+    return _pdate(sheet.cell_value(r, 0))
 
 
 def series(sheet, *cols):
@@ -78,16 +96,18 @@ def series(sheet, *cols):
     h = _header_row(sheet)
     out = []
     for r in range(h + 1, sheet.nrows):
-        d = _pdate(sheet.cell_value(r, 0))
+        d = _row_date(sheet, r)
         if d is None:
             continue
-        out.append((d,) + tuple(_num(sheet.cell_value(r, c)) for c in cols))
+        out.append((d,) + tuple(_num(_cell(sheet, r, c)) for c in cols))
     return out
 
 
 def demographic(sheet):
     """[(label, count)] from a two-column demographic sheet (header on row 0),
     sorted by count descending (stable — ties keep sheet order)."""
+    if sheet.ncols < 2:
+        return []
     rows = [(str(sheet.cell_value(r, 0)).strip(), _num(sheet.cell_value(r, 1)))
             for r in range(1, sheet.nrows) if str(sheet.cell_value(r, 0)).strip()]
     return sorted(rows, key=lambda kv: -kv[1])
@@ -104,6 +124,14 @@ def _clean_place(label):
 # ── html/svg building blocks ─────────────────────────────────────────────────
 def esc(s):
     return html.escape(str(s), quote=True)
+
+
+def safe_url(u):
+    """Only let http/https/mailto links from the export reach an href — the
+    report is published publicly, so a stray javascript:/data: URL in an export
+    cell must not become a live scheme."""
+    u = str(u).strip()
+    return u if u.lower().startswith(("http://", "https://", "mailto:")) else "#"
 
 
 def panel(title, sub, rows, clean=False):
@@ -221,7 +249,6 @@ def stacked_days(rows):
 
 def post_card(p, top_reach, best_rate):
     """One post card. `p` is a dict of the All-posts columns."""
-    import re
     title = re.sub(r"https?://\S+", "", str(p["title"])).split("\n")[0].strip()
     if len(title) > 200:
         title = title[:197].rstrip() + "…"
@@ -243,11 +270,12 @@ def post_card(p, top_reach, best_rate):
                       for k, v in stats)
     eng = (f'CTR <b>{p["ctr"] * 100:.2f}%</b> · comments '
            f'<b>{p["comments"]:.0f}</b> · reposts <b>{p["reposts"]:.0f}</b>')
-    href = esc(p["link"]) if p["link"] else "#"
+    href = esc(safe_url(p["link"])) if p["link"] else "#"
     return (f'  <div class="post">\n'
             f'    <div class="post-hd">{"".join(chips)}'
             f'<span class="date">{esc(p["date"])}</span></div>\n'
-            f'    <a class="post-title" href="{href}">{esc(title)}</a>\n'
+            f'    <a class="post-title" href="{href}" target="_blank" '
+            f'rel="noopener">{esc(title)}</a>\n'
             f'    <div class="post-stats">{st_html}</div>\n'
             f'    <div class="post-eng">{eng}</div>\n'
             f'  </div>')
@@ -342,23 +370,24 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
     met = series(cw.sheet_by_name("Metrics"), 3)  # impressions (total)
     impressions = sum(v for _, v in met)
     ap = cw.sheet_by_name("All posts")
-    hp = _header_row(ap) if str(ap.cell_value(0, 0)).strip().lower() != "post title" else 0
-    # All-posts header sits on the row starting with 'Post title'
+    # The 'All posts' header row starts with 'Post title' (a description line
+    # sits above it); default to 0 and tolerate an empty sheet (no posts yet).
+    hp = 0
     for r in range(min(4, ap.nrows)):
-        if str(ap.cell_value(r, 0)).strip().lower() == "post title":
+        if str(_cell(ap, r, 0)).strip().lower() == "post title":
             hp = r
             break
     posts = []
     for r in range(hp + 1, ap.nrows):
-        if not str(ap.cell_value(r, 0)).strip():
+        if not str(_cell(ap, r, 0)).strip():
             continue
         posts.append(dict(
-            title=ap.cell_value(r, 0), link=ap.cell_value(r, 1),
-            date=ap.cell_value(r, 5), impr=_num(ap.cell_value(r, 9)),
-            views=_num(ap.cell_value(r, 10)), clicks=_num(ap.cell_value(r, 12)),
-            ctr=_num(ap.cell_value(r, 13)), likes=_num(ap.cell_value(r, 14)),
-            comments=_num(ap.cell_value(r, 15)), reposts=_num(ap.cell_value(r, 16)),
-            eng=_num(ap.cell_value(r, 18)), ctype=ap.cell_value(r, 19)))
+            title=_cell(ap, r, 0), link=_cell(ap, r, 1),
+            date=_cell(ap, r, 5), impr=_num(_cell(ap, r, 9)),
+            views=_num(_cell(ap, r, 10)), clicks=_num(_cell(ap, r, 12)),
+            ctr=_num(_cell(ap, r, 13)), likes=_num(_cell(ap, r, 14)),
+            comments=_num(_cell(ap, r, 15)), reposts=_num(_cell(ap, r, 16)),
+            eng=_num(_cell(ap, r, 18)), ctype=_cell(ap, r, 19)))
     posts.sort(key=lambda p: -p["impr"])
     top_reach = posts[0] if posts else None
     best_rate = max(posts, key=lambda p: p["eng"]) if posts else None
@@ -380,9 +409,6 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
     dN = daily_new[-1][0] if daily_new else None
     win = (f"{d0.strftime('%m/%d')} → {dN.strftime('%m/%d/%Y')}"
            if d0 else "—")
-
-    def dsum(wb, sheet):
-        return sum(v for _, v in demographic(wb.sheet_by_name(sheet)))
 
     # ── assemble ─────────────────────────────────────────────────────────────
     P = [f'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
@@ -506,7 +532,13 @@ def main():
         print(f"  {k:<10} {os.path.basename(v)}")
 
     snapshot = datetime.date.today()
-    out_html = build(files["followers"], files["content"], files["visitors"], snapshot)
+    try:
+        out_html = build(files["followers"], files["content"],
+                         files["visitors"], snapshot)
+    except (xlrd.XLRDError, IndexError, KeyError) as e:
+        sys.exit(f"couldn't parse a LinkedIn export ({type(e).__name__}: {e}).\n"
+                 "LinkedIn may have changed the export layout (sheet/column names) "
+                 "— re-download the three tabs, or check the sheet structure.")
     with open(a.out, "w", encoding="utf-8") as fh:
         fh.write(out_html)
     print(f"wrote {a.out}  ({len(out_html):,} bytes)")
