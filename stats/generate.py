@@ -836,10 +836,18 @@ if dv_chart:
              f'<b style="color:#e0a52e">▲</b> key date. '
              f'Real site views only — email-campaign scanners excluded.</p></div>')
 
-# cumulative total views (glamour: running sum, only goes up)
-total_block(P, "Total views — all-time", "Community sites &middot; cumulative real views",
-            [(d, byday[d]) for d in days], "#5b8def",
-            [(d, lbl) for d, lbl in key_dates.items()], " views")
+# cumulative total REACH (glamour): site views + GitHub repo views, running sum,
+# so the endpoint reconciles with the "Total reach" headline card at the top
+# (which is also site views + repo views).
+_repo_byday = collections.Counter()
+for _k, _r in repo_traffic.items():
+    for _x in _r.get("views", {}).get("days", []):
+        _repo_byday[_x["timestamp"][:10]] += _x.get("count", 0)
+_reach_days = sorted(set(byday) | set(_repo_byday))
+total_block(P, "Total reach — all-time",
+            "Community sites (views) + GitHub repos &middot; cumulative reach",
+            [(d, byday.get(d, 0) + _repo_byday.get(d, 0)) for d in _reach_days], "#5b8def",
+            [(d, lbl) for d, lbl in key_dates.items()], "")
 
 # top referrers (site + repo, merged)
 P.append('<h2>Top referrers</h2>')
