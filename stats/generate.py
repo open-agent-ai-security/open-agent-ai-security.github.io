@@ -841,8 +841,15 @@ if dv_chart:
 # (which is also site views + repo views).
 _repo_byday = collections.Counter()
 for _k, _r in repo_traffic.items():
-    for _x in _r.get("views", {}).get("days", []):
-        _repo_byday[_x["timestamp"][:10]] += _x.get("count", 0)
+    _vdays = _r.get("views", {}).get("days", [])
+    if _vdays:
+        for _x in _vdays:
+            _repo_byday[_x["timestamp"][:10]] += _x.get("count", 0)
+    elif days:
+        # No daily history yet — attribute the 14-day count to the latest day so
+        # the cumulative endpoint still matches the headline reach card (which
+        # applies the same fallback).
+        _repo_byday[days[-1]] += _r.get("views", {}).get("count", 0)
 _reach_days = sorted(set(byday) | set(_repo_byday))
 total_block(P, "Total reach — all-time",
             "Community sites (views) + GitHub repos &middot; cumulative reach",
