@@ -22,7 +22,7 @@ its own page. Weekly-ish cadence: re-export, drop in, re-run, commit linkedin.ht
 Only dependency beyond the stdlib is `xlrd` (reads the old-BIFF .xls LinkedIn
 emits): `python3 -m pip install xlrd`.
 """
-import os, sys, re, glob, math, argparse, datetime, html
+import os, sys, re, glob, json, math, argparse, datetime, html
 
 try:
     import xlrd
@@ -247,6 +247,52 @@ def stacked_days(rows):
     return '<div class="mini">' + "".join(cols) + "</div>"
 
 
+def featured_posts_section():
+    """Featured community social posts, moved here from the main /stats dashboard
+    (they're all manual LinkedIn posts). Curated in stats/social-posts.json."""
+    try:
+        posts = json.load(open(os.path.join(HERE, "social-posts.json"),
+                               encoding="utf-8")).get("posts", [])
+    except (OSError, ValueError):
+        return []
+    if not posts:
+        return []
+    out = ['<h2>Featured posts <span class="n">&middot; from our community</span></h2>',
+           '<p class="sub" style="margin-bottom:10px">Standout posts driving '
+           'awareness for the community — newest first. Curated in '
+           '<code>stats/social-posts.json</code>.</p>']
+    tile_keys = [("impressions", "Impressions"), ("members_reached", "Members reached"),
+                 ("video_views", "Video views"), ("article_views", "Article views"),
+                 ("engagements", "Engagements")]
+    eng_keys = [("reactions", "\U0001F44D", "reactions"), ("comments", "\U0001F4AC", "comments"),
+                ("reposts", "\U0001F501", "reposts"), ("saves", "\U0001F516", "saves"),
+                ("sends", "\U0001F4E9", "sends")]
+    for p in sorted(posts, key=lambda x: x.get("date", ""), reverse=True):
+        s = p.get("stats", {})
+        plat = p.get("platform", "")
+        chip = ('<span class="li-chip"><b>in</b>LinkedIn</span>' if plat.lower() == "linkedin"
+                else f'<span class="vid-chip">{esc(plat)}</span>')
+        tiles = []
+        for k, lbl in tile_keys:
+            if k == "article_views" and "video_views" in s:
+                continue                       # prefer video_views when both present
+            if k in s:
+                tiles.append(f'<div class="st"><b>{s[k]:,}</b><span>{lbl}</span></div>')
+        eng = [f'<span>{icon} <b>{s[k]:,}</b> {lbl}</span>'
+               for k, icon, lbl in eng_keys if s.get(k)]
+        author = p.get("author", "")
+        href = esc(safe_url(p.get("url", "")))
+        out.append(f'<div class="post"><div class="post-hd">{chip}'
+                   f'{f"<span>{esc(author)}</span>" if author else ""}'
+                   f'<span class="date">{esc(p.get("date", ""))}</span></div>'
+                   f'<a class="post-title" href="{href}" target="_blank" rel="noopener">'
+                   f'{esc(p.get("title", ""))}</a>'
+                   f'<div class="post-stats">{"".join(tiles)}</div>'
+                   + (f'<div class="post-eng">{"".join(eng)}</div>' if eng else "")
+                   + '</div>')
+    return out
+
+
 def post_card(p, top_reach, best_rate):
     """One post card. `p` is a dict of the All-posts columns."""
     title = re.sub(r"https?://\S+", "", str(p["title"])).split("\n")[0].strip()
@@ -458,6 +504,8 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
     P.append('<h2>Posts <span class="n">· organic</span></h2>')
     for p in posts:
         P.append(post_card(p, top_reach, best_rate))
+
+    P.extend(featured_posts_section())
 
     P.append(f'<h2>Page visitors <span class="n">· {pageviews:,.0f} views / '
              f'{uniques:,.0f} unique</span></h2>')
