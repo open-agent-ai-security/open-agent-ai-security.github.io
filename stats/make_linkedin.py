@@ -257,10 +257,16 @@ def featured_posts_section():
         return []
     if not posts:
         return []
-    out = ['<h2>Featured posts <span class="n">&middot; from our community</span></h2>',
-           '<p class="sub" style="margin-bottom:10px">Standout posts driving '
-           'awareness for the community — newest first. Curated in '
-           '<code>stats/social-posts.json</code>.</p>']
+    out = ['<div style="border-top:1px solid var(--bd);margin:38px 0 0;padding-top:6px">'
+           '<span class="tag" style="letter-spacing:.08em">Separate source &middot; '
+           'hand-maintained</span></div>',
+           '<h2 style="margin-top:6px">Featured posts</h2>',
+           '<p class="sub" style="margin-bottom:10px"><b>Not from the community page, '
+           'and a different source than everything above.</b> A hand-picked set of '
+           'standout posts that drove awareness for the community — each post\'s '
+           'metrics are entered by hand into <code>stats/social-posts.json</code> and '
+           'refreshed only occasionally, unlike the automated LinkedIn page exports '
+           '(followers / posts / visitors) up top. Newest first.</p>']
     tile_keys = [("impressions", "Impressions"), ("members_reached", "Members reached"),
                  ("video_views", "Video views"), ("article_views", "Article views"),
                  ("engagements", "Engagements")]
@@ -505,8 +511,6 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
     for p in posts:
         P.append(post_card(p, top_reach, best_rate))
 
-    P.extend(featured_posts_section())
-
     P.append(f'<h2>Page visitors <span class="n">· {pageviews:,.0f} views / '
              f'{uniques:,.0f} unique</span></h2>')
     P.append('<div class="sec">')
@@ -529,6 +533,10 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
         P.append(panel(sheet, f"{sum(v for _, v in rows):.0f} views", rows,
                        clean=(sheet == "Location")))
     P.append('</div>')
+
+    # Featured posts last: a separate, hand-maintained source (individual post
+    # metrics), distinct from the automated .xls page exports above.
+    P.extend(featured_posts_section())
 
     P.append(f'<div class="foot">Source: manual LinkedIn analytics exports '
              f'(<b>followers · content · visitors</b>), org page '
