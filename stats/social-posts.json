@@ -1,84 +1,102 @@
 {
-  "_comment": "Top social posts to feature in the stats report. Add one object per post to `posts` (keys starting with _ are ignored). `stats` is free-form — include whatever metrics the platform reports (impressions, reactions/likes, comments/replies, reposts/shares, etc.); missing ones are just omitted. The report section (added later) can order by any stat or by the array order here.",
-  "_example": {
-    "platform": "LinkedIn",
-    "author": "Steve Wilson",
-    "date": "2026-07-01",
-    "url": "https://www.linkedin.com/posts/example",
-    "title": "First line / short description of the post",
-    "stats": {
-      "impressions": 12000,
-      "reactions": 240,
-      "comments": 31,
-      "reposts": 18
-    }
+ "_comment": "Top social posts to feature in the stats report. Add one object per post to `posts` (keys starting with _ are ignored). `stats` is free-form \u2014 include whatever metrics the platform reports (impressions, reactions/likes, comments/replies, reposts/shares, etc.); missing ones are just omitted. The report section (added later) can order by any stat or by the array order here.",
+ "_example": {
+  "platform": "LinkedIn",
+  "author": "Steve Wilson",
+  "date": "2026-07-01",
+  "url": "https://www.linkedin.com/posts/example",
+  "title": "First line / short description of the post",
+  "stats": {
+   "impressions": 12000,
+   "reactions": 240,
+   "comments": 31,
+   "reposts": 18
+  }
+ },
+ "posts": [
+  {
+   "platform": "LinkedIn",
+   "author": "Steve Wilson",
+   "date": "2026-07-13",
+   "url": "https://www.linkedin.com/pulse/when-owasp-llm-risks-meet-agentic-steve-wilson-wkeec/",
+   "title": "When OWASP LLM Risks Meet Agentic Risks",
+   "stats": {
+    "impressions": 4616,
+    "members_reached": 2923,
+    "article_views": 163,
+    "engagements": 127,
+    "reactions": 80,
+    "comments": 22,
+    "reposts": 8,
+    "saves": 17,
+    "sends": 0
+   }
   },
-  "posts": [
-    {
-      "platform": "LinkedIn",
-      "author": "Steve Wilson",
-      "date": "2026-07-06",
-      "url": "https://www.linkedin.com/posts/wilsonsd_my-latest-real-world-adventures-and-lessons-ugcPost-7479319987384410112-llCj",
-      "title": "The Scanner, the SOC Agent, and the Prompt That Lied",
-      "stats": {
-        "impressions": 2652,
-        "members_reached": 1579,
-        "article_views": 201,
-        "engagements": 91,
-        "reactions": 77,
-        "comments": 6,
-        "reposts": 4,
-        "saves": 4,
-        "sends": 0
-      }
-    },
-    {
-      "platform": "LinkedIn",
-      "author": "Steve Wilson",
-      "date": "2026-07-01",
-      "url": "https://www.linkedin.com/posts/wilsonsd_do-you-know-what-your-agents-are-up-to-ugcPost-7478082122679758848-pTjr",
-      "title": "Do you know what your agents are up to?",
-      "stats": {
-        "impressions": 2817,
-        "members_reached": 1789,
-        "video_views": 1153,
-        "engagements": 116,
-        "reactions": 91,
-        "comments": 12,
-        "reposts": 9,
-        "saves": 3,
-        "sends": 1
-      }
-    },
-    {
-      "platform": "LinkedIn",
-      "author": "Steve Wilson",
-      "date": "2026-06-23",
-      "url": "https://www.linkedin.com/posts/wilsonsd_ive-been-working-like-crazy-on-this-for-ugcPost-7475219279647354880-Pz03",
-      "title": "Praxen launch",
-      "stats": {
-        "impressions": 7022,
-        "members_reached": 4482,
-        "video_views": 2981,
-        "engagements": 253,
-        "reactions": 170,
-        "comments": 34,
-        "reposts": 17,
-        "saves": 27,
-        "sends": 5
-      }
-    },
-    {
-      "platform": "LinkedIn",
-      "author": "Joanne Pei Lee Wong",
-      "date": "2026-06-24",
-      "url": "https://www.linkedin.com/pulse/frontier-ai-changing-cyber-risk-agent-behavior-needs-part-wong-oxptc/",
-      "title": "Frontier AI Is Changing Cyber Risk. Agent Behavior Verification Needs to Be Part of the Response.",
-      "_note": "Community post (not ours) — only public reactions/reposts visible; impressions/views unavailable.",
-      "stats": {
-        "reactions": 26,
-        "reposts": 1
-      }
-    }
-  ]
+  {
+   "platform": "LinkedIn",
+   "author": "Steve Wilson",
+   "date": "2026-07-06",
+   "url": "https://www.linkedin.com/posts/wilsonsd_my-latest-real-world-adventures-and-lessons-ugcPost-7479319987384410112-llCj",
+   "title": "The Scanner, the SOC Agent, and the Prompt That Lied",
+   "stats": {
+    "impressions": 3585,
+    "members_reached": 2166,
+    "article_views": 249,
+    "engagements": 110,
+    "reactions": 98,
+    "comments": 4,
+    "reposts": 4,
+    "saves": 4,
+    "sends": 0
+   }
+  },
+  {
+   "platform": "LinkedIn",
+   "author": "Steve Wilson",
+   "date": "2026-07-01",
+   "url": "https://www.linkedin.com/posts/wilsonsd_do-you-know-what-your-agents-are-up-to-ugcPost-7478082122679758848-pTjr",
+   "title": "Do you know what your agents are up to?",
+   "stats": {
+    "impressions": 3330,
+    "members_reached": 2159,
+    "video_views": 1352,
+    "engagements": 128,
+    "reactions": 102,
+    "comments": 13,
+    "reposts": 9,
+    "saves": 3,
+    "sends": 1
+   }
+  },
+  {
+   "platform": "LinkedIn",
+   "author": "Steve Wilson",
+   "date": "2026-06-23",
+   "url": "https://www.linkedin.com/posts/wilsonsd_ive-been-working-like-crazy-on-this-for-ugcPost-7475219279647354880-Pz03",
+   "title": "Praxen launch",
+   "stats": {
+    "impressions": 7189,
+    "members_reached": 4533,
+    "video_views": 3038,
+    "engagements": 259,
+    "reactions": 175,
+    "comments": 32,
+    "reposts": 20,
+    "saves": 27,
+    "sends": 5
+   }
+  },
+  {
+   "platform": "LinkedIn",
+   "author": "Joanne Pei Lee Wong",
+   "date": "2026-06-24",
+   "url": "https://www.linkedin.com/pulse/frontier-ai-changing-cyber-risk-agent-behavior-needs-part-wong-oxptc/",
+   "title": "Frontier AI Is Changing Cyber Risk. Agent Behavior Verification Needs to Be Part of the Response.",
+   "_note": "Community post (not ours) \u2014 only public reactions/reposts visible; impressions/views unavailable.",
+   "stats": {
+    "reactions": 26,
+    "reposts": 1
+   }
+  }
+ ]
 }

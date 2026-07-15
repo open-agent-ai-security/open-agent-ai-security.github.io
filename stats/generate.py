@@ -227,12 +227,7 @@ if os.path.exists(KEY_DATES):
     with open(KEY_DATES, encoding="utf-8") as _fh:
         key_dates = {k: v for k, v in json.load(_fh).items() if not k.startswith("_")}
 
-# Featured social posts (URL + stats), shown in "Key social posts", newest first.
-SOCIAL = os.path.join(SCRIPT_DIR, "social-posts.json")
-social_posts = []
-if os.path.exists(SOCIAL):
-    with open(SOCIAL, encoding="utf-8") as _fh:
-        social_posts = json.load(_fh).get("posts", [])
+# (Featured social posts moved to the LinkedIn stats page; see make_linkedin.py.)
 
 
 # ── Classify: real vs. email-campaign scanner traffic ────────────────────────
@@ -889,51 +884,8 @@ for loc, c in toploc:
     P.append(bar(loc_name(loc), c, lmax, color="#4db6ac"))
 P.append('</div>')
 
-# Key social posts (featured LinkedIn/social posts, newest first)
-if social_posts:
-    P.append('<h2>Key social posts</h2>')
-    P.append('<p class="sub">Standout posts driving awareness for the community — '
-             'newest first.</p>')
-    for p in sorted(social_posts, key=lambda x: x.get("date", ""), reverse=True):
-        s = p.get("stats", {})
-        plat = p.get("platform", "")
-        if plat.lower() == "linkedin":
-            chip = '<span class="li-chip"><b>in</b> LinkedIn</span>'
-        else:
-            chip = f'<span class="chip" style="background:#2a3a52;color:#cde">{plat}</span>'
-        # headline stat tiles (only those present)
-        tiles = []
-        if "impressions" in s:
-            tiles.append((f'{s["impressions"]:,}', "Impressions"))
-        if "members_reached" in s:
-            tiles.append((f'{s["members_reached"]:,}', "Members reached"))
-        if "video_views" in s:
-            tiles.append((f'{s["video_views"]:,}', "Video views"))
-        elif "article_views" in s:
-            tiles.append((f'{s["article_views"]:,}', "Article views"))
-        if "engagements" in s:
-            tiles.append((f'{s["engagements"]:,}', "Engagements"))
-        tiles_html = "".join(f'<div class="st"><b>{v}</b><span>{l}</span></div>'
-                             for v, l in tiles)
-        # engagement breakdown (icon + count), only non-zero
-        eng = []
-        for key, icon, lbl in [("reactions", "&#128077;", "reactions"),
-                               ("comments", "&#128172;", "comments"),
-                               ("reposts", "&#128257;", "reposts"),
-                               ("saves", "&#128278;", "saves"),
-                               ("sends", "&#128233;", "sends")]:
-            if s.get(key):
-                eng.append(f'<span>{icon} <b>{s[key]:,}</b> {lbl}</span>')
-        eng_html = ("".join(eng)) or ""
-        author = p.get("author", "")
-        P.append(f'<div class="post"><div class="post-hd">{chip}'
-                 f'{f"<span>{author}</span>" if author else ""}'
-                 f'<span class="date">{p.get("date","")}</span></div>'
-                 f'<a class="post-title" href="{p["url"]}" target="_blank" '
-                 f'rel="noopener">{p["title"]}</a>'
-                 f'<div class="post-stats">{tiles_html}</div>'
-                 + (f'<div class="post-eng">{eng_html}</div>' if eng_html else "")
-                 + '</div>')
+# (The "Key social posts" section moved to the LinkedIn stats page — they're all
+#  manual LinkedIn posts; see stats/make_linkedin.py → linkedin.html.)
 
 # GitHub stars (counts fetched live; combined trend chart from star-history.com)
 P.append('<h2>GitHub stars</h2>')
