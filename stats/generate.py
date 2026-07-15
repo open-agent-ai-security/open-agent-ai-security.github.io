@@ -998,18 +998,20 @@ if prx_days:
     n = [d["count"] for d in prx_days]
     tot, last_30, last_7 = sum(n), sum(n[-30:]), sum(n[-7:])
     uniq_14 = _prx_cl.get("uniques", 0)          # GitHub's dedup'd 14-day unique cloners
-    P.append('<h2>Praxen plugin installs &middot; clone proxy</h2>')
-    P.append('<p class="sub"><b style="color:var(--tx)">Praxen only.</b> Claude Code / '
-             'Codex install Praxen by <code>git clone</code>-ing the repo — there is no '
-             'central marketplace download counter — so repo clones are the best install '
-             f'proxy (<b style="color:{color}">{uniq_14:,} unique cloners</b> in the '
-             'trailing 14 days). Clones include update re-pulls and CI, so — like the PyPI '
-             'numbers — read the trend, not an exact headcount. (Observra ships on PyPI; '
-             'Praxen ships as a plugin, hence the different signal.)</p>')
+    P.append('<h2>Praxen plugin installs</h2>')
+    P.append('<p class="sub"><b style="color:var(--tx)">Praxen only.</b> Praxen '
+             'installs as an agent plugin (Claude Code / Codex), and those '
+             'marketplaces expose no public download counter — so we use '
+             '<b>GitHub repo clones as a proxy for installs</b> '
+             f'(<b style="color:{color}">{uniq_14:,} unique installs</b> in the '
+             'trailing 14 days, GitHub-deduplicated). It is a proxy: the count also '
+             'includes update re-pulls and CI, so — like the PyPI numbers — read the '
+             'trend, not an exact headcount. (Observra ships on PyPI, hence its '
+             'different install signal.)</p>')
     P.append('<div class="cards" style="grid-template-columns:repeat(3,1fr)">')
-    for val, cap in ((last_30, "Praxen &middot; clones, last 30 days"),
-                     (last_7, "clones, last 7 days"),
-                     (tot, "tracked total clones")):
+    for val, cap in ((last_30, "Praxen &middot; installs, last 30 days"),
+                     (last_7, "installs, last 7 days"),
+                     (tot, "tracked total installs")):
         P.append(f'<div class="card"><b style="color:{color}">{val:,}</b>'
                  f'<span>{cap}</span></div>')
     P.append('</div>')
@@ -1019,20 +1021,22 @@ if prx_days:
     prx_marks = [(r["date"], r["tag"]) for r in _prx_rel]
     prx_marks += [(d, lbl) for d, lbl in key_dates.items() if "praxen" in lbl.lower()]
     chart = trend_svg([(d["date"], d["count"]) for d in prx_days], color=color,
-                      markers=prx_marks, unit=" clones")
+                      markers=prx_marks, unit=" installs")
     if chart:
         P.append(f'<div class="sec" style="padding:16px 18px 10px">'
                  f'<div style="font-size:12.5px;font-weight:600;color:var(--tx);'
                  f'margin:0 0 8px"><b style="color:{color}">Praxen</b> '
-                 f'<code>open-agent-ai-security/praxen</code> &middot; clones per day</div>{chart}'
+                 f'<code>open-agent-ai-security/praxen</code> &middot; installs per day '
+                 f'(clone proxy)</div>{chart}'
                  f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
                  f'<b style="color:{color}">━</b> 7-day average &nbsp;·&nbsp; '
-                 f'<b style="color:{color}">▮</b> daily clones &nbsp;·&nbsp; '
+                 f'<b style="color:{color}">▮</b> daily installs &nbsp;·&nbsp; '
                  f'<b style="color:#e0a52e">▲</b> release / launch'
                  f'{f" · snapshot {repo_snapshot}" if repo_snapshot else ""}.</p></div>')
-    # cumulative total pulls (glamour)
-    total_block(P, "Total pulls — Praxen", "Praxen &middot; cumulative clone-proxy installs",
-                [(d["date"], d["count"]) for d in prx_days], color, prx_marks, " clones")
+    # cumulative total installs (glamour)
+    total_block(P, "Total installs — Praxen", "Praxen &middot; cumulative plugin installs "
+                "(clone proxy)",
+                [(d["date"], d["count"]) for d in prx_days], color, prx_marks, " installs")
 
 # Marketo campaign tracking (ongoing — each detected send is logged as it lands)
 _bot = CLASS["campaign_bot"]
