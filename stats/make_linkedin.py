@@ -312,12 +312,6 @@ h2 .n{color:var(--mut2);font-weight:600;font-size:14px;letter-spacing:0}
 .drow .lab .v{color:var(--tx);font-weight:700;flex:0 0 auto;font-variant-numeric:tabular-nums}
 .drow .track{background:rgba(255,255,255,.05);border-radius:6px;height:8px;overflow:hidden}
 .drow .track i{display:block;height:100%;border-radius:6px;background:var(--ac)}
-.funnel{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:10px;margin:8px 0 6px}
-.fstep{background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:16px 14px;text-align:center}
-.fstep b{display:block;font-size:26px;font-weight:700;color:var(--ac2);line-height:1.05}
-.fstep span{font-size:12px;color:var(--mut);display:block;margin-top:3px}
-.fstep em{font-style:normal;color:var(--mut2);font-size:11px}
-.farrow{color:var(--mut2);font-size:20px;font-weight:700}
 .mini{display:flex;align-items:flex-end;gap:14px;height:150px;padding:8px 4px 0}
 .mcol{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
 .mcol .val{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px}
@@ -350,7 +344,7 @@ h2 .n{color:var(--mut2);font-weight:600;font-size:14px;letter-spacing:0}
 .warn code{background:rgba(255,255,255,.07);padding:1px 5px;border-radius:4px;font-size:12.5px}
 @media(max-width:680px){
   .cards{grid-template-columns:repeat(2,1fr)}
-  .funnel{grid-template-columns:1fr;gap:6px}.farrow{transform:rotate(90deg)}
+
   .grid2{columns:1}}"""
 
 
@@ -421,10 +415,9 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
     P.append(f'<p class="sub">Companion to <a href="./">Community Traffic</a>, '
              f'tracking the <a href="https://www.linkedin.com/company/'
              f'open-agent-and-ai-security-community/">Open Agent &amp; AI Security '
-             f'Community</a> LinkedIn page. Window <b>{win}</b> · '
-             f'<b>{days_live}</b> active day{"s" if days_live != 1 else ""}. Kept on '
-             f'its own page until there is enough history to fold into the main '
-             f'dashboard.</p>')
+             f'Community</a> LinkedIn page — our standing record of LinkedIn '
+             f'audience, content, and visitors over time. Latest export covers '
+             f'<b>{win}</b>.</p>')
     P.append('<div class="warn"><b>MANUAL SNAPSHOT</b> — LinkedIn API access isn\'t '
              'configured yet, so this is built from hand-exported <code>.xls</code> '
              'reports (followers · content · visitors) by '
@@ -444,18 +437,6 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
              f'<span>Page views / visitors</span></div>')
     P.append(f'<div class="card"><b>{days_live}</b><span>Active days</span></div>')
     P.append('</div>')
-
-    P.append('<h2>Launch week, three signals</h2>')
-    P.append('<p class="sub" style="margin-bottom:10px">Different LinkedIn surfaces, '
-             'not a strict subset — feed <b>reach</b>, page <b>visits</b>, and '
-             '<b>follows</b> each measured separately.</p>')
-    P.append('<div class="funnel">'
-             f'<div class="fstep"><b>{impressions:,.0f}</b><span>Impressions</span>'
-             f'<em>feed reach</em></div><div class="farrow">→</div>'
-             f'<div class="fstep"><b>{uniques:,.0f}</b><span>Unique visitors</span>'
-             f'<em>{pageviews:,.0f} page views</em></div><div class="farrow">→</div>'
-             f'<div class="fstep"><b>{followers_total:,.0f}</b><span>Followers</span>'
-             f'<em>{organic:,.0f} organic · {paid:,.0f} paid</em></div></div>')
 
     P.append('<h2>Total followers <span class="n">· cumulative</span></h2>')
     P.append('<div class="sec" style="padding:16px 18px 10px">')
