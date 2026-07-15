@@ -664,7 +664,12 @@ def pct(v):
 P = []
 P.append(f'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
          f'<meta name="viewport" content="width=device-width, initial-scale=1">'
-         f'<title>Community Traffic — Overview</title><style>{CSS}</style></head>'
+         f'<title>Community Traffic — Overview</title>'
+         # Internal traffic dashboard, not primary content — keep it out of
+         # search/GEO indexes (still crawlable via `follow` for any outbound
+         # links), and out of sitemap.xml (see that file's header comment).
+         f'<meta name="robots" content="noindex, follow">'
+         f'<style>{CSS}</style></head>'
          f'<body><div class="wrap">')
 P.append('<span class="tag">GoatCounter + GitHub · open-agent-ai-security</span>'
          '<h1>Community Traffic — Overview</h1>')
