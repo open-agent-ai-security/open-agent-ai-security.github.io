@@ -283,8 +283,9 @@ def featured_posts_section():
             if k == "article_views" and "video_views" in s:
                 continue                       # prefer video_views when both present
             if k in s:
-                tiles.append(f'<div class="st"><b>{s[k]:,}</b><span>{lbl}</span></div>')
-        eng = [f'<span>{icon} <b>{s[k]:,}</b> {lbl}</span>'
+                tiles.append(f'<div class="st"><b>{_num(s[k]):,.0f}</b>'
+                             f'<span>{lbl}</span></div>')
+        eng = [f'<span>{icon} <b>{_num(s[k]):,.0f}</b> {lbl}</span>'
                for k, icon, lbl in eng_keys if s.get(k)]
         author = p.get("author", "")
         href = esc(safe_url(p.get("url", "")))
