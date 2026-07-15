@@ -1,0 +1,14 @@
+# open-agent-ai-security.github.io is the origin root for this GitHub Pages
+# org site AND its project sites (observra, praxen live at /observra/,
+# /praxen/ on this same origin) — this is the only robots.txt crawlers honor
+# for any of them; a robots.txt committed inside the observra/praxen repos
+# themselves is never fetched (robots.txt is only read at the origin root,
+# per RFC 9309), so don't add one there — update this file instead.
+#
+# Permissive by design: this is a public open-source community/docs site with
+# no private or account-gated content, and we want both traditional search
+# engines and AI/LLM answer-engine crawlers to index and cite it (GEO).
+User-agent: *
+Allow: /
+
+Sitemap: https://open-agent-ai-security.github.io/sitemap.xml

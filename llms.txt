@@ -1,0 +1,23 @@
+# Open Agent and AI Security Community
+
+> An open, collaborative community dedicated to securing agentic enterprise
+> applications and accelerating the responsible use of AI in security
+> operations. Publishes open-source reference implementations and shared
+> infrastructure for agent security — sponsored by Exabeam.
+
+## Projects
+
+- [Observra](https://open-agent-ai-security.github.io/observra/): open-source observability and telemetry framework for AI and agentic systems — deep visibility into agent behavior, execution flows, runtime events, and inter-agent communication. See its own [llms.txt](https://open-agent-ai-security.github.io/observra/llms.txt) for docs/quickstarts.
+- [Praxen](https://open-agent-ai-security.github.io/praxen/): agent behavior verifier. Compares an AI agent's declared policy against the available evidence, and reports where observed behavior diverges from declared intent.
+
+## Source
+
+- [Observra on GitHub](https://github.com/open-agent-ai-security/observra)
+- [Praxen on GitHub](https://github.com/open-agent-ai-security/praxen)
+- [Community GitHub org](https://github.com/open-agent-ai-security)
+
+## Optional
+
+- [Community traffic/reach stats](https://open-agent-ai-security.github.io/stats/): internal dashboard, not primary content
+- [LinkedIn](https://www.linkedin.com/company/open-agent-and-ai-security-community/): news and discussion
+- [Exabeam](https://www.exabeam.com/): community sponsor

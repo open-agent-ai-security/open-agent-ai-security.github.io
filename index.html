@@ -12,6 +12,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Open Agent and AI Security Community</title>
   <meta name="description" content="An open, collaborative community dedicated to securing agentic enterprise applications and accelerating the responsible use of AI in security operations. Securing agentic and AI applications — together.">
+  <meta name="keywords" content="agentic AI security, AI agent security community, open-source agent observability, agent behavior verification, AI agent risk assessment, agentic enterprise security, LLM security, agent telemetry">
+  <meta name="robots" content="index, follow">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="256x256" href="assets/favicon-256.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
@@ -29,6 +31,46 @@
   <meta name="twitter:title" content="Open Agent and AI Security Community">
   <meta name="twitter:description" content="Securing agentic and AI applications — together.">
   <meta name="twitter:image" content="https://open-agent-ai-security.github.io/assets/community-social.png">
+
+  <!-- Structured data: the community as an Organization, plus its two
+       published projects as SoftwareSourceCode entities so search/AI answer
+       engines can attribute "who publishes Observra/Praxen" correctly (GEO). -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://open-agent-ai-security.github.io/#org",
+        "name": "Open Agent and AI Security Community",
+        "url": "https://open-agent-ai-security.github.io/",
+        "description": "An open, collaborative community dedicated to securing agentic enterprise applications and accelerating the responsible use of AI in security operations.",
+        "logo": "https://open-agent-ai-security.github.io/assets/community-social.png",
+        "sameAs": [
+          "https://www.linkedin.com/company/open-agent-and-ai-security-community/",
+          "https://github.com/open-agent-ai-security"
+        ],
+        "sponsor": { "@type": "Organization", "name": "Exabeam", "url": "https://www.exabeam.com/" }
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "name": "Observra",
+        "description": "An open-source observability and telemetry framework designed for AI and agentic systems, providing deep visibility into agent behavior, execution flows, runtime events, and inter-agent communication.",
+        "url": "https://open-agent-ai-security.github.io/observra/",
+        "codeRepository": "https://github.com/open-agent-ai-security/observra",
+        "author": { "@id": "https://open-agent-ai-security.github.io/#org" }
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "name": "Praxen",
+        "description": "Agent behavior verifier. Compares an AI agent's declared policy against the available evidence, and reports where observed behavior diverges from declared intent.",
+        "url": "https://open-agent-ai-security.github.io/praxen/",
+        "codeRepository": "https://github.com/open-agent-ai-security/praxen",
+        "author": { "@id": "https://open-agent-ai-security.github.io/#org" }
+      }
+    ]
+  }
+  </script>
 
   <!-- Preconnect warms the Google Fonts fetch used by the inline @import below. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
