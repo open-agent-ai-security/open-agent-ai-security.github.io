@@ -537,6 +537,121 @@ def esc(s):
     return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
+def cumulative_svg(points, color="#37c2f0", markers=None, height=180, unit=""):
+    """Cumulative-total 'glamour' line chart (no JS): a running sum of a daily
+    series, so the line only ever goes up. Area-filled, endpoint total labelled,
+    optional amber milestone markers, per-point hover. No bars, no moving average.
+
+      points  : [(date 'YYYY-MM-DD', daily_value)] ascending
+      markers : [(date 'YYYY-MM-DD', label)]
+    """
+    import math
+    pts = [(d, v) for d, v in points if v is not None]
+    if len(pts) < 2:
+        return ""
+    cum, run = [], 0
+    for d, v in pts:
+        run += v
+        cum.append((d, run))
+    markers = sorted((m for m in (markers or []) if m and m[0]), key=lambda m: m[0])
+    W, H = 720, height
+    x0, x1, y0, y1 = 40, W - 12, 24, H - 22
+    d0 = datetime.date.fromisoformat(cum[0][0])
+    dN = datetime.date.fromisoformat(cum[-1][0])
+    for _md, _lbl in markers:
+        try:
+            _mdt = datetime.date.fromisoformat(_md)
+        except ValueError:
+            continue
+        if dN < _mdt <= dN + datetime.timedelta(days=7):
+            dN = _mdt
+    span = max((dN - d0).days, 1)
+    sx = lambda ds: x0 + (x1 - x0) * (datetime.date.fromisoformat(ds) - d0).days / span
+    vmax = cum[-1][1] or 1                       # monotonic: the last point is the max
+    raw = vmax / 5
+    mag = 10 ** math.floor(math.log10(raw)) if raw > 0 else 1
+    step = next(m * mag for m in (1, 2, 2.5, 5, 10) if m * mag >= raw)
+    nmax = math.ceil(vmax / step) * step
+    ticks, _t = [], 0.0
+    while _t <= nmax + 1e-6:
+        ticks.append(int(round(_t)))
+        _t += step
+    ticks = sorted(set(ticks))
+    sy = lambda v: y1 - (y1 - y0) * (v / nmax)
+
+    svg = [f'<svg viewBox="0 0 {W} {H}" width="100%" role="img" '
+           f'style="display:block;font-family:Inter,system-ui,sans-serif">']
+    svg.append('<style>.col .hit{fill:transparent}.col:hover .hit{fill:rgba(255,255,255,.05)}'
+               '.col .tip{opacity:0;transition:opacity .1s}.col:hover .tip{opacity:1}'
+               '.tip{pointer-events:none}</style>')
+    for t in ticks:
+        gy = sy(t)
+        svg.append(f'<line x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}" '
+                   f'stroke="var(--bd)" stroke-width="1" opacity="{0.85 if t == 0 else 0.33}"/>')
+        svg.append(f'<text x="{x0 - 6}" y="{gy + 3:.1f}" fill="var(--mut2)" '
+                   f'font-size="9" text-anchor="end">{t:,}</text>')
+    svg.append(f'<text x="{x0}" y="{H - 5}" fill="var(--mut)" font-size="10">{cum[0][0]}</text>')
+    svg.append(f'<text x="{x1}" y="{H - 5}" fill="var(--mut)" font-size="10" '
+               f'text-anchor="end">{cum[-1][0]}</text>')
+    line = "M " + " L ".join(f"{sx(d):.1f} {sy(v):.1f}" for d, v in cum)
+    svg.append(f'<path d="{line} L {sx(cum[-1][0]):.1f} {y1:.1f} L {x0:.1f} {y1:.1f} Z" '
+               f'fill="{color}" opacity="0.13"/>')
+    last_lx = -999
+    for md, ml in markers:
+        try:
+            mx = sx(md)
+        except ValueError:
+            continue
+        if not (x0 - 1 <= mx <= x1 + 1):
+            continue
+        svg.append(f'<line x1="{mx:.1f}" y1="{y0 - 6:.1f}" x2="{mx:.1f}" y2="{y1:.1f}" '
+                   f'stroke="#e0a52e" stroke-width="1" stroke-dasharray="2 3" opacity="0.5"/>')
+        svg.append(f'<path d="M {mx - 3:.1f} {y0 - 9:.1f} L {mx + 3:.1f} {y0 - 9:.1f} '
+                   f'L {mx:.1f} {y0 - 3:.1f} Z" fill="#e0a52e"><title>{esc(ml)} · {md}</title></path>')
+        if mx - last_lx > 30:
+            svg.append(f'<text x="{mx:.1f}" y="{y0 - 12:.1f}" fill="#e0a52e" font-size="9" '
+                       f'font-weight="600" text-anchor="middle">{esc(ml)}</text>')
+            last_lx = mx
+    svg.append(f'<path d="{line}" fill="none" stroke="{color}" stroke-width="2.4" '
+               f'stroke-linejoin="round" stroke-linecap="round"/>')
+    ld, lv = cum[-1]
+    svg.append(f'<circle cx="{sx(ld):.1f}" cy="{sy(lv):.1f}" r="3.6" fill="{color}"/>')
+    svg.append(f'<text x="{sx(ld) - 7:.1f}" y="{sy(lv) - 7:.1f}" fill="var(--tx)" '
+               f'font-size="13" font-weight="700" text-anchor="end">{lv:,}{unit}</text>')
+    slot = (x1 - x0) / span
+    hitw = max(slot, 6)
+    for d, v in cum:
+        cx = sx(d)
+        txt = f'{d} · {v:,}{unit} total'
+        tw = len(txt) * 6.0 + 14
+        tx = min(max(cx, x0 + tw / 2), x1 - tw / 2)
+        ty = max(sy(v) - 10, y0 + 16)
+        svg.append('<g class="col">'
+                   f'<rect class="hit" x="{cx - hitw / 2:.1f}" y="{y0}" '
+                   f'width="{hitw:.1f}" height="{y1 - y0}"/>'
+                   f'<g class="tip"><rect x="{tx - tw / 2:.1f}" y="{ty - 14:.1f}" '
+                   f'width="{tw:.1f}" height="17" rx="4" fill="#0f1830" '
+                   f'stroke="var(--bd)" stroke-width="1"/>'
+                   f'<text x="{tx:.1f}" y="{ty - 2:.1f}" text-anchor="middle" '
+                   f'fill="var(--tx)" font-size="11">{esc(txt)}</text></g></g>')
+    svg.append("</svg>")
+    return "".join(svg)
+
+
+def total_block(P, title, sub, daily_points, color, markers, unit):
+    """Append a cumulative-total 'glamour' chart section (running sum, up only)."""
+    svg = cumulative_svg(daily_points, color=color, markers=markers, unit=unit)
+    if not svg:
+        return
+    P.append(f'<h2>{title}</h2>')
+    P.append(f'<div class="sec" style="padding:16px 18px 10px">'
+             f'<div style="font-size:12.5px;font-weight:600;color:var(--tx);'
+             f'margin:0 0 8px">{sub}</div>{svg}'
+             f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
+             f'<b style="color:{color}">━</b> cumulative total &nbsp;·&nbsp; '
+             f'<b style="color:#e0a52e">▲</b> milestone. Running total — only goes up.</p></div>')
+
+
 def trend_svg(points, color="#37c2f0", markers=None, avg_window=7,
               height=180, unit=""):
     """Self-contained inline-SVG trend chart for a daily time-series (no JS).
@@ -729,6 +844,26 @@ if dv_chart:
              f'<b style="color:#e0a52e">▲</b> key date. '
              f'Real site views only — email-campaign scanners excluded.</p></div>')
 
+# cumulative total REACH (glamour): site views + GitHub repo views, running sum,
+# so the endpoint reconciles with the "Total reach" headline card at the top
+# (which is also site views + repo views).
+_repo_byday = collections.Counter()
+for _k, _r in repo_traffic.items():
+    _vdays = _r.get("views", {}).get("days", [])
+    if _vdays:
+        for _x in _vdays:
+            _repo_byday[_x["timestamp"][:10]] += _x.get("count", 0)
+    elif days:
+        # No daily history yet — attribute the 14-day count to the latest day so
+        # the cumulative endpoint still matches the headline reach card (which
+        # applies the same fallback).
+        _repo_byday[days[-1]] += _r.get("views", {}).get("count", 0)
+_reach_days = sorted(set(byday) | set(_repo_byday))
+total_block(P, "Total reach — all-time",
+            "Community sites (views) + GitHub repos &middot; cumulative reach",
+            [(d, byday.get(d, 0) + _repo_byday.get(d, 0)) for d in _reach_days], "#5b8def",
+            [(d, lbl) for d, lbl in key_dates.items()], "")
+
 # top referrers (site + repo, merged)
 P.append('<h2>Top referrers</h2>')
 P.append('<p class="sub" style="margin-bottom:8px">Pages-site + repo referrers, '
@@ -859,6 +994,12 @@ if pypi_dl:
                      f'<b style="color:{color}">▮</b> daily downloads &nbsp;·&nbsp; '
                      f'<b style="color:#e0a52e">▲</b> version ship'
                      f'{f" · snapshot {pypi_snapshot}" if pypi_snapshot else ""}.</p></div>')
+        # cumulative total installs (glamour)
+        total_block(P, f"Total installs — {label}",
+                    f"{label} &middot; cumulative <code>pip</code> downloads",
+                    [(d["date"], d["downloads"]) for d in dl], color,
+                    [(r["date"], r["version"]) for r in pypi_dl[key].get("releases", [])],
+                    " downloads")
 
 # Praxen plugin installs (proxy: GitHub repo clones — Claude Code / Codex install
 # by git-cloning the repo; there is no official marketplace download counter).
@@ -872,18 +1013,20 @@ if prx_days:
     n = [d["count"] for d in prx_days]
     tot, last_30, last_7 = sum(n), sum(n[-30:]), sum(n[-7:])
     uniq_14 = _prx_cl.get("uniques", 0)          # GitHub's dedup'd 14-day unique cloners
-    P.append('<h2>Praxen plugin installs &middot; clone proxy</h2>')
-    P.append('<p class="sub"><b style="color:var(--tx)">Praxen only.</b> Claude Code / '
-             'Codex install Praxen by <code>git clone</code>-ing the repo — there is no '
-             'central marketplace download counter — so repo clones are the best install '
-             f'proxy (<b style="color:{color}">{uniq_14:,} unique cloners</b> in the '
-             'trailing 14 days). Clones include update re-pulls and CI, so — like the PyPI '
-             'numbers — read the trend, not an exact headcount. (Observra ships on PyPI; '
-             'Praxen ships as a plugin, hence the different signal.)</p>')
+    P.append('<h2>Praxen plugin installs</h2>')
+    P.append('<p class="sub"><b style="color:var(--tx)">Praxen only.</b> Praxen '
+             'installs as an agent plugin (Claude Code / Codex), and those '
+             'marketplaces expose no public download counter — so we use '
+             '<b>GitHub repo clones as a proxy for installs</b> '
+             f'(<b style="color:{color}">{uniq_14:,} unique installs</b> in the '
+             'trailing 14 days, GitHub-deduplicated). It is a proxy: the count also '
+             'includes update re-pulls and CI, so — like the PyPI numbers — read the '
+             'trend, not an exact headcount. (Observra ships on PyPI, hence its '
+             'different install signal.)</p>')
     P.append('<div class="cards" style="grid-template-columns:repeat(3,1fr)">')
-    for val, cap in ((last_30, "Praxen &middot; clones, last 30 days"),
-                     (last_7, "clones, last 7 days"),
-                     (tot, "tracked total clones")):
+    for val, cap in ((last_30, "Praxen &middot; installs, last 30 days"),
+                     (last_7, "installs, last 7 days"),
+                     (tot, "tracked total installs")):
         P.append(f'<div class="card"><b style="color:{color}">{val:,}</b>'
                  f'<span>{cap}</span></div>')
     P.append('</div>')
@@ -893,17 +1036,22 @@ if prx_days:
     prx_marks = [(r["date"], r["tag"]) for r in _prx_rel]
     prx_marks += [(d, lbl) for d, lbl in key_dates.items() if "praxen" in lbl.lower()]
     chart = trend_svg([(d["date"], d["count"]) for d in prx_days], color=color,
-                      markers=prx_marks, unit=" clones")
+                      markers=prx_marks, unit=" installs")
     if chart:
         P.append(f'<div class="sec" style="padding:16px 18px 10px">'
                  f'<div style="font-size:12.5px;font-weight:600;color:var(--tx);'
                  f'margin:0 0 8px"><b style="color:{color}">Praxen</b> '
-                 f'<code>open-agent-ai-security/praxen</code> &middot; clones per day</div>{chart}'
+                 f'<code>open-agent-ai-security/praxen</code> &middot; installs per day '
+                 f'(clone proxy)</div>{chart}'
                  f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
                  f'<b style="color:{color}">━</b> 7-day average &nbsp;·&nbsp; '
-                 f'<b style="color:{color}">▮</b> daily clones &nbsp;·&nbsp; '
+                 f'<b style="color:{color}">▮</b> daily installs &nbsp;·&nbsp; '
                  f'<b style="color:#e0a52e">▲</b> release / launch'
                  f'{f" · snapshot {repo_snapshot}" if repo_snapshot else ""}.</p></div>')
+    # cumulative total installs (glamour)
+    total_block(P, "Total installs — Praxen", "Praxen &middot; cumulative plugin installs "
+                "(clone proxy)",
+                [(d["date"], d["count"]) for d in prx_days], color, prx_marks, " installs")
 
 # Marketo campaign tracking (ongoing — each detected send is logged as it lands)
 _bot = CLASS["campaign_bot"]
