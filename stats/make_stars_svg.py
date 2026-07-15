@@ -109,8 +109,10 @@ for i in range(6):                            # x date ticks
     xx = x(dt)
     svg.append(f'<line x1="{xx:.1f}" y1="{MT+PH}" x2="{xx:.1f}" y2="{MT+PH+4}" '
                f'stroke="var(--bd)" stroke-width="1"/>')
+    # First/last labels anchor inward (start/end) so they don't clip the viewBox.
+    anchor = "start" if i == 0 else "end" if i == 5 else "middle"
     svg.append(f'<text x="{xx:.1f}" y="{MT+PH+18:.1f}" font-size="10" fill="var(--mut)" '
-               f'text-anchor="middle">{dt.strftime("%b %d")}</text>')
+               f'text-anchor="{anchor}">{dt.strftime("%b %d")}</text>')
 for label, color, pts in series:              # smooth series lines
     if not pts:
         continue
