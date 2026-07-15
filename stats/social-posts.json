@@ -17,6 +17,24 @@
   {
    "platform": "LinkedIn",
    "author": "Steve Wilson",
+   "date": "2026-07-13",
+   "url": "https://www.linkedin.com/pulse/when-owasp-llm-risks-meet-agentic-steve-wilson-wkeec/",
+   "title": "When OWASP LLM Risks Meet Agentic Risks",
+   "stats": {
+    "impressions": 4616,
+    "members_reached": 2923,
+    "article_views": 163,
+    "engagements": 127,
+    "reactions": 80,
+    "comments": 22,
+    "reposts": 8,
+    "saves": 17,
+    "sends": 0
+   }
+  },
+  {
+   "platform": "LinkedIn",
+   "author": "Steve Wilson",
    "date": "2026-07-06",
    "url": "https://www.linkedin.com/posts/wilsonsd_my-latest-real-world-adventures-and-lessons-ugcPost-7479319987384410112-llCj",
    "title": "The Scanner, the SOC Agent, and the Prompt That Lied",
