@@ -962,6 +962,12 @@ sd_chart = trend_svg([(d, byday_search[d]) for d in days], color="#3fb98f",
                      markers=[SEO_MILESTONE], unit=" search views")
 if sd_chart:
     P.append('<h2>Search-driven traffic</h2>')
+    P.append('<p class="sub" style="margin-bottom:8px">Views whose referrer is a '
+             'search engine (Google, Bing, DuckDuckGo, Brave, …). Like all referrer '
+             'data this <b>undercounts</b> — many search visits arrive with no '
+             'referrer — so read the <b>trend</b>, not the absolute level. The '
+             'marker is when the SEO/GEO work went live; organic search indexes and '
+             'compounds over weeks, so lift shows up after it, not immediately.</p>')
     P.append(f'<div class="sec" style="padding:16px 18px 10px">'
              f'<div style="font-size:12.5px;font-weight:600;color:var(--tx);'
              f'margin:0 0 8px">Community sites &middot; views referred by a search '
@@ -969,13 +975,7 @@ if sd_chart:
              f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
              f'<b style="color:#3fb98f">━</b> 7-day average &nbsp;·&nbsp; '
              f'<b style="color:#3fb98f">▮</b> daily search views &nbsp;·&nbsp; '
-             f'<b style="color:#e0a52e">▲</b> SEO/GEO work live. '
-             f'Counts visits whose referrer is a search engine (Google, Bing, '
-             f'DuckDuckGo, Brave, …). Like all referrer data this <b>undercounts</b> '
-             f'— many search visits arrive with no referrer — so read the '
-             f'<b>trend</b>, not the absolute level. The marker is when the SEO/GEO '
-             f'work went live; organic search indexes and compounds over weeks, so '
-             f'lift shows up after it, not immediately.</p></div>')
+             f'<b style="color:#e0a52e">▲</b> SEO/GEO work live.</p></div>')
 
 P.append(f'<p class="foot">Generated {today} by <code>stats/generate.py</code>. '
          f'Sources: GoatCounter export (Pages sites, community account)'
