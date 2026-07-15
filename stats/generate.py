@@ -338,7 +338,11 @@ def catf(ref):
         return "Internal site nav"
     if "github.com" in r:
         return "GitHub.com"
-    if any(s in r for s in ("google", "bing", "duckduckgo")):
+    # Search engines. "search.yahoo" (not bare "yahoo") so the Yahoo Finance
+    # press syndication at finance.yahoo.com stays out of Search.
+    if any(s in r for s in ("google", "bing", "duckduckgo", "brave", "ecosia",
+                            "yandex", "baidu", "qwant", "kagi", "startpage",
+                            "search.yahoo")):
         return "Search"
     if "teams" in r or "office.net" in r or "microsoft" in r:
         return "MS Teams"
@@ -404,6 +408,7 @@ days = sorted({h["hour"][:10] for h in hits})          # full site export window
 
 bucket_total = collections.Counter()                   # PAGES real views / project
 byday = collections.Counter()
+byday_search = collections.Counter()                   # real views referred by a search engine
 refcat = collections.Counter()
 bypath = collections.Counter()
 pages_real = 0                                          # real Pages views (full window)
@@ -417,7 +422,10 @@ for h in hits:
     b = bucket_of(path)
     bucket_total[b] += h["count"]
     byday[d] += h["count"]
-    refcat[catf(refs.get(h["ref_id"], ""))] += h["count"]
+    cat = catf(refs.get(h["ref_id"], ""))
+    if cat == "Search":
+        byday_search[d] += h["count"]
+    refcat[cat] += h["count"]
     bypath[h["path_id"]] += h["count"]
 
 toppages = sorted(((paths.get(pid, ""), c) for pid, c in bypath.items()),
@@ -944,6 +952,31 @@ if _camp:
              f'How each pageview is attributed (Marketo token &rarr; mobile / '
              f'revisit / burst-hour screen) is documented at the top of '
              f'<code>stats/generate.py</code>.</p>')
+
+# search-driven traffic (referrer = a search engine) — the TREND is the point.
+# The SEO/GEO milestone marks when that work went live. trend_svg extends the
+# right edge to show a marker up to 7 days past the last data day, then clamps it
+# off once the data lags further behind — so as fresh exports arrive it settles
+# into place and marks where organic-search indexing begins to compound.
+SEO_MILESTONE = ("2026-07-15", "SEO/GEO live")
+sd_chart = trend_svg([(d, byday_search[d]) for d in days], color="#3fb98f",
+                     markers=[SEO_MILESTONE], unit=" search views")
+if sd_chart:
+    P.append('<h2>Search-driven traffic</h2>')
+    P.append('<p class="sub" style="margin-bottom:8px">Views whose referrer is a '
+             'search engine (Google, Bing, DuckDuckGo, Brave, …). Like all referrer '
+             'data this <b>undercounts</b> — many search visits arrive with no '
+             'referrer — so read the <b>trend</b>, not the absolute level. The '
+             'marker is when the SEO/GEO work went live; organic search indexes and '
+             'compounds over weeks, so lift shows up after it, not immediately.</p>')
+    P.append(f'<div class="sec" style="padding:16px 18px 10px">'
+             f'<div style="font-size:12.5px;font-weight:600;color:var(--tx);'
+             f'margin:0 0 8px">Community sites &middot; views referred by a search '
+             f'engine, per day</div>{sd_chart}'
+             f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
+             f'<b style="color:#3fb98f">━</b> 7-day average &nbsp;·&nbsp; '
+             f'<b style="color:#3fb98f">▮</b> daily search views &nbsp;·&nbsp; '
+             f'<b style="color:#e0a52e">▲</b> SEO/GEO work live.</p></div>')
 
 P.append(f'<p class="foot">Generated {today} by <code>stats/generate.py</code>. '
          f'Sources: GoatCounter export (Pages sites, community account)'
