@@ -954,9 +954,10 @@ if _camp:
              f'<code>stats/generate.py</code>.</p>')
 
 # search-driven traffic (referrer = a search engine) — the TREND is the point.
-# The SEO/GEO milestone is intentionally set to when that work went live; it stays
-# clamped off the chart until the data window reaches it, then marks the moment
-# organic-search indexing begins to compound.
+# The SEO/GEO milestone marks when that work went live. trend_svg extends the
+# right edge to show a marker up to 7 days past the last data day, then clamps it
+# off once the data lags further behind — so as fresh exports arrive it settles
+# into place and marks where organic-search indexing begins to compound.
 SEO_MILESTONE = ("2026-07-15", "SEO/GEO live")
 sd_chart = trend_svg([(d, byday_search[d]) for d in days], color="#3fb98f",
                      markers=[SEO_MILESTONE], unit=" search views")
