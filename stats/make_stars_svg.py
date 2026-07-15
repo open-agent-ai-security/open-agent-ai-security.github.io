@@ -3,8 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """
 Build the cumulative GitHub-stars trend chart (community-stars.svg) from real
-`starred_at` timestamps — one smooth line per project. Self-contained, responsive
-SVG on white; generate.py embeds it in the "GitHub stars" section.
+`starred_at` timestamps — one smooth line per project. Self-contained, responsive,
+theme-aware SVG (CSS vars resolve against the page); generate.py embeds it inline
+in the "GitHub stars" section, inside the same translucent panel as every other
+chart. No baked-in title/background — the section <h2> supplies the heading.
 
 Replaces the star-history.com dependency (rate-limited). Smooth (monotone-clamped
 Catmull-Rom) curves rather than a step staircase, so the trend reads at a glance.
@@ -30,8 +32,10 @@ SERIES = [
     ("Observra", "open-agent-ai-security/observra", "#37c2f0"),
 ]
 
-W, H = 800, 533.333                          # star-history's native aspect ratio
-ML, MR, MT, MB = 64, 24, 54, 52
+# Match the report's other line charts (generate.py cumulative_svg/trend_svg):
+# 720-wide, ~180 plot, thin marks, theme CSS vars, title from the section <h2>.
+W, H = 720, 230
+ML, MR, MT, MB = 40, 14, 16, 34
 PW, PH = W - ML - MR, H - MT - MB
 
 
@@ -85,27 +89,27 @@ def smooth(pts):
     return ' '.join(d)
 
 
+# Theme-aware (CSS vars resolve against the page :root when inlined), no baked-in
+# title/background — generate.py wraps it in the section <h2> + translucent .sec box.
 svg = [
-    f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W:.0f} {H:.3f}" '
-    f'width="100%" style="max-width:760px;height:auto;display:block;margin:0 auto;'
-    f'border-radius:10px;background:#fff;'
+    f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W:.0f} {H:.0f}" '
+    f'width="100%" role="img" style="display:block;max-width:100%;height:auto;'
     f'font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">',
-    f'<text x="{ML}" y="30" font-size="17" font-weight="700" fill="#0a1020">'
-    f'GitHub stars over time</text>',
 ]
 for i in range(6):                            # y gridlines + labels
     v = ymax * i / 5
     yy = y(v)
     svg.append(f'<line x1="{ML}" y1="{yy:.1f}" x2="{ML+PW}" y2="{yy:.1f}" '
-               f'stroke="#e7ebf2" stroke-width="1"/>')
-    svg.append(f'<text x="{ML-10}" y="{yy+4:.1f}" font-size="12" fill="#6f819a" '
+               f'stroke="var(--bd)" stroke-width="1" '
+               f'opacity="{0.85 if i == 0 else 0.33}"/>')
+    svg.append(f'<text x="{ML-7}" y="{yy+3:.1f}" font-size="9" fill="var(--mut2)" '
                f'text-anchor="end">{v:.0f}</text>')
 for i in range(6):                            # x date ticks
     dt = t0 + datetime.timedelta(seconds=span * i / 5)
     xx = x(dt)
-    svg.append(f'<line x1="{xx:.1f}" y1="{MT+PH}" x2="{xx:.1f}" y2="{MT+PH+5}" '
-               f'stroke="#c3ccda" stroke-width="1"/>')
-    svg.append(f'<text x="{xx:.1f}" y="{MT+PH+22:.1f}" font-size="11.5" fill="#6f819a" '
+    svg.append(f'<line x1="{xx:.1f}" y1="{MT+PH}" x2="{xx:.1f}" y2="{MT+PH+4}" '
+               f'stroke="var(--bd)" stroke-width="1"/>')
+    svg.append(f'<text x="{xx:.1f}" y="{MT+PH+18:.1f}" font-size="10" fill="var(--mut)" '
                f'text-anchor="middle">{dt.strftime("%b %d")}</text>')
 for label, color, pts in series:              # smooth series lines
     if not pts:
@@ -113,8 +117,8 @@ for label, color, pts in series:              # smooth series lines
     ppts = [(x(t0), y(0))] + [(x(dt), y(v)) for dt, v in pts] \
         + [(x(t1), y(pts[-1][1]))]
     svg.append(f'<path d="{smooth(ppts)}" fill="none" stroke="{color}" '
-               f'stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>')
-    svg.append(f'<circle cx="{x(t1):.1f}" cy="{y(pts[-1][1]):.1f}" r="4.5" '
+               f'stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>')
+    svg.append(f'<circle cx="{x(t1):.1f}" cy="{y(pts[-1][1]):.1f}" r="3.6" '
                f'fill="{color}"/>')
 for ds, lbl in sorted(key_dates.items()):      # key-date markers (on top of curves)
     try:
@@ -125,19 +129,19 @@ for ds, lbl in sorted(key_dates.items()):      # key-date markers (on top of cur
         continue
     kx = x(kdt)
     svg.append(f'<line x1="{kx:.1f}" y1="{MT}" x2="{kx:.1f}" y2="{MT+PH}" '
-               f'stroke="#e0a52e" stroke-width="1.3" stroke-dasharray="4 4" '
-               f'opacity="0.75"/>')
+               f'stroke="#e0a52e" stroke-width="1" stroke-dasharray="2 3" '
+               f'opacity="0.5"/>')
     svg.append(f'<text x="{kx-4:.1f}" y="{MT+PH-8:.1f}" '
                f'transform="rotate(-90 {kx-4:.1f} {MT+PH-8:.1f})" text-anchor="start" '
-               f'font-size="11" font-weight="700" fill="#b07d1e">'
+               f'font-size="9.5" font-weight="600" fill="#e0a52e">'
                f'&#9670; {lbl}</text>')
 
-lx, ly = ML + 14, MT + 20                      # legend
+lx, ly = ML + 12, MT + 16                       # legend
 for i, (label, color, pts) in enumerate(series):
-    yy = ly + i * 22
-    svg.append(f'<rect x="{lx}" y="{yy-9}" width="13" height="13" rx="3" fill="{color}"/>')
-    svg.append(f'<text x="{lx+20}" y="{yy+2}" font-size="13.5" font-weight="600" '
-               f'fill="#0a1020">{label} &#183; {len(pts)}&#9733;</text>')
+    yy = ly + i * 20
+    svg.append(f'<rect x="{lx}" y="{yy-9}" width="12" height="12" rx="3" fill="{color}"/>')
+    svg.append(f'<text x="{lx+18}" y="{yy+1}" font-size="12" font-weight="600" '
+               f'fill="var(--tx)">{label} &#183; {len(pts)}&#9733;</text>')
 svg.append('</svg>')
 
 with open(OUT, "w", encoding="utf-8") as fh:
