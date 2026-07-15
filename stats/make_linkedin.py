@@ -421,10 +421,9 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
     P.append(f'<p class="sub">Companion to <a href="./">Community Traffic</a>, '
              f'tracking the <a href="https://www.linkedin.com/company/'
              f'open-agent-and-ai-security-community/">Open Agent &amp; AI Security '
-             f'Community</a> LinkedIn page. Window <b>{win}</b> · '
-             f'<b>{days_live}</b> active day{"s" if days_live != 1 else ""}. Kept on '
-             f'its own page until there is enough history to fold into the main '
-             f'dashboard.</p>')
+             f'Community</a> LinkedIn page — our standing record of LinkedIn '
+             f'audience, content, and visitors over time. Latest export covers '
+             f'<b>{win}</b>.</p>')
     P.append('<div class="warn"><b>MANUAL SNAPSHOT</b> — LinkedIn API access isn\'t '
              'configured yet, so this is built from hand-exported <code>.xls</code> '
              'reports (followers · content · visitors) by '
@@ -445,7 +444,7 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
     P.append(f'<div class="card"><b>{days_live}</b><span>Active days</span></div>')
     P.append('</div>')
 
-    P.append('<h2>Launch week, three signals</h2>')
+    P.append('<h2>Three signals: reach &rarr; visits &rarr; follows</h2>')
     P.append('<p class="sub" style="margin-bottom:10px">Different LinkedIn surfaces, '
              'not a strict subset — feed <b>reach</b>, page <b>visits</b>, and '
              '<b>follows</b> each measured separately.</p>')
