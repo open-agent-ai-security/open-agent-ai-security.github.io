@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Only this repo's own indexable pages for now (stats/index.html is
-  intentionally excluded — it's an internal traffic dashboard, marked
-  noindex, and shouldn't be submitted to search engines).
-
-  Once observra's sitemap.xml (github.com/open-agent-ai-security/observra
-  PR #93) is merged, and praxen has an equivalent, upgrade this file to a
-  <sitemapindex> referencing:
-    https://open-agent-ai-security.github.io/observra/sitemap.xml
-    https://open-agent-ai-security.github.io/praxen/sitemap.xml
-  Not done here because referencing a sitemap that doesn't exist yet on the
-  live site produces "Sitemap could not be read" errors in Search Console.
+  Sitemap INDEX for the whole origin (open-agent-ai-security.github.io) and its
+  project sub-sites. robots.txt points here. Child sitemaps:
+    - sitemap-pages.xml         this repo's own landing page(s)
+    - /observra/sitemap.xml     the Observra Pages site (generated in that repo)
+    - /praxen/sitemap.xml       the Praxen Pages site (generated in that repo)
+  Add a project by dropping in its /<project>/sitemap.xml and adding one <sitemap>
+  line below. (The internal traffic dashboard at /stats/ is noindex and excluded.)
 -->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://open-agent-ai-security.github.io/</loc></url>
-</urlset>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap><loc>https://open-agent-ai-security.github.io/sitemap-pages.xml</loc></sitemap>
+  <sitemap><loc>https://open-agent-ai-security.github.io/observra/sitemap.xml</loc></sitemap>
+  <sitemap><loc>https://open-agent-ai-security.github.io/praxen/sitemap.xml</loc></sitemap>
+</sitemapindex>

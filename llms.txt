@@ -8,7 +8,7 @@
 ## Projects
 
 - [Observra](https://open-agent-ai-security.github.io/observra/): open-source observability and telemetry framework for AI and agentic systems — deep visibility into agent behavior, execution flows, runtime events, and inter-agent communication. See its own [llms.txt](https://open-agent-ai-security.github.io/observra/llms.txt) for docs/quickstarts.
-- [Praxen](https://open-agent-ai-security.github.io/praxen/): agent behavior verifier. Compares an AI agent's declared policy against the available evidence, and reports where observed behavior diverges from declared intent.
+- [Praxen](https://open-agent-ai-security.github.io/praxen/): agent behavior verifier. Compares an AI agent's declared policy against the available evidence, and reports where observed behavior diverges from declared intent. See its own [llms.txt](https://open-agent-ai-security.github.io/praxen/llms.txt) for docs/quickstarts.
 
 ## Source
 
