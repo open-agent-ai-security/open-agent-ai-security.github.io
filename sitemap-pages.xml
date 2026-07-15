@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This repo's own indexable pages (referenced by the sitemap INDEX in
+  sitemap.xml). stats/index.html + stats/linkedin.html are intentionally
+  excluded — internal dashboards, marked noindex.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://open-agent-ai-security.github.io/</loc></url>
+</urlset>
