@@ -203,21 +203,19 @@ else:
 # window — all GitHub retains). Read from disk, never the live API, so generation
 # stays offline/deterministic. Missing file → repo columns simply don't render.
 REPO_TRAFFIC = os.path.join(SCRIPT_DIR, "repo-traffic.json")
-repo_traffic, repo_snapshot = {}, None
+repo_traffic = {}
 if os.path.exists(REPO_TRAFFIC):
     with open(REPO_TRAFFIC, encoding="utf-8") as _fh:
         _rt = json.load(_fh)
     repo_traffic = _rt.get("repos", {})
-    repo_snapshot = _rt.get("snapshot_utc")
 
 # PyPI downloads (accumulated daily series; windows derived below). observra only.
 PYPI_DL = os.path.join(SCRIPT_DIR, "pypi-downloads.json")
-pypi_dl, pypi_snapshot = {}, None
+pypi_dl = {}
 if os.path.exists(PYPI_DL):
     with open(PYPI_DL, encoding="utf-8") as _fh:
         _pd = json.load(_fh)
     pypi_dl = _pd.get("packages", {})
-    pypi_snapshot = _pd.get("snapshot_utc")
 
 # Key dates (launches, events) annotated on the Daily Views chart. Edit
 # key-dates.json: {"YYYY-MM-DD": "label"}; keys starting with "_" are ignored.
@@ -473,10 +471,7 @@ stars = {k: fetch_stars(REPO[k]) for k, _l, _p, _c in PROJECTS if k in REPO}
 stars_svg = ""
 if os.path.exists(STARS_SVG):
     with open(STARS_SVG, encoding="utf-8") as _svg:
-        stars_svg = _svg.read().replace(
-            'width="800" height="533.333" style="stroke-width:3;font-family:xkcd;background:#fff"',
-            'viewBox="0 0 800 533.333" width="100%" style="stroke-width:3;font-family:xkcd;'
-            'background:#fff;max-width:760px;height:auto;display:block;margin:0 auto;border-radius:10px"')
+        stars_svg = _svg.read()
 
 
 # ── Render ───────────────────────────────────────────────────────────────────
@@ -644,7 +639,7 @@ def total_block(P, title, sub, daily_points, color, markers, unit):
              f'margin:0 0 8px">{sub}</div>{svg}'
              f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
              f'<b style="color:{color}">━</b> cumulative total &nbsp;·&nbsp; '
-             f'<b style="color:#e0a52e">▲</b> milestone. Running total — only goes up.</p></div>')
+             f'<b style="color:#e0a52e">▲</b> milestone.</p></div>')
 
 
 def trend_svg(points, color="#37c2f0", markers=None, avg_window=7,
@@ -836,8 +831,7 @@ if dv_chart:
              f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
              f'<b style="color:#5b8def">━</b> 7-day average &nbsp;·&nbsp; '
              f'<b style="color:#5b8def">▮</b> daily views &nbsp;·&nbsp; '
-             f'<b style="color:#e0a52e">▲</b> key date. '
-             f'Real site views only — email-campaign scanners excluded.</p></div>')
+             f'<b style="color:#e0a52e">▲</b> key date.</p></div>')
 
 # cumulative total REACH (glamour): site views + GitHub repo views, running sum,
 # so the endpoint reconciles with the "Total reach" headline card at the top
@@ -903,9 +897,9 @@ for key, label, _prefix, color in PROJECTS:
                  f'<span>{label} &middot; <code>{REPO[key]}</code></span></div>')
 P.append('</div>')
 if stars_svg:
-    P.append(f'<div class="sec" style="background:#fff;padding:14px 14px 6px;overflow:hidden">{stars_svg}</div>')
-    P.append(f'<p class="sub" style="margin:10px 0 0">Cumulative stargazers from the '
-             f'GitHub API &middot; snapshot {today}. '
+    P.append(f'<div class="sec" style="padding:16px 18px 12px;overflow:hidden">{stars_svg}</div>')
+    P.append('<p class="sub" style="margin:10px 0 0">Cumulative stargazers from the '
+             'GitHub API. '
              'A launch is a spike; the slope over the following weeks is the real adoption signal.</p>')
 
 # PyPI downloads (pip installs; accumulated daily, all-inclusive; observra only)
@@ -944,8 +938,7 @@ if pypi_dl:
                      f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
                      f'<b style="color:{color}">━</b> 7-day average &nbsp;·&nbsp; '
                      f'<b style="color:{color}">▮</b> daily downloads &nbsp;·&nbsp; '
-                     f'<b style="color:#e0a52e">▲</b> version ship'
-                     f'{f" · snapshot {pypi_snapshot}" if pypi_snapshot else ""}.</p></div>')
+                     f'<b style="color:#e0a52e">▲</b> version ship.</p></div>')
         # cumulative total installs (glamour)
         total_block(P, f"Total installs — {label}",
                     f"{label} &middot; cumulative <code>pip</code> downloads",
@@ -998,8 +991,7 @@ if prx_days:
                  f'<p class="sub" style="margin:8px 0 0;font-size:12.5px">'
                  f'<b style="color:{color}">━</b> 7-day average &nbsp;·&nbsp; '
                  f'<b style="color:{color}">▮</b> daily installs &nbsp;·&nbsp; '
-                 f'<b style="color:#e0a52e">▲</b> release / launch'
-                 f'{f" · snapshot {repo_snapshot}" if repo_snapshot else ""}.</p></div>')
+                 f'<b style="color:#e0a52e">▲</b> release / launch.</p></div>')
     # cumulative total installs (glamour)
     total_block(P, "Total installs — Praxen", "Praxen &middot; cumulative plugin installs "
                 "(clone proxy)",
