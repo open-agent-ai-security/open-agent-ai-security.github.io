@@ -156,6 +156,13 @@ def cumulative_line(daily):
     main dashboard's trend charts. `daily` = [(date, new_that_day)] ascending."""
     if not daily:
         return ""
+    # LinkedIn's export opens weeks before the page had its first follower, so the
+    # raw series carries a long flat-at-zero runway (e.g. 06/15 with the first gain
+    # on 07/09). Trim the leading zeros, keeping a single zero-day anchor just
+    # before the first gain, so the line ramps from 0 instead of starting mid-axis.
+    first_gain = next((i for i, (_d, n) in enumerate(daily) if n > 0), None)
+    if first_gain and first_gain > 0:
+        daily = daily[first_gain - 1:]
     d0, dN = daily[0][0], daily[-1][0]
     span = max((dN - d0).days, 1)
     cum, run = [], 0.0
