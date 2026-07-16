@@ -52,16 +52,27 @@ def stargazer_times(repo):
     return sorted(stamps)
 
 
+# Align the x-axis with the report's "Daily views — site" chart, whose window
+# opens when GoatCounter tracking began (2026-06-17). The repos predate that, so
+# stars exist before the window — each line therefore OPENS at its cumulative
+# count as of the window start (not at zero) and climbs from there. This keeps the
+# true star totals (the legend numbers) while matching the report's time window.
+# If the Daily Views window ever moves, update this to match (see generate.py).
+WINDOW_START = datetime.datetime(2026, 6, 17)
+
 series, all_dates = [], []
 for label, repo, color in SERIES:
     stamps = stargazer_times(repo)
-    series.append((label, color, [(stamps[i], i + 1) for i in range(len(stamps))]))
-    all_dates += stamps
+    cum = [(stamps[i], i + 1) for i in range(len(stamps))]     # (star time, running total)
+    baseline = sum(1 for s in stamps if s <= WINDOW_START)     # already earned at t0
+    pts = [(WINDOW_START, baseline)] + [(dt, v) for dt, v in cum if dt > WINDOW_START]
+    series.append((label, color, pts))
+    all_dates += [s for s in stamps if s > WINDOW_START]
 
-t0 = min(all_dates)
+t0 = WINDOW_START
 t1 = datetime.datetime.utcnow()
 span = (t1 - t0).total_seconds() or 1
-ymax = max((len(p) for _l, _c, p in series), default=5)
+ymax = max((p[-1][1] for _l, _c, p in series if p), default=5)  # final cumulative totals
 ymax = max(5, ((ymax + 4) // 5) * 5)
 
 
@@ -116,8 +127,8 @@ for i in range(6):                            # x date ticks
 for label, color, pts in series:              # smooth series lines
     if not pts:
         continue
-    ppts = [(x(t0), y(0))] + [(x(dt), y(v)) for dt, v in pts] \
-        + [(x(t1), y(pts[-1][1]))]
+    # pts already opens at (WINDOW_START, baseline); extend flat to "now".
+    ppts = [(x(dt), y(v)) for dt, v in pts] + [(x(t1), y(pts[-1][1]))]
     svg.append(f'<path d="{smooth(ppts)}" fill="none" stroke="{color}" '
                f'stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>')
     svg.append(f'<circle cx="{x(t1):.1f}" cy="{y(pts[-1][1]):.1f}" r="3.6" '
@@ -143,11 +154,12 @@ for i, (label, color, pts) in enumerate(series):
     yy = ly + i * 20
     svg.append(f'<rect x="{lx}" y="{yy-9}" width="12" height="12" rx="3" fill="{color}"/>')
     svg.append(f'<text x="{lx+18}" y="{yy+1}" font-size="12" font-weight="600" '
-               f'fill="var(--tx)">{label} &#183; {len(pts)}&#9733;</text>')
+               f'fill="var(--tx)">{label} &#183; {pts[-1][1] if pts else 0}&#9733;</text>')
 svg.append('</svg>')
 
 with open(OUT, "w", encoding="utf-8") as fh:
     fh.write("".join(svg))
 print(f"Wrote {OUT}  ({os.path.getsize(OUT)} bytes)")
 for label, color, pts in series:
-    print(f"  {label:<10} {len(pts)} stars")
+    print(f"  {label:<10} {pts[-1][1] if pts else 0} stars "
+          f"(opens at {pts[0][1]} on {WINDOW_START:%Y-%m-%d})")
