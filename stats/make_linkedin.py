@@ -235,23 +235,95 @@ def cumulative_line(daily):
     return "".join(s)
 
 
-def stacked_days(rows):
-    """Per-day stacked bars (mobile over desktop). rows = [(date, desk, mob)]."""
-    active = [(d, dk, mb) for (d, dk, mb) in rows if (dk + mb) > 0]
-    if not active:
+def views_trend_svg(rows, avg_window=5):
+    """House-style daily page-views chart, matching the main dashboard's
+    generate.py:trend_svg: per-day bars against a labelled round-number y-axis,
+    a smoothed moving-average trend LINE, first/last date labels, the latest
+    value labelled, and a per-day hover tooltip. rows = [(date, total)] ascending.
+
+    avg_window defaults to 5 (not the main chart's 7): the LinkedIn export has
+    only a handful of active days, so a 7-day mean would flatten to the window
+    average — a 5-day window still tracks the trend."""
+    if not any(t > 0 for (_d, t) in rows):
         return ""
-    mx = max(dk + mb for _, dk, mb in active) or 1
-    cols = []
-    for d, dk, mb in active:
-        segs = ""
-        if mb:
-            segs += f'<div class="seg mob" style="height:{mb / mx * 100:.1f}%"></div>'
-        if dk:
-            segs += f'<div class="seg desk" style="height:{dk / mx * 100:.1f}%"></div>'
-        cols.append(f'<div class="mcol"><span class="val">{dk + mb:.0f}</span>'
-                    f'<div class="stack">{segs}</div>'
-                    f'<span class="day">{d.strftime("%m/%d")}</span></div>')
-    return '<div class="mini">' + "".join(cols) + "</div>"
+    # Trim the export's leading dead-zero runway (LinkedIn's window opens weeks
+    # before the first visit), keeping one zero-day anchor before the first
+    # active day so the first bar sits on the baseline — same as the followers
+    # chart's cumulative_line().
+    first = next(i for i, r in enumerate(rows) if r[1] > 0)
+    rows = rows[max(0, first - 1):]
+    pts = list(rows)
+    d0, dN = rows[0][0], rows[-1][0]
+    span = max((dN - d0).days, 1)
+    W, H, x0, x1, y0, y1 = 720, 180, 40, 708, 24, 158
+    sx = lambda d: x0 + (x1 - x0) * (d - d0).days / span
+    # nice round-number y-axis (~5 ticks), same logic as generate.py:trend_svg
+    vmax = max(t for _, t in pts) or 1
+    raw = vmax / 5
+    mag = 10 ** math.floor(math.log10(raw)) if raw > 0 else 1
+    step = next(m * mag for m in (1, 2, 2.5, 5, 10) if m * mag >= raw)
+    nmax = math.ceil(vmax / step) * step
+    ticks, t = [], 0.0
+    while t <= nmax + 1e-6:
+        ticks.append(int(round(t)))
+        t += step
+    sy = lambda v: y1 - (y1 - y0) * (v / nmax)
+
+    s = [f'<svg viewBox="0 0 {W} {H}" width="100%" role="img" '
+         f'style="display:block;font-family:Inter,system-ui,sans-serif">']
+    s.append('<style>.col .hit{fill:transparent}'
+             '.col:hover .hit{fill:rgba(255,255,255,.05)}'
+             '.col .tip{opacity:0;transition:opacity .1s}'
+             '.col:hover .tip{opacity:1}.tip{pointer-events:none}</style>')
+    for tk in ticks:
+        gy = sy(tk)
+        s.append(f'<line x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}" '
+                 f'stroke="var(--bd)" stroke-width="1" '
+                 f'opacity="{0.85 if tk == 0 else 0.33}"/>')
+        s.append(f'<text x="{x0 - 6}" y="{gy + 3:.1f}" fill="var(--mut2)" '
+                 f'font-size="9" text-anchor="end">{tk:,}</text>')
+    s.append(f'<text x="{x0}" y="{H - 5}" fill="var(--mut)" font-size="10">'
+             f'{d0.strftime("%m/%d")}</text>')
+    s.append(f'<text x="{x1}" y="{H - 5}" fill="var(--mut)" font-size="10" '
+             f'text-anchor="end">{dN.strftime("%m/%d")}</text>')
+    # per-day bars
+    slot = (x1 - x0) / span
+    bw = max(min(slot * 0.7, 13), 2)
+    for d, v in pts:
+        bx, by = sx(d), sy(v)
+        s.append(f'<rect x="{bx - bw / 2:.1f}" y="{by:.1f}" width="{bw:.1f}" '
+                 f'height="{max(y1 - by, 0):.1f}" rx="1.5" fill="var(--ac)" '
+                 f'opacity="0.32"/>')
+    # moving-average line (the trend)
+    vals = [v for _, v in pts]
+    ma = [(d, sum(vals[max(0, i - avg_window + 1):i + 1]) /
+              len(vals[max(0, i - avg_window + 1):i + 1]))
+          for i, (d, _v) in enumerate(pts)]
+    ma_path = "M " + " L ".join(f'{sx(d):.1f} {sy(v):.1f}' for d, v in ma)
+    s.append(f'<path d="{ma_path}" fill="none" stroke="var(--ac2)" '
+             f'stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>')
+    # latest daily value, labelled above its bar
+    ld, lv = pts[-1]
+    s.append(f'<text x="{sx(ld):.1f}" y="{sy(lv) - 5:.1f}" fill="var(--tx)" '
+             f'font-size="11" font-weight="600" text-anchor="end">{lv:,.0f}</text>')
+    # hover layer (topmost): full-height hit column per day + its CSS tooltip
+    hitw = max(slot, 6)
+    for d, v in pts:
+        cx = sx(d)
+        txt = f'{d.strftime("%m/%d")} · {v:,.0f} views'
+        tw = len(txt) * 6.0 + 14
+        tx = min(max(cx, x0 + tw / 2), x1 - tw / 2)
+        ty = max(sy(v) - 10, y0 + 16)
+        s.append('<g class="col">'
+                 f'<rect class="hit" x="{cx - hitw / 2:.1f}" y="{y0}" '
+                 f'width="{hitw:.1f}" height="{y1 - y0}"/>'
+                 f'<g class="tip"><rect x="{tx - tw / 2:.1f}" y="{ty - 14:.1f}" '
+                 f'width="{tw:.1f}" height="17" rx="4" fill="#0f1830" '
+                 f'stroke="var(--bd)" stroke-width="1"/>'
+                 f'<text x="{tx:.1f}" y="{ty - 2:.1f}" text-anchor="middle" '
+                 f'fill="var(--tx)" font-size="11">{esc(txt)}</text></g></g>')
+    s.append("</svg>")
+    return "".join(s)
 
 
 def featured_posts_section():
@@ -265,15 +337,12 @@ def featured_posts_section():
     if not posts:
         return []
     out = ['<div style="border-top:1px solid var(--bd);margin:38px 0 0;padding-top:6px">'
-           '<span class="tag" style="letter-spacing:.08em">Separate source &middot; '
-           'hand-maintained</span></div>',
+           '<span class="tag" style="letter-spacing:.08em">Separate source</span></div>',
            '<h2 style="margin-top:6px">Featured posts</h2>',
-           '<p class="sub" style="margin-bottom:10px"><b>Not from the community page, '
-           'and a different source than everything above.</b> A hand-picked set of '
-           'standout posts that drove awareness for the community — each post\'s '
-           'metrics are entered by hand into <code>stats/social-posts.json</code> and '
-           'refreshed only occasionally, unlike the automated LinkedIn page exports '
-           '(followers / posts / visitors) up top. Newest first.</p>']
+           '<p class="sub" style="margin-bottom:10px">A separate selection, not part '
+           'of the LinkedIn exports above: a small curated set of standout posts that '
+           'helped drive awareness for the community, with their individual metrics. '
+           'Refreshed occasionally; newest first.</p>']
     tile_keys = [("impressions", "Impressions"), ("members_reached", "Members reached"),
                  ("video_views", "Video views"), ("article_views", "Article views"),
                  ("engagements", "Engagements")]
@@ -372,16 +441,6 @@ h2 .n{color:var(--mut2);font-weight:600;font-size:14px;letter-spacing:0}
 .drow .lab .v{color:var(--tx);font-weight:700;flex:0 0 auto;font-variant-numeric:tabular-nums}
 .drow .track{background:rgba(255,255,255,.05);border-radius:6px;height:8px;overflow:hidden}
 .drow .track i{display:block;height:100%;border-radius:6px;background:var(--ac)}
-.mini{display:flex;align-items:flex-end;gap:14px;height:150px;padding:8px 4px 0}
-.mcol{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
-.mcol .val{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px}
-.mcol .stack{width:44px;flex:1 1 auto;display:flex;flex-direction:column;justify-content:flex-end;border-radius:6px 6px 0 0;overflow:hidden;min-height:3px}
-.mcol .seg{width:100%}
-.mcol .seg.desk{background:var(--ac)}
-.mcol .seg.mob{background:var(--ac2);opacity:.6}
-.mcol .day{font-size:11.5px;color:var(--mut2);margin-top:9px}
-.legend{font-size:12px;color:var(--mut);margin-top:12px;display:flex;gap:16px;flex-wrap:wrap}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
 .post{background:var(--panel);border:1px solid var(--bd);border-radius:16px;padding:18px 20px;margin-bottom:12px}
 .post-hd{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:13px;color:var(--mut)}
 .post-hd .date{margin-left:auto;color:var(--mut2);font-size:12.5px}
@@ -451,9 +510,7 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
     vrows = series(vm, 19, 20, 21, 24)  # pv desktop, pv mobile, pv total, uniq total
     pageviews = sum(t for (_, dk, mb, t, u) in vrows)
     uniques = sum(u for (_, dk, mb, t, u) in vrows)
-    desk_tot = sum(dk for (_, dk, mb, t, u) in vrows)
-    mob_tot = sum(mb for (_, dk, mb, t, u) in vrows)
-    days_stack = [(d, dk, mb) for (d, dk, mb, t, u) in vrows]
+    days_views = [(d, t) for (d, dk, mb, t, u) in vrows]
 
     # ── window + activity ────────────────────────────────────────────────────
     active = {d for (d, n) in daily_new if n} | {d for (d, v) in met if v} \
@@ -478,12 +535,9 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
              f'Community</a> LinkedIn page — our standing record of LinkedIn '
              f'audience, content, and visitors over time. Latest export covers '
              f'<b>{win}</b>.</p>')
-    P.append('<div class="warn"><b>MANUAL SNAPSHOT</b> — LinkedIn API access isn\'t '
-             'configured yet, so this is built from hand-exported <code>.xls</code> '
-             'reports (followers · content · visitors) by '
-             '<code>stats/make_linkedin.py</code>, snapshot '
-             f'<b>{snapshot.strftime("%m/%d/%Y")}</b>. Re-export weekly, drop into '
-             '<code>stats/linkedin-exports/</code>, and re-run to refresh.</div>')
+    P.append('<div class="warn"><b>Not auto-updated</b> — this page is refreshed '
+             'periodically from a manual LinkedIn data pull, snapshot '
+             f'<b>{snapshot.strftime("%m/%d/%Y")}</b>.</div>')
 
     org_note = " · all organic" if paid == 0 else ""
     P.append('<div class="cards">')
@@ -521,14 +575,12 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
 
     P.append(f'<h2>Page visitors <span class="n">· {pageviews:,.0f} views / '
              f'{uniques:,.0f} unique</span></h2>')
-    P.append('<div class="sec">')
-    P.append('<div class="sec-hd">Page views by day '
-             '<span class="mut">— desktop vs mobile</span></div>')
-    P.append(stacked_days(days_stack))
-    P.append(f'<div class="legend"><span><i style="background:var(--ac)"></i>'
-             f'Desktop {desk_tot:,.0f}</span><span>'
-             f'<i style="background:var(--ac2);opacity:.6"></i>'
-             f'Mobile {mob_tot:,.0f}</span></div>')
+    views_avg_window = 5
+    P.append('<div class="sec" style="padding:16px 18px 10px">')
+    P.append(f'<div class="sec-hd">Page views by day '
+             f'<span class="mut">— {pageviews:,.0f} views over {days_live} active '
+             f'days, {views_avg_window}-day trend</span></div>')
+    P.append(views_trend_svg(days_views, avg_window=views_avg_window))
     P.append('</div>')
 
     P.append('<h2>Who\'s visiting <span class="n">· view-weighted</span></h2>')
@@ -542,18 +594,17 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
                        clean=(sheet == "Location")))
     P.append('</div>')
 
-    # Featured posts last: a separate, hand-maintained source (individual post
-    # metrics), distinct from the automated .xls page exports above.
+    # Featured posts last: a separate source (individual curated post metrics),
+    # distinct from the bulk .xls page exports above.
     P.extend(featured_posts_section())
 
-    P.append(f'<div class="foot">Source: manual LinkedIn analytics exports '
+    P.append(f'<div class="foot">Source: LinkedIn analytics exports '
              f'(<b>followers · content · visitors</b>), org page '
              f'<code>open-agent-and-ai-security-community</code>, snapshot '
              f'{snapshot.strftime("%m/%d/%Y")} · window {win}. Demographic breakdowns '
              f'cover only LinkedIn-classifiable members and are view-weighted where '
-             f'noted, so treat them as directional. Generated by '
-             f'<code>stats/make_linkedin.py</code>; updates by hand until LinkedIn API '
-             f'access is configured. · open-agent-ai-security</div>')
+             f'noted, so treat them as directional. Not auto-updated — refreshed '
+             f'periodically from a manual data pull. · open-agent-ai-security</div>')
     P.append('</div></body></html>')
     return "\n".join(P)
 
