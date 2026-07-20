@@ -5,8 +5,8 @@
     "praxen": {
       "repo": "open-agent-ai-security/praxen",
       "views": {
-        "count": 369,
-        "uniques": 94,
+        "count": 376,
+        "uniques": 97,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -142,12 +142,17 @@
             "timestamp": "2026-07-18T00:00:00Z",
             "count": 17,
             "uniques": 6
+          },
+          {
+            "timestamp": "2026-07-19T00:00:00Z",
+            "count": 11,
+            "uniques": 7
           }
         ]
       },
       "clones": {
-        "count": 1112,
-        "uniques": 295,
+        "count": 1170,
+        "uniques": 302,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -283,29 +288,34 @@
             "timestamp": "2026-07-18T00:00:00Z",
             "count": 48,
             "uniques": 21
+          },
+          {
+            "timestamp": "2026-07-19T00:00:00Z",
+            "count": 61,
+            "uniques": 20
           }
         ]
       },
       "referrers": [
         {
-          "referrer": "open-agent-ai-security.github.io",
+          "referrer": "github.com",
           "count": 57,
+          "uniques": 16
+        },
+        {
+          "referrer": "open-agent-ai-security.github.io",
+          "count": 56,
           "uniques": 25
         },
         {
-          "referrer": "github.com",
-          "count": 56,
-          "uniques": 16
+          "referrer": "Google",
+          "count": 23,
+          "uniques": 12
         },
         {
           "referrer": "helpnetsecurity.com",
           "count": 18,
           "uniques": 12
-        },
-        {
-          "referrer": "Google",
-          "count": 18,
-          "uniques": 10
         },
         {
           "referrer": "Bing",
@@ -323,6 +333,11 @@
           "uniques": 2
         },
         {
+          "referrer": "t.co",
+          "count": 2,
+          "uniques": 2
+        },
+        {
           "referrer": "com.radolyn.ayugram",
           "count": 1,
           "uniques": 1
@@ -331,18 +346,13 @@
           "referrer": "statics.teams.cdn.office.net",
           "count": 1,
           "uniques": 1
-        },
-        {
-          "referrer": "t.co",
-          "count": 1,
-          "uniques": 1
         }
       ],
       "paths": [
         {
           "path": "/open-agent-ai-security/praxen",
-          "count": 174,
-          "uniques": 81
+          "count": 181,
+          "uniques": 84
         },
         {
           "path": "/open-agent-ai-security/praxen/pulls",
@@ -456,8 +466,8 @@
     "observra": {
       "repo": "open-agent-ai-security/observra",
       "views": {
-        "count": 390,
-        "uniques": 81,
+        "count": 391,
+        "uniques": 83,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -593,12 +603,17 @@
             "timestamp": "2026-07-18T00:00:00Z",
             "count": 6,
             "uniques": 3
+          },
+          {
+            "timestamp": "2026-07-19T00:00:00Z",
+            "count": 4,
+            "uniques": 4
           }
         ]
       },
       "clones": {
-        "count": 449,
-        "uniques": 153,
+        "count": 443,
+        "uniques": 150,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -734,24 +749,29 @@
             "timestamp": "2026-07-18T00:00:00Z",
             "count": 3,
             "uniques": 3
+          },
+          {
+            "timestamp": "2026-07-19T00:00:00Z",
+            "count": 0,
+            "uniques": 0
           }
         ]
       },
       "referrers": [
         {
           "referrer": "open-agent-ai-security.github.io",
-          "count": 75,
-          "uniques": 18
+          "count": 77,
+          "uniques": 20
         },
         {
           "referrer": "github.com",
-          "count": 72,
+          "count": 70,
           "uniques": 22
         },
         {
           "referrer": "Google",
-          "count": 9,
-          "uniques": 7
+          "count": 10,
+          "uniques": 8
         },
         {
           "referrer": "teams.public.onecdn.static.microsoft",
@@ -777,7 +797,7 @@
       "paths": [
         {
           "path": "/open-agent-ai-security/observra",
-          "count": 146,
+          "count": 145,
           "uniques": 67
         },
         {
@@ -821,9 +841,9 @@
           "uniques": 4
         },
         {
-          "path": "/open-agent-ai-security/observra/pull/94",
+          "path": "/open-agent-ai-security/observra/blob/main/examples/claude_adapter.py",
           "count": 5,
-          "uniques": 3
+          "uniques": 4
         }
       ],
       "releases": [
