@@ -40,14 +40,18 @@ def pull_csv():
     if not tok:
         sys.exit("GOATCOUNTER_API_TOKEN not set")
 
-    # A transient failure (5xx, 429, timeout, connection reset) shouldn't cost the
-    # whole daily refresh — the export gates page regeneration, so one blip freezes
+    # A transient failure (5xx, timeout, connection reset) shouldn't cost the whole
+    # daily refresh — the export gates page regeneration, so one blip freezes
     # /stats for ~24h until the next run. Retry the export/poll/download calls with
     # exponential backoff; non-retryable HTTP errors (401/403/400) still fail fast.
     # 404 is retryable here on purpose: GoatCounter has been observed returning a
     # transient `404 {"error":"not found"}` on POST /export that clears on retry
     # (2026-07-13 — a scheduled run 404'd, a manual re-run minutes later succeeded).
-    RETRYABLE = {404, 429, 500, 502, 503, 504}
+    # 429 is deliberately NOT retryable: the export limit is once/hour, and the
+    # body says so ("try again in 59m57s"), so a 2/4/8s backoff can never clear it
+    # — it just burns ~14s before failing anyway. Fail fast and let the next
+    # scheduled run pick it up with a fresh hourly budget.
+    RETRYABLE = {404, 500, 502, 503, 504}
     def api(method, path, _tries=4):
         req = urllib.request.Request(
             SITE + "/api/v0" + path, method=method,
