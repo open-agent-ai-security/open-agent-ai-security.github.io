@@ -17,18 +17,36 @@
   {
    "platform": "LinkedIn",
    "author": "Steve Wilson",
+   "date": "2026-07-20",
+   "url": "https://www.linkedin.com/posts/wilsonsd_aisecurity-aiagents-cybersecurity-ugcPost-7484960551937208320-ggZ5/",
+   "title": "We're Teaching AI Agents Bad Security",
+   "stats": {
+    "impressions": 3754,
+    "members_reached": 2337,
+    "article_views": 126,
+    "engagements": 76,
+    "reactions": 50,
+    "comments": 9,
+    "reposts": 2,
+    "saves": 15,
+    "sends": 0
+   }
+  },
+  {
+   "platform": "LinkedIn",
+   "author": "Steve Wilson",
    "date": "2026-07-13",
    "url": "https://www.linkedin.com/pulse/when-owasp-llm-risks-meet-agentic-steve-wilson-wkeec/",
    "title": "When OWASP LLM Risks Meet Agentic Risks",
    "stats": {
-    "impressions": 4616,
-    "members_reached": 2923,
-    "article_views": 163,
-    "engagements": 127,
-    "reactions": 80,
-    "comments": 22,
-    "reposts": 8,
-    "saves": 17,
+    "impressions": 6466,
+    "members_reached": 4198,
+    "article_views": 210,
+    "engagements": 156,
+    "reactions": 99,
+    "comments": 27,
+    "reposts": 10,
+    "saves": 20,
     "sends": 0
    }
   },
@@ -39,12 +57,12 @@
    "url": "https://www.linkedin.com/posts/wilsonsd_my-latest-real-world-adventures-and-lessons-ugcPost-7479319987384410112-llCj",
    "title": "The Scanner, the SOC Agent, and the Prompt That Lied",
    "stats": {
-    "impressions": 3585,
-    "members_reached": 2166,
-    "article_views": 249,
-    "engagements": 110,
-    "reactions": 98,
-    "comments": 4,
+    "impressions": 3824,
+    "members_reached": 2325,
+    "article_views": 260,
+    "engagements": 93,
+    "reactions": 77,
+    "comments": 8,
     "reposts": 4,
     "saves": 4,
     "sends": 0
