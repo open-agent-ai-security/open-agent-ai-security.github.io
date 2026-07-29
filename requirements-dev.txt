@@ -1,0 +1,4 @@
+# Dev-only build dependency for blog/generate_blog.py (community mini-blog).
+# Not part of any published package — same convention observra/praxen already
+# use for their own docs_build.py.
+markdown==3.9
