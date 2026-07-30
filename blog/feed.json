@@ -6,6 +6,23 @@
   "description": "Announcements, release notes, and project updates from the Open Agent and AI Security Community.",
   "items": [
     {
+      "id": "https://open-agent-ai-security.github.io/blog/vinaya-finbot-sailors/",
+      "url": "https://open-agent-ai-security.github.io/blog/vinaya-finbot-sailors/",
+      "title": "Community Spotlight: Connecting SAILORS to Praxen",
+      "summary": "Community member Vinaya Vasu connects her SAILORS security framework to Praxen, showing how design-time checks and post-build verification reinforce each other.",
+      "content_text": "Community member Vinaya Vasu has been connecting her own security framework, SAILORS, to Praxen, and it's exactly the kind of cross-pollination we love to see. \n SAILORS is a design-time security checklist (input sanitization, access management, output inspection, least-privilege tooling, human override gates, action recording, and prompt hardening) meant to catch agent risks before a single line of code ships. In her latest piece, Vinaya runs Praxen against an agent from the OWASP Agentic AI CTF and lines the results up against SAILORS's seven checks, showing how the two approaches reinforce each other: SAILORS at the sprint review, Praxen after the build. \n Check it out and see how she connects the dots: \n  What Praxen Found on FinBot — and Where SAILORS Fits",
+      "date_published": "2026-07-31T00:00:00Z",
+      "authors": [
+        {
+          "name": "Open Agent and AI Security Community"
+        }
+      ],
+      "tags": [
+        "community",
+        "praxen"
+      ]
+    },
+    {
       "id": "https://open-agent-ai-security.github.io/blog/join-linkedin-community/",
       "url": "https://open-agent-ai-security.github.io/blog/join-linkedin-community/",
       "title": "Join Us on LinkedIn",
