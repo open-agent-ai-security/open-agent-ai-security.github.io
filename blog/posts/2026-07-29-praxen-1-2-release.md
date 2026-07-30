@@ -5,7 +5,7 @@ date: 2026-07-29
 summary: Praxen 1.2 aligns risk findings to the 2026 OWASP Top 10 for LLM Applications, with clearer scoring, scan-to-scan comparisons, and a new shareable Worker Remit.
 tags: release, praxen
 image: praxen-1.2-release.png
-image_alt: Praxen 1.2 release — Verify your agent. Trust its behavior.
+image_alt: Praxen 1.2 release — 2026 OWASP Top 10 for LLM.
 ---
 
 Today we're releasing **Praxen 1.2**, with support for the 2026 OWASP Top 10 for LLM Applications.
