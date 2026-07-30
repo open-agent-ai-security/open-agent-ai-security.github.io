@@ -55,6 +55,24 @@
         "release",
         "praxen"
       ]
+    },
+    {
+      "id": "https://open-agent-ai-security.github.io/blog/steve-owasp-agentic-findings/",
+      "url": "https://open-agent-ai-security.github.io/blog/steve-owasp-agentic-findings/",
+      "title": "Community Spotlight: Mapping OWASP Risks with Praxen",
+      "summary": "Community member Steve Wilson used Praxen to test 12 open-source agent projects against both the OWASP LLM and Agentic Top 10 — and found the two risk taxonomies overlap more than most people expect.",
+      "content_text": "Our community member Steve Wilson just published his latest findings, using Praxen to analyze 12 open-source agent projects against both the OWASP Top 10 for LLM Applications and the OWASP Agentic AI risk framework. \n Across 114 findings, nearly half — 46 — spanned both frameworks, with the strongest overlap between Excessive Agency (the most common LLM-side finding) and Unexpected Code Execution (the most common agentic-side finding). His takeaway: the two taxonomies describe different layers of the same failures — the LLM framework catches model-level weaknesses, the agentic framework catches what happens when those weaknesses turn into real operational consequences — and real-world security failures often chain across both. \n Check it out:  When OWASP LLM Risks Meet Agentic Risks",
+      "date_published": "2026-07-14T00:00:00Z",
+      "authors": [
+        {
+          "name": "Open Agent and AI Security Community"
+        }
+      ],
+      "tags": [
+        "community",
+        "praxen",
+        "owasp"
+      ]
     }
   ]
 }
