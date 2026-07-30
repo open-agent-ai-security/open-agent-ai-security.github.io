@@ -359,8 +359,8 @@ header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);-webkit-b
 .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;height:66px}
 .brand{display:inline-flex;align-items:center}
 .brand img.logo{height:30px;width:auto;display:block}
-.nav-links{display:flex;align-items:center;gap:26px}
-.nav-links a{color:var(--mut);font-weight:500;font-size:14.5px}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--mut);font-weight:500;font-size:15px}
 .nav-links a:hover{color:var(--tx)}
 .nav-links a.active{color:var(--violet-2)}
 .btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;font-size:15px;border-radius:11px;padding:11px 20px;border:1px solid transparent;transition:all .18s ease;font-family:inherit;text-decoration:none}
