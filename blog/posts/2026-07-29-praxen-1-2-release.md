@@ -9,7 +9,9 @@ image: praxen-1.2-release.png
 image_alt: Praxen 1.2 release — 2026 OWASP Top 10 for LLM.
 ---
 
-Today we're releasing **Praxen 1.2**, with support for the 2026 OWASP Top 10 for LLM Applications.
+Today we're releasing **Praxen 1.2**, aligned to the newly published [2026 OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/).
+
+The [OWASP GenAI Security Project](https://genai.owasp.org/) — the open, vendor-neutral community that maintains the industry's most widely-adopted LLM risk model — is shipping the 2026 revision of the list, and Praxen 1.2 ships aligned to it from day one.
 
 This is more than a terminology update. Praxen now evaluates agent risks using the latest OWASP guidance, helping teams connect what an agent can do, what it is allowed to do, and where its controls may fall short against the industry's most current risk model.
 
@@ -17,7 +19,7 @@ For developers and security teams, that means Praxen findings are easier to inte
 
 > "The 2026 OWASP Top 10 reflects how quickly AI application risk is evolving. Praxen 1.2 brings that guidance directly into the review process, so teams can evaluate real agent capabilities, permissions, and behavior against the latest industry standard."
 >
-> — Steve Wilson, creator of Praxen and project co-lead for the OWASP Top 10 for LLM Applications
+> — Steve Wilson, creator of Praxen and project co-lead for the [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/)
 
 ## What's new in Praxen 1.2
 
@@ -44,7 +46,7 @@ That makes Praxen more useful not only for developers, but also for security tea
 
 ## Built in the open
 
-Praxen is available under the Apache 2.0 license as part of the Open Agent AI Security community.
+Praxen is available under the Apache 2.0 license as part of the Open Agent AI Security community. The OWASP Top 10 for LLM Applications, and the companion Agentic AI Top 10, are maintained by the [OWASP GenAI Security Project](https://genai.owasp.org/) — an open, vendor-neutral community — and Praxen 1.2 adopts both 2026 lists as its default risk mapping.
 
 ## Get Praxen 1.2
 
