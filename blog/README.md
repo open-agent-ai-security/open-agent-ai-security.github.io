@@ -226,12 +226,16 @@ data:
   that quietly breaks — plain text sidesteps it entirely.
 
 Both are linked from the blog index (visible "RSS feed"/"JSON Feed" links)
-and via `<link rel="alternate">` autodiscovery on every blog page. **Not**
-autodiscoverable from the root `index.html` — the blog is intentionally
-unlinked from the main page for now (see the git history/commit messages for
-why); it's still listed in `llms.txt` though, since that's a separate
-discovery surface. If you add a post field that should show up in a feed,
-update `render_rss()` **and** `render_json_feed()` together so they don't
+and via `<link rel="alternate">` autodiscovery on every blog page. At launch,
+the root `index.html` is meant to carry the same two autodiscovery tags plus
+a "Blog" nav link — both are already written out as HTML comments at their
+exact intended spot in `index.html` (search `withheld`), ready to uncomment.
+Right now they're deliberately commented out: the blog is in QA/preview and
+intentionally unlinked from the main page until that's done (see this repo's
+git history for why). It's still listed in `llms.txt` regardless, since
+that's a separate discovery surface with no "is this launched yet" gate.
+If you add a post field that should show up in a feed, update `render_rss()`
+**and** `render_json_feed()` together so they don't
 drift apart.
 
 ## Share and related posts
@@ -299,3 +303,6 @@ deploy; GitHub Pages just serves whatever's committed.
   "make this public" action, same category as pushing to `main`: only do it
   when explicitly asked to publish/launch, not as part of routine drafting
   or editing.
+- Same goes for the commented-out nav link and autodiscovery tags in the
+  root `index.html` (search `withheld`) — don't uncomment them until
+  explicitly asked to launch the blog off of QA/preview.
