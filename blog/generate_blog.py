@@ -10,7 +10,9 @@ as stats/generate.py and stats/make_linkedin.py: self-contained output, no
 client-side JS, regenerate locally and commit the result.
 
 Post format — blog/posts/YYYY-MM-DD-slug.md, a --- delimited frontmatter block
-(plain `key: value` lines, no YAML) followed by a Markdown body:
+(plain `key: value` lines, no YAML — though wrapping a value in matching
+quotes is tolerated and stripped, since that's an easy habit to fall into)
+followed by a Markdown body:
 
   ---
   title: Observra 1.1: Any Agent, No Adapter Required
@@ -86,7 +88,10 @@ def parse_post(path):
         if not line.strip() or ":" not in line:
             continue
         k, v = line.split(":", 1)
-        meta[k.strip()] = v.strip()
+        v = v.strip()
+        if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
+            v = v[1:-1]  # tolerate YAML-style quoting even though this isn't YAML
+        meta[k.strip()] = v
 
     missing = [f for f in REQUIRED if not meta.get(f)]
     if missing:
