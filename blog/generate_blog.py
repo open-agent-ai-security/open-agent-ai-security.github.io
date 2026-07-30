@@ -18,6 +18,8 @@ followed by a Markdown body:
   title: Observra 1.1: Any Agent, No Adapter Required
   author: Steve Wilson
   date: 2026-08-04
+  updated: 2026-08-06
+  published: yes
   summary: One-line teaser shown on the index card and in link previews.
   tags: release, observra
   image: observra-1.1.jpg
@@ -31,6 +33,21 @@ prefix is stripped to make the slug (and the URL); everything else (nav order,
 routing) is derived from that — there's no hand-curated page list like
 observra/praxen's docs_build.py PAGES, because a blog's order is inherent
 (newest first), not an editorial choice.
+
+`updated` is optional (YYYY-MM-DD). Only set it when a post is materially
+edited after publishing — it feeds `dateModified` in the JSON-LD, the
+sitemap's `<lastmod>`, and a visible "Updated ..." next to the publish date
+(omitted entirely when absent or equal to `date`, so most posts never touch
+this field).
+
+`published` gates whether a post is publicly discoverable — defaults to NOT
+published if omitted (`yes`/`true`/`on`/`1` turn it on, case-insensitive;
+anything else, including leaving it out, is a draft). A draft still gets its
+own `blog/<slug>/index.html` — written, reviewable, shareable by direct link
+for QA — but is left out of the index, both feeds, the sitemap, the blog-wide
+JSON-LD, and every other post's "Related posts" pool, and its own page is
+`noindex`. Flip it to `yes` and regenerate when it's time to actually launch;
+nothing else about the post needs to change. See "Draft workflow" below.
 
 `image` is optional. Either a filename in blog/images/ (checked into git) or a
 full http(s) URL. When present it renders as a header banner on the post page
@@ -49,11 +66,16 @@ root index.html's own markup/CSS — same classes, same asset files, just with
 relative paths rewritten for the extra directory depth — so a blog page reads
 as the same site, not a themed subsite.
 
+Each post page also gets: an estimated reading time (word count / 200wpm),
+a share row (X, LinkedIn, copy-link — plain hrefs plus one small first-party
+clipboard script, no third-party embeds), and a "Related posts" block for
+any other post sharing at least one tag.
+
 Regenerate:
   pip install -r requirements-dev.txt
   python3 blog/generate_blog.py
 """
-import os, re, sys, html, glob, json, datetime
+import os, re, sys, html, glob, json, datetime, urllib.parse
 import markdown
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -74,6 +96,10 @@ FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n(.*)$", re.DOTALL)
 DATE_PREFIX_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-")
 
 esc = lambda s: html.escape(str(s), quote=True)
+
+
+def _truthy(v):
+    return str(v).strip().lower() in ("yes", "true", "on", "1")
 
 
 def parse_post(path):
@@ -101,7 +127,15 @@ def parse_post(path):
     except ValueError:
         sys.exit(f"{path}: date must be YYYY-MM-DD, got {meta['date']!r}")
 
+    meta["updated"] = meta.get("updated", "").strip()
+    if meta["updated"]:
+        try:
+            datetime.datetime.strptime(meta["updated"], "%Y-%m-%d")
+        except ValueError:
+            sys.exit(f"{path}: updated must be YYYY-MM-DD, got {meta['updated']!r}")
+
     meta["slug"] = DATE_PREFIX_RE.sub("", os.path.splitext(os.path.basename(path))[0])
+    meta["published"] = _truthy(meta.get("published", ""))
     meta["tags"] = [t.strip() for t in meta.get("tags", "").split(",") if t.strip()]
     meta["image"] = meta.get("image", "").strip()
     meta["image_alt"] = meta.get("image_alt", "").strip() or meta["title"]
@@ -109,6 +143,7 @@ def parse_post(path):
     md = markdown.Markdown(extensions=["tables", "fenced_code", "toc", "sane_lists"])
     meta["body_html"] = md.convert(body.strip())
     meta["toc_html"] = onpage_toc(md.toc_tokens)
+    meta["reading_time"] = max(1, round(len(strip_tags(meta["body_html"]).split()) / 200))
     return meta
 
 
@@ -151,6 +186,24 @@ def image_url(image, rel):
     if not image:
         return ""
     return image if IMAGE_URL_RE.match(image) else f"{rel}images/{image}"
+
+
+BODY_IMG_SRC_RE = re.compile(r'(<img\s[^>]*\bsrc=")([^"]+)(")')
+
+
+def resolve_body_images(body_html, rel):
+    """Rewrite inline post-body images the same way as the `image` frontmatter
+    field: a plain Markdown `![alt](filename.png)` with a bare filename (no
+    scheme, no leading path) resolves against blog/images/ — one mental model
+    for every image in a post, not two. A path already written as absolute,
+    explicitly relative (./ or ../), or a full http(s) URL is left untouched,
+    so an author can still opt out of the convention when they need to."""
+    def resolve(m):
+        src = m.group(2)
+        if IMAGE_URL_RE.match(src) or src.startswith(("/", "./", "../")):
+            return m.group(0)
+        return f"{m.group(1)}{rel}images/{src}{m.group(3)}"
+    return BODY_IMG_SRC_RE.sub(resolve, body_html)
 
 
 def local_image_dimensions(image):
@@ -223,6 +276,8 @@ def json_ld_post(meta, canonical, og_image):
         "url": canonical,
         "mainEntityOfPage": canonical,
     }
+    if meta["updated"] and meta["updated"] != meta["date"]:
+        data["dateModified"] = meta["updated"]
     if og_image:
         data["image"] = og_image
     if meta["tags"]:
@@ -242,6 +297,7 @@ def json_ld_index(posts):
                 "headline": p["title"],
                 "url": f'{SITE}/blog/{p["slug"]}/',
                 "datePublished": p["date"],
+                **({"dateModified": p["updated"]} if p["updated"] and p["updated"] != p["date"] else {}),
                 "author": {"@type": "Person", "name": p["author"]},
             }
             for p in posts
@@ -256,6 +312,28 @@ GITHUB_ICON = (
     '1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 '
     '3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 '
     '.4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>'
+)
+
+X_ICON = (
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
+    '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 '
+    '17.52h1.833L7.084 4.126H5.117z"/></svg>'
+)
+
+LINKEDIN_ICON = (
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
+    '<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 '
+    '1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 '
+    '1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 '
+    '1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>'
+)
+
+COPY_LINK_JS = (
+    "<script>document.addEventListener('click',function(e){"
+    "var b=e.target.closest('.copy-link');if(!b)return;"
+    "navigator.clipboard.writeText(b.getAttribute('data-url')).then(function(){"
+    "var t=b.textContent;b.textContent='Copied!';"
+    "setTimeout(function(){b.textContent=t;},1500);});});</script>"
 )
 
 
@@ -316,7 +394,21 @@ ul.toc{list-style:none;margin:0 0 26px;padding:14px 18px;background:var(--panel)
 ul.toc li{margin:4px 0}
 ul.toc a{color:var(--mut)}
 ul.toc a:hover{color:var(--violet-2)}
+.draft-banner{border:1px solid #7a5a1d;background:linear-gradient(160deg,rgba(255,193,64,.12),rgba(255,255,255,.01));border-radius:12px;padding:12px 16px;margin:0 0 24px;color:#ffd98a;font-size:13.5px}
+.draft-banner code{background:rgba(255,193,64,.14);border-color:#7a5a1d;color:#ffd98a}
 .post-hero{width:100%;aspect-ratio:2/1;object-fit:cover;border-radius:16px;border:1px solid var(--bd);margin:0 0 26px;background:var(--panel)}
+.content p img{border-radius:12px;border:1px solid var(--bd);background:var(--panel);margin:6px 0 20px}
+.share{display:flex;align-items:center;gap:10px;margin-top:40px;padding-top:26px;border-top:1px solid var(--bd)}
+.share-label{color:var(--mut2);font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin-right:2px}
+.share-btn{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;color:var(--mut);font-size:12.5px;font-family:inherit;line-height:1;cursor:pointer;transition:border-color .15s,color .15s}
+.share-btn:hover{border-color:var(--bd-hi);color:var(--tx)}
+.related{margin-top:34px}
+.related h2{margin-top:0}
+.related-list{display:flex;gap:14px;flex-wrap:wrap}
+.related-card{flex:1 1 200px;background:var(--panel);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s,background .15s}
+.related-card:hover{border-color:var(--bd-hi);background:var(--panel2)}
+.related-card .date{color:var(--mut2);font-size:12px}
+.related-card h3{color:var(--tx);font-size:15.5px;margin:6px 0 0;font-weight:600}
 .posts{display:flex;flex-direction:column;gap:14px}
 .post-card{display:flex;gap:18px;align-items:flex-start;background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:16px;text-decoration:none;transition:border-color .15s,background .15s}
 .post-card:hover{border-color:var(--bd-hi);background:var(--panel2)}
@@ -409,7 +501,7 @@ def site_footer(home):
 
 def page_shell(title, description, canonical, body_html, home, blog_home, active_blog,
                 og_image="", og_image_dims=None, og_type="article",
-                keywords="", json_ld="", published_time="", tags=()):
+                keywords="", json_ld="", published_time="", tags=(), robots="index, follow"):
     """og_image should always be set (callers fall back to DEFAULT_OG_IMAGE)
     so every shared blog link — post or index — gets a real preview card on
     Twitter/X and LinkedIn, not a bare title. og_image_dims, when known,
@@ -446,13 +538,15 @@ def page_shell(title, description, canonical, body_html, home, blog_home, active
         f'<title>{esc(title)}</title>'
         f'<meta name="description" content="{esc(description)}">'
         f'{keywords_tag}'
-        f'<meta name="robots" content="index, follow">'
+        f'<meta name="robots" content="{esc(robots)}">'
         f'<link rel="canonical" href="{esc(canonical)}">'
         f'<link rel="icon" type="image/png" sizes="32x32" href="{esc(home)}assets/favicon-32.png">'
         f'<link rel="icon" type="image/png" sizes="256x256" href="{esc(home)}assets/favicon-256.png">'
         f'<link rel="apple-touch-icon" sizes="180x180" href="{esc(home)}assets/favicon-180.png">'
         f'<link rel="alternate" type="application/rss+xml" '
         f'title="Open Agent and AI Security Community Blog" href="{esc(blog_home)}feed.xml">'
+        f'<link rel="alternate" type="application/feed+json" '
+        f'title="Open Agent and AI Security Community Blog (JSON Feed)" href="{esc(blog_home)}feed.json">'
         f'<meta property="og:type" content="{esc(og_type)}">'
         f'<meta property="og:title" content="{esc(title)}">'
         f'<meta property="og:description" content="{esc(description)}">'
@@ -470,24 +564,76 @@ def page_shell(title, description, canonical, body_html, home, blog_home, active
         f'{site_header(home, blog_home, active_blog)}'
         f'<main><div class="content">{body_html}</div></main>'
         f'{site_footer(home)}'
+        f'{COPY_LINK_JS}'
         f'</body></html>'
     )
 
 
-def render_post_body(meta, img_rel):
+def render_post_body(meta, img_rel, related=()):
     tags_html = "".join(f'<span class="tag">{esc(t)}</span>' for t in meta["tags"])
     img = image_url(meta["image"], img_rel)
     hero_html = (f'<img class="post-hero" src="{esc(img)}" alt="{esc(meta["image_alt"])}">'
                  if img else "")
+    updated_html = (f' &middot; Updated {human_date(meta["updated"])}'
+                    if meta["updated"] and meta["updated"] != meta["date"] else '')
+    canonical = f'{SITE}/blog/{meta["slug"]}/'
+    draft_html = (
+        '<div class="draft-banner"><b>Draft</b> — not yet published. This page '
+        'isn\'t linked from the blog index, feeds, or sitemap, and is marked '
+        '<code>noindex</code> for search engines.</div>'
+        if not meta["published"] else ""
+    )
     return (
-        hero_html
+        draft_html
+        + hero_html
         + '<p class="eyebrow">Community blog</p>'
         + f'<h1>{esc(meta["title"])}</h1>'
-        + f'<div class="meta">{human_date(meta["date"])} &middot; {esc(meta["author"])}'
+        + f'<div class="meta">{human_date(meta["date"])}{updated_html} &middot; '
+        + f'{esc(meta["author"])} &middot; {meta["reading_time"]} min read'
         + (f' &middot; {tags_html}' if tags_html else '')
         + '</div>'
         + meta["toc_html"]
-        + meta["body_html"]
+        + resolve_body_images(meta["body_html"], img_rel)
+        + render_share(canonical, meta["title"])
+        + render_related(related)
+    )
+
+
+def related_posts(post, posts, limit=3):
+    """Other posts sharing at least one tag — most shared tags first, newest
+    first as a tiebreak. A post with no tags has nothing to match on, so it
+    never gets (or produces) related posts."""
+    if not post["tags"]:
+        return []
+    scored = [(len(set(post["tags"]) & set(p["tags"])), p)
+              for p in posts if p is not post and set(post["tags"]) & set(p["tags"])]
+    scored.sort(key=lambda t: t[1]["date"], reverse=True)
+    scored.sort(key=lambda t: t[0], reverse=True)
+    return [p for _, p in scored[:limit]]
+
+
+def render_related(related):
+    if not related:
+        return ""
+    cards = "".join(
+        f'<a class="related-card" href="../{esc(p["slug"])}/">'
+        f'<div class="date">{human_date(p["date"])}</div>'
+        f'<h3>{esc(p["title"])}</h3></a>'
+        for p in related
+    )
+    return f'<div class="related"><h2>Related posts</h2><div class="related-list">{cards}</div></div>'
+
+
+def render_share(canonical, title):
+    tw = f'https://twitter.com/intent/tweet?text={urllib.parse.quote(title)}&url={urllib.parse.quote(canonical)}'
+    li = f'https://www.linkedin.com/sharing/share-offsite/?url={urllib.parse.quote(canonical)}'
+    return (
+        '<div class="share">'
+        '<span class="share-label">Share</span>'
+        f'<a class="share-btn" href="{esc(tw)}" target="_blank" rel="noopener" aria-label="Share on X">{X_ICON}</a>'
+        f'<a class="share-btn" href="{esc(li)}" target="_blank" rel="noopener" aria-label="Share on LinkedIn">{LINKEDIN_ICON}</a>'
+        f'<button type="button" class="share-btn copy-link" data-url="{esc(canonical)}">Copy link</button>'
+        '</div>'
     )
 
 
@@ -506,12 +652,14 @@ def render_index_body(posts, img_rel):
             f'<p>{esc(summary)}</p>'
             f'</div></a>'
         )
+    posts_html = (f'<div class="posts">{"".join(cards)}</div>' if cards
+                  else '<p class="meta">No posts yet — check back soon.</p>')
     return (
         '<p class="eyebrow">Open Agent and AI Security Community</p>'
         '<h1><span class="grad">Blog</span></h1>'
         '<p class="meta">Announcements, release notes, and project updates from the community. '
-        '&middot; <a href="feed.xml">RSS feed</a></p>'
-        f'<div class="posts">{"".join(cards)}</div>'
+        '&middot; <a href="feed.xml">RSS feed</a> &middot; <a href="feed.json">JSON Feed</a></p>'
+        f'{posts_html}'
     )
 
 
@@ -556,13 +704,51 @@ def render_rss(posts):
     )
 
 
+def render_json_feed(posts):
+    """JSON Feed 1.1 (jsonfeed.org) — a plainer, JSON-native alternative to
+    RSS that some modern readers/tools prefer; same underlying post data as
+    feed.xml, just a second serialization. content_text (not content_html) is
+    used deliberately: the post body's images/links are resolved relative to
+    blog/<slug>/, and re-resolving them absolute for a feed consumed out of
+    that context is exactly the kind of thing that quietly breaks — plain
+    text sidesteps it entirely."""
+    items = []
+    for p in posts:
+        url = f'{SITE}/blog/{p["slug"]}/'
+        item = {
+            "id": url,
+            "url": url,
+            "title": p["title"],
+            "summary": p.get("summary") or strip_tags(p["body_html"])[:160],
+            "content_text": strip_tags(p["body_html"]),
+            "date_published": f'{p["date"]}T00:00:00Z',
+            "authors": [{"name": p["author"]}],
+        }
+        if p["updated"] and p["updated"] != p["date"]:
+            item["date_modified"] = f'{p["updated"]}T00:00:00Z'
+        if p["tags"]:
+            item["tags"] = p["tags"]
+        items.append(item)
+    feed = {
+        "version": "https://jsonfeed.org/version/1.1",
+        "title": "Blog — Open Agent and AI Security Community",
+        "home_page_url": f"{SITE}/blog/",
+        "feed_url": f"{SITE}/blog/feed.json",
+        "description": "Announcements, release notes, and project updates from the "
+                        "Open Agent and AI Security Community.",
+        "items": items,
+    }
+    return json.dumps(feed, ensure_ascii=False, indent=2)
+
+
 def render_blog_sitemap(posts):
     """This blog's own sitemap — same modular pattern observra/praxen use for
     their sub-sites (see sitemap.xml's own header comment): drop in
     blog/sitemap.xml and add one <sitemap> line to the root index, rather than
     hand-maintaining post URLs inside sitemap-pages.xml where they'd go stale."""
     urls = [f'<url><loc>{SITE}/blog/</loc></url>']
-    urls += [f'<url><loc>{SITE}/blog/{p["slug"]}/</loc><lastmod>{p["date"]}</lastmod></url>' for p in posts]
+    urls += [f'<url><loc>{SITE}/blog/{p["slug"]}/</loc>'
+             f'<lastmod>{p["updated"] or p["date"]}</lastmod></url>' for p in posts]
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
@@ -578,6 +764,11 @@ def main():
 
     posts = [parse_post(p) for p in paths]
     posts.sort(key=lambda p: p["date"], reverse=True)
+    # The index/feeds/sitemap/JSON-LD/related-posts pool is published posts
+    # only — a draft's own page still gets built below (for direct-link QA),
+    # but must never leak into anything a published post links to or that a
+    # crawler/reader discovers on its own.
+    published = [p for p in posts if p["published"]]
 
     for p in posts:
         out_dir = os.path.join(HERE, p["slug"])
@@ -595,16 +786,17 @@ def main():
             title=f'{p["title"]} — Community Blog',
             description=description,
             canonical=canonical,
-            body_html=render_post_body(p, img_rel="../"),
+            body_html=render_post_body(p, img_rel="../", related=related_posts(p, published)),
             home="../../",
             blog_home="../",
             active_blog=True,
             og_image=og_image,
             og_image_dims=og_image_dims,
             keywords=", ".join(p["tags"]),
-            json_ld=json_ld_post(p, canonical, og_image),
+            json_ld=json_ld_post(p, canonical, og_image) if p["published"] else "",
             published_time=p["date"],
             tags=p["tags"],
+            robots="index, follow" if p["published"] else "noindex, follow",
         )
         with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as fh:
             fh.write(out_html)
@@ -614,25 +806,30 @@ def main():
         description="Announcements, release notes, and project updates from the "
                      "Open Agent and AI Security Community.",
         canonical=f"{SITE}/blog/",
-        body_html=render_index_body(posts, img_rel=""),
+        body_html=render_index_body(published, img_rel=""),
         home="../",
         blog_home="./",
         active_blog=True,
         og_image=DEFAULT_OG_IMAGE,
         og_image_dims=DEFAULT_OG_IMAGE_DIMS,
         og_type="website",
-        json_ld=json_ld_index(posts),
+        json_ld=json_ld_index(published),
     )
     with open(os.path.join(HERE, "index.html"), "w", encoding="utf-8") as fh:
         fh.write(index_html)
 
     with open(os.path.join(HERE, "feed.xml"), "w", encoding="utf-8") as fh:
-        fh.write(render_rss(posts))
+        fh.write(render_rss(published))
+
+    with open(os.path.join(HERE, "feed.json"), "w", encoding="utf-8") as fh:
+        fh.write(render_json_feed(published))
 
     with open(os.path.join(HERE, "sitemap.xml"), "w", encoding="utf-8") as fh:
-        fh.write(render_blog_sitemap(posts))
+        fh.write(render_blog_sitemap(published))
 
-    print(f"Wrote {len(posts)} post(s) + blog/index.html + feed.xml + sitemap.xml")
+    drafts = len(posts) - len(published)
+    print(f"Wrote {len(published)} published + {drafts} draft post page(s) "
+          f"+ blog/index.html + feed.xml + feed.json + sitemap.xml")
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@
 
 ## Blog
 
-- [Community blog](https://open-agent-ai-security.github.io/blog/): announcements, release notes, and project updates. [RSS feed](https://open-agent-ai-security.github.io/blog/feed.xml).
+- [Community blog](https://open-agent-ai-security.github.io/blog/): announcements, release notes, and project updates. [RSS feed](https://open-agent-ai-security.github.io/blog/feed.xml), [JSON Feed](https://open-agent-ai-security.github.io/blog/feed.json).
 
 ## Source
 

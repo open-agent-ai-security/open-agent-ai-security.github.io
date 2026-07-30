@@ -4,7 +4,9 @@ Static blog for the Open Agent and AI Security Community site. Markdown posts
 in `posts/` are compiled by `generate_blog.py` into `index.html` (the
 chronological post list) and `<slug>/index.html` per post — the same
 "generate locally, commit the output" model as `stats/generate.py`, no
-build-on-deploy, no client-side JS.
+build-on-deploy. The only JavaScript on any page is the tiny first-party
+copy-link handler (see **Share and related posts** below) plus the site's
+existing analytics snippet — no third-party embeds, no framework.
 
 This file is the reference for **both humans and agents** editing this
 folder. If you're an agent adding or editing a post, follow this exactly
@@ -21,6 +23,7 @@ Create `posts/YYYY-MM-DD-slug.md`. The date prefix drives sort order; the
 title: Observra 1.1: Any Agent, No Adapter Required
 author: Steve Wilson
 date: 2026-08-04
+published: yes
 summary: One-line teaser shown on the index card and in link previews.
 tags: release, observra
 image: observra-1.1.jpg
@@ -37,14 +40,46 @@ not from anything in the body.
 | `title`      | yes      | Rendered as the page's H1 and `<title>`.                       |
 | `author`     | yes      | Plain text, e.g. `Steve Wilson`.                                |
 | `date`       | yes      | `YYYY-MM-DD`. Drives sort order — there's no separate nav to edit. |
+| `published`  | no       | `yes`/`true`/`on`/`1` (case-insensitive) to go live; **anything else, including omitting it, is a draft.** See **Draft workflow** below. |
+| `updated`    | no       | `YYYY-MM-DD`. Only set this when you materially edit a post after publishing — see **Editing a published post** below. |
 | `summary`    | no       | Index-card teaser and `og:description`. Falls back to the first ~160 characters of the rendered post if omitted. |
-| `tags`       | no       | Comma-separated, shown as small chips under the title.          |
+| `tags`       | no       | Comma-separated, shown as small chips under the title. Also drives **Related posts** (see below). |
 | `image`      | no       | See **Images** below.                                           |
 | `image_alt`  | no       | Alt text for `image`. Defaults to `title`.                      |
 
 The generator hard-fails (exits non-zero, writes nothing) if `title`,
 `author`, or `date` is missing, or `date` isn't `YYYY-MM-DD` — fix the post
 named in the error rather than working around it.
+
+## Draft workflow
+
+`published` is how you queue a post — write it, commit it, even push it —
+without it going live, then flip one field when it's actually time to launch:
+
+1. **Write the post** with `published` omitted (or set to anything other than
+   `yes`/`true`/`on`/`1` — e.g. write `published: no` for clarity if you
+   want). Regenerate. The post still gets a real page at `blog/<slug>/`, so
+   you (or reviewers) can open it, click through it, check the image/TOC/
+   share row — everything renders exactly as it will once live.
+2. **A draft page is deliberately excluded from** the blog index, `feed.xml`,
+   `feed.json`, `blog/sitemap.xml`, the blog-wide JSON-LD, and every other
+   post's **Related posts** list — a live post must never surface a draft's
+   title/existence before it's meant to. A draft's own page also carries
+   `<meta name="robots" content="noindex, follow">`, and a visible amber
+   "Draft" banner at the top of the post so nobody mistakes a QA preview for
+   the live thing (including you, three tabs into reviewing a queue of them).
+   Its own **Related posts** section still pulls from already-published posts
+   only, so that part of the QA preview is accurate too.
+3. **When it's launch time**, change `published: no` to `published: yes` in
+   that one file and regenerate — the post joins the index/feeds/sitemap/
+   JSON-LD/related-posts pool in the same build, no other edits needed. This
+   is the "publish on a schedule with launches" step: prep and review the
+   post whenever, flip the field the moment you actually want it live.
+
+A draft's file (and its generated `blog/<slug>/index.html`) can still be
+committed and pushed like anything else in this repo — being unindexed and
+unlinked from every discovery surface is what keeps it effectively private,
+not being absent from git or the deployed site.
 
 ## Markdown support
 
@@ -63,33 +98,61 @@ if you want the fuller rationale).
 
 ## Images
 
-Optional — a post with no `image` field renders as text-only on both the
-index card and the post page; nothing to configure to skip it.
+All post images — header, inline, whatever — live in one place and follow
+one rule: **put the file in `blog/images/` (checked into git — these are
+real, deliberate assets, not generated output, unlike everything else in
+`blog/` besides `posts/`), then reference it by filename only.** The
+generator resolves a bare filename to the right relative path for wherever
+it's actually rendering (`blog/index.html` vs. `blog/<slug>/index.html` are
+different depths) — you never hand-write `../images/...` yourself. A full
+`https://` URL also works anywhere a filename does, if the image is hosted
+elsewhere instead. A post needs neither kind of image; both fall back
+cleanly (see below).
 
-- Put image files directly in `blog/images/` (checked into git — these are
-  real, deliberate assets, not generated output, unlike everything else in
-  `blog/` besides `posts/`).
-- Reference by **filename only** in frontmatter: `image: observra-1.1.jpg`.
-  A full `https://` URL also works if the image is hosted elsewhere instead.
-- One image is used in two places: a full-width header banner on the post
-  page, and a thumbnail on that post's index card. There's no separate
-  thumbnail field — same file, two crops.
+### Header / preview image
+
+The optional `image` frontmatter field (see **Adding a post** above):
+
+- One image is used in three places: a full-width header banner on the post
+  page, a thumbnail on that post's index card, and the `og:image`/
+  `twitter:image` shown when the link is shared — there's no separate field
+  for any of those, same file, different crops.
 - **Aspect ratio ~2:1** (e.g. 1200×630 — the same shape the rest of the site
-  uses for `og:image`). The header banner is `object-fit: cover` at 2:1, so
-  a very different ratio will crop in ways you didn't intend; check it after
-  building.
-- The image doubles as the post's `og:image`/`twitter:image` (the thumbnail
-  Slack/LinkedIn/X show when the post link is shared) automatically — no
-  separate step. For a local file, its real width/height are read straight
-  from the file (PNG/JPEG headers) and included as `og:image:width/height`,
-  so the declared size always matches reality rather than asserting a fixed
-  1200×630 regardless of the actual file. An external `https://` image has no
-  local file to inspect, so those dimension tags are simply omitted — every
-  crawler sizes the image itself on fetch regardless, they just don't get the
-  hint.
-- A post with **no** `image` field still gets a real preview card rather than
-  a bare title: it falls back to the same `assets/community-social.png` the
-  root site uses. The blog index page uses this same fallback.
+  uses for `og:image`). The header banner and index thumbnail are both
+  `object-fit: cover` at 2:1, so a very different ratio will crop in ways you
+  didn't intend; check it after building.
+- For a local file, its real width/height are read straight from the file
+  (PNG/JPEG headers) and included as `og:image:width/height`, so the
+  declared size always matches reality rather than asserting a fixed
+  1200×630 regardless of the actual file. An external `https://` image has
+  no local file to inspect, so those dimension tags are simply omitted —
+  every crawler sizes the image itself on fetch regardless, they just don't
+  get the hint.
+- A post with **no** `image` field still gets a real preview card rather
+  than a bare title: it falls back to the same `assets/community-social.png`
+  the root site uses. The blog index page uses this same fallback.
+
+### Inline images inside a post body
+
+Same `blog/images/` directory, same bare-filename convention — just written
+as standard Markdown instead of frontmatter:
+
+```markdown
+![OWASP LLM Top 10 coverage by category](praxen-1-2-owasp-coverage.png)
+```
+
+The generator resolves the filename the same way it resolves the header
+`image` field. A path you've already written yourself — absolute (`/...`),
+explicitly relative (`./...`/`../...`), or a full `https://` URL — is left
+untouched, so you can opt out of the convention if you genuinely need to.
+No aspect-ratio requirement here (it isn't cropped to a fixed box like the
+header image); it just renders at its natural size, capped to the content
+column's width.
+
+Naming tip: `blog/images/` is one flat directory shared by every post, not
+one folder per post — prefix a body image's filename with the post's slug
+(e.g. `praxen-1-2-owasp-coverage.png`, not `owasp-coverage.png`) so two
+posts never collide on a generic name.
 
 ## Links
 
@@ -106,11 +169,10 @@ thumb for links written inside a post body:
 - **Another blog post** — relative, one level up: `../other-post-slug/`.
 - **Observra / Praxen / any other project site or repo** — the full
   `https://` URL, same as everywhere else on this site.
-- **Images** — handled by the `image` frontmatter field (see above), not a
-  Markdown `![]()` in the body, unless you're intentionally inlining an
-  extra image mid-post (in which case the same relative-path rules apply:
-  `../images/foo.jpg` from a post body, since it's rendered one level
-  below `blog/`).
+- **Images** — a bare filename, in frontmatter or in a Markdown `![]()`; see
+  **Images** above. The generator resolves the path for you either way, so
+  this is the one category of link where you don't apply the depth rules
+  above yourself.
 
 ## SEO and structured data
 
@@ -148,16 +210,60 @@ This isn't read from `index.html` automatically; if that snippet ever changes
 (token rotation, dropping one of the two tools), update `analytics_scripts()`
 to match by hand.
 
-## RSS feed
+## Feeds — RSS and JSON Feed
 
-`blog/generate_blog.py` also writes `blog/feed.xml` (RSS 2.0) on every run —
-one `<item>` per post, newest first, with `dc:creator` carrying the author
-(RSS's own `<author>` element expects an email address, which posts don't
-have). It's linked three ways: a visible "RSS feed" link on the blog index,
-an `<link rel="alternate" type="application/rss+xml">` autodiscovery tag on
-every blog page *and* the root `index.html`, and listed in `llms.txt`. If you
-change post fields that should show up in the feed, edit `render_rss()`
-alongside the HTML renderers so they don't drift apart.
+`blog/generate_blog.py` writes two feeds on every run, from the same post
+data:
+
+- **`blog/feed.xml`** (RSS 2.0) — one `<item>` per post, newest first, with
+  `dc:creator` carrying the author (RSS's own `<author>` element expects an
+  email address, which posts don't have).
+- **`blog/feed.json`** ([JSON Feed 1.1](https://www.jsonfeed.org/version/1.1/))
+  — a plainer JSON-native alternative some modern readers/tools prefer. Uses
+  `content_text` rather than `content_html` on purpose: a post body's
+  images/links are resolved relative to `blog/<slug>/`, and re-resolving them
+  absolute for a feed read out of that context is exactly the kind of thing
+  that quietly breaks — plain text sidesteps it entirely.
+
+Both are linked from the blog index (visible "RSS feed"/"JSON Feed" links)
+and via `<link rel="alternate">` autodiscovery on every blog page. **Not**
+autodiscoverable from the root `index.html` — the blog is intentionally
+unlinked from the main page for now (see the git history/commit messages for
+why); it's still listed in `llms.txt` though, since that's a separate
+discovery surface. If you add a post field that should show up in a feed,
+update `render_rss()` **and** `render_json_feed()` together so they don't
+drift apart.
+
+## Share and related posts
+
+Every post page (not the index) gets two things at the bottom, generated
+automatically:
+
+- **Share row** — plain-href links to X and LinkedIn's share-intent URLs
+  (no embedded widgets, no tracking beyond what those platforms' own pages
+  do), plus a "Copy link" button. The button is the one place this blog uses
+  JavaScript: a single small first-party script (`COPY_LINK_JS` in
+  `generate_blog.py`) using `navigator.clipboard`, delegated on `document` so
+  it's one script tag total, harmless on pages with no button. Nothing
+  external is loaded to make it work.
+- **Related posts** — up to 3 other posts sharing at least one `tags` value,
+  ranked by most shared tags then newest first. A post with no tags gets (and
+  is eligible to appear in) no related-posts section — there's no fallback
+  "recent posts" list standing in for it.
+
+Reading time (`meta["reading_time"]`, shown as "N min read" next to the
+byline) is computed from the rendered post's word count at ~200wpm, rounded
+up, minimum 1 — not configurable, just recomputed every build.
+
+## Editing a published post
+
+Set the optional `updated` frontmatter field (`YYYY-MM-DD`) when you
+materially edit a post after it's already live — a typo fix doesn't need it,
+a real content change does. It shows as "Updated ..." next to the publish
+date, and feeds `dateModified` in the post's JSON-LD, `date_modified` in its
+JSON Feed entry, and `<lastmod>` in `blog/sitemap.xml` (which otherwise
+silently keeps reusing the original publish date forever, even after real
+edits). Omit it and nothing changes — this is purely additive.
 
 ## Building
 
@@ -167,24 +273,29 @@ python3 blog/generate_blog.py
 ```
 
 Regenerates `blog/index.html`, `blog/<slug>/index.html` for every file in
-`blog/posts/`, `blog/feed.xml`, and `blog/sitemap.xml`. **Commit the
-regenerated output together with the source Markdown in the same change** —
-like `stats/generate.py`, this repo doesn't build on deploy; GitHub Pages
-just serves whatever's committed.
+`blog/posts/`, `blog/feed.xml`, `blog/feed.json`, and `blog/sitemap.xml`.
+**Commit the regenerated output together with the source Markdown in the
+same change** — like `stats/generate.py`, this repo doesn't build on
+deploy; GitHub Pages just serves whatever's committed.
 
 ## Rules for agents specifically
 
 - Never hand-edit anything under `blog/<slug>/`, `blog/index.html`,
-  `blog/feed.xml`, or `blog/sitemap.xml` directly — they're all build output
-  and get silently overwritten by the next `python3 blog/generate_blog.py`
-  run. Edit the source in `blog/posts/*.md` (or `generate_blog.py`/this
-  README) and regenerate.
+  `blog/feed.xml`, `blog/feed.json`, or `blog/sitemap.xml` directly — they're
+  all build output and get silently overwritten by the next
+  `python3 blog/generate_blog.py` run. Edit the source in `blog/posts/*.md`
+  (or `generate_blog.py`/this README) and regenerate.
 - Always run the generator after adding/editing a post, a template change,
   or a theme tweak, and commit the regenerated output in the same change —
   don't leave `blog/index.html` stale relative to `blog/posts/`.
 - Don't invent a `title`, `author`, or `date` on someone's behalf — ask if
   it's unclear rather than guessing.
 - Match the existing tone: short, factual, dev-facing — see
-  `posts/2026-07-29-welcome-to-the-blog.md` for the reference voice. Avoid
+  `posts/2026-07-29-observra-1-1-release.md` for the reference voice. Avoid
   overwrought marketing copy unless a post is explicitly meant to be one
   (e.g. a press-release-style release announcement).
+- New posts default to draft (`published` omitted) unless told otherwise —
+  don't set `published: yes` on someone's behalf. Flipping it is a real
+  "make this public" action, same category as pushing to `main`: only do it
+  when explicitly asked to publish/launch, not as part of routine drafting
+  or editing.
