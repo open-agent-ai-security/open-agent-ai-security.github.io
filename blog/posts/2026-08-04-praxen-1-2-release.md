@@ -1,7 +1,7 @@
 ---
 title: Praxen 1.2: Now Aligned to the 2026 OWASP Top 10 for LLM Applications
 author: Steve Wilson
-date: 2026-07-29
+date: 2026-08-04
 summary: Praxen 1.2 aligns risk findings to the 2026 OWASP Top 10 for LLM Applications, with clearer scoring, scan-to-scan comparisons, and a new shareable Worker Remit.
 tags: release, praxen
 published: no
@@ -29,6 +29,8 @@ Alongside the updated OWASP support, this release includes several improvements 
 - Clearer, more consistent findings through an improved analysis and scoring process
 - Scan-to-scan comparisons showing what is new, resolved, or unchanged
 - A new human-readable, shareable Worker Remit for developers, security reviewers, auditors, and leadership
+- Reliability improvements so analysis holds up on large, complex codebases instead of stalling
+- Scan scoping — point Praxen at the specific component in a monorepo or multi-agent project
 
 Praxen's public 12-agent benchmark remains available for anyone who wants to inspect its performance on real software.
 
