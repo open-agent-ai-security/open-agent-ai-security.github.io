@@ -409,6 +409,15 @@ ul.toc a:hover{color:var(--violet-2)}
 .related-card:hover{border-color:var(--bd-hi);background:var(--panel2)}
 .related-card .date{color:var(--mut2);font-size:12px}
 .related-card h3{color:var(--tx);font-size:15.5px;margin:6px 0 0;font-weight:600}
+.hero-card{display:block;text-decoration:none;margin:8px 0 40px;transition:opacity .15s}
+.hero-card:hover{opacity:.92}
+.hero-thumb{width:100%;aspect-ratio:2/1;object-fit:cover;border-radius:18px;border:1px solid var(--bd);background:var(--panel);margin:0 0 22px;transition:border-color .15s}
+.hero-card:hover .hero-thumb{border-color:var(--bd-hi)}
+.hero-eyebrow{margin:0 0 10px}
+.hero-card h2{color:var(--tx);font-family:"Space Grotesk",Inter,sans-serif;font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.01em;margin:0 0 8px}
+.hero-card .date{color:var(--mut2);font-size:13px;margin:0 0 12px}
+.hero-card p{color:var(--mut);font-size:16px;line-height:1.6;margin:0;max-width:640px}
+.more-label{font-family:"Space Grotesk",Inter,sans-serif;font-size:15px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin:0 0 16px}
 .posts{display:flex;flex-direction:column;gap:14px}
 .post-card{display:flex;gap:18px;align-items:flex-start;background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:16px;text-decoration:none;transition:border-color .15s,background .15s}
 .post-card:hover{border-color:var(--bd-hi);background:var(--panel2)}
@@ -417,7 +426,7 @@ ul.toc a:hover{color:var(--violet-2)}
 .post-card .date{color:var(--mut2);font-size:12.5px}
 .post-card h2{color:var(--tx);font-size:19px;margin:6px 0 8px}
 .post-card p{color:var(--mut);font-size:14.5px;margin:0}
-@media(max-width:560px){.post-card{flex-direction:column}.post-thumb{width:100%;flex-basis:auto}}
+@media(max-width:560px){.post-card{flex-direction:column}.post-thumb{width:100%;flex-basis:auto}.hero-card h2{font-size:24px}}
 
 /* ---------- Footer (identical to root index.html) ---------- */
 footer{border-top:1px solid var(--bd);background:var(--bg2);padding:50px 0 38px}
@@ -638,8 +647,34 @@ def render_share(canonical, title):
 
 
 def render_index_body(posts, img_rel):
+    head = (
+        '<p class="eyebrow">Open Agent and AI Security Community</p>'
+        '<h1><span class="grad">Blog</span></h1>'
+        '<p class="meta">Announcements, release notes, and project updates from the community. '
+        '&middot; <a href="feed.xml">RSS feed</a> &middot; <a href="feed.json">JSON Feed</a></p>'
+    )
+    if not posts:
+        return head + '<p class="meta">No posts yet — check back soon.</p>'
+
+    # The newest post gets a bigger, more prominent treatment (larger image,
+    # larger title, visible summary) instead of sitting in the same compact
+    # card as everything else — same idea as scale.com/blog's featured post.
+    hero, rest = posts[0], posts[1:]
+    hero_summary = hero.get("summary") or strip_tags(hero["body_html"])[:200]
+    hero_img = image_url(hero["image"], img_rel)
+    hero_thumb_html = f'<img class="hero-thumb" src="{esc(hero_img)}" alt="">' if hero_img else ""
+    hero_html = (
+        f'<a class="hero-card" href="{esc(hero["slug"])}/">'
+        f'{hero_thumb_html}'
+        '<p class="eyebrow hero-eyebrow">Latest</p>'
+        f'<h2>{esc(hero["title"])}</h2>'
+        f'<div class="date">{human_date(hero["date"])}</div>'
+        f'<p>{esc(hero_summary)}</p>'
+        f'</a>'
+    )
+
     cards = []
-    for p in posts:
+    for p in rest:
         summary = p.get("summary") or strip_tags(p["body_html"])[:160]
         img = image_url(p["image"], img_rel)
         thumb_html = f'<img class="post-thumb" src="{esc(img)}" alt="">' if img else ""
@@ -652,15 +687,10 @@ def render_index_body(posts, img_rel):
             f'<p>{esc(summary)}</p>'
             f'</div></a>'
         )
-    posts_html = (f'<div class="posts">{"".join(cards)}</div>' if cards
-                  else '<p class="meta">No posts yet — check back soon.</p>')
-    return (
-        '<p class="eyebrow">Open Agent and AI Security Community</p>'
-        '<h1><span class="grad">Blog</span></h1>'
-        '<p class="meta">Announcements, release notes, and project updates from the community. '
-        '&middot; <a href="feed.xml">RSS feed</a> &middot; <a href="feed.json">JSON Feed</a></p>'
-        f'{posts_html}'
-    )
+    rest_html = (f'<h2 class="more-label">More from the blog</h2><div class="posts">{"".join(cards)}</div>'
+                 if cards else '')
+
+    return f'{head}{hero_html}{rest_html}'
 
 
 def xml_esc(s):

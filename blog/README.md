@@ -117,6 +117,13 @@ The optional `image` frontmatter field (see **Adding a post** above):
   page, a thumbnail on that post's index card, and the `og:image`/
   `twitter:image` shown when the link is shared — there's no separate field
   for any of those, same file, different crops.
+- The newest published post gets a bigger "hero" treatment at the top of the
+  index instead of the same compact card as everything else — larger image,
+  larger title, and its summary shown in full (not truncated like the
+  smaller cards below it). This is purely about publish-date order: it's
+  always `posts[0]` after sorting, so a backdated post never becomes the
+  hero just because it was added most recently — see **Draft workflow**
+  above for how `date` interacts with when a post actually appears.
 - **Aspect ratio ~2:1** (e.g. 1200×630 — the same shape the rest of the site
   uses for `og:image`). The header banner and index thumbnail are both
   `object-fit: cover` at 2:1, so a very different ratio will crop in ways you
