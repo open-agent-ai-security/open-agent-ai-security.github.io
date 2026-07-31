@@ -1083,6 +1083,200 @@
           "date": "2026-07-10"
         }
       ]
+    },
+    "promptfall": {
+      "repo": "open-agent-ai-security/promptfall",
+      "views": {
+        "count": 30,
+        "uniques": 3,
+        "days": [
+          {
+            "timestamp": "2026-07-17T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-18T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-19T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-20T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-21T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-22T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-23T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-24T00:00:00Z",
+            "count": 17,
+            "uniques": 2
+          },
+          {
+            "timestamp": "2026-07-25T00:00:00Z",
+            "count": 2,
+            "uniques": 2
+          },
+          {
+            "timestamp": "2026-07-26T00:00:00Z",
+            "count": 9,
+            "uniques": 1
+          },
+          {
+            "timestamp": "2026-07-27T00:00:00Z",
+            "count": 2,
+            "uniques": 1
+          },
+          {
+            "timestamp": "2026-07-28T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-29T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-30T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          }
+        ]
+      },
+      "clones": {
+        "count": 432,
+        "uniques": 160,
+        "days": [
+          {
+            "timestamp": "2026-07-17T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-18T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-19T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-20T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-21T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-22T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-23T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-07-24T00:00:00Z",
+            "count": 100,
+            "uniques": 50
+          },
+          {
+            "timestamp": "2026-07-25T00:00:00Z",
+            "count": 59,
+            "uniques": 27
+          },
+          {
+            "timestamp": "2026-07-26T00:00:00Z",
+            "count": 161,
+            "uniques": 62
+          },
+          {
+            "timestamp": "2026-07-27T00:00:00Z",
+            "count": 49,
+            "uniques": 22
+          },
+          {
+            "timestamp": "2026-07-28T00:00:00Z",
+            "count": 49,
+            "uniques": 25
+          },
+          {
+            "timestamp": "2026-07-29T00:00:00Z",
+            "count": 5,
+            "uniques": 5
+          },
+          {
+            "timestamp": "2026-07-30T00:00:00Z",
+            "count": 9,
+            "uniques": 4
+          }
+        ]
+      },
+      "referrers": [
+        {
+          "referrer": "github.com",
+          "count": 13,
+          "uniques": 2
+        }
+      ],
+      "paths": [
+        {
+          "path": "/open-agent-ai-security/promptfall",
+          "count": 21,
+          "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/promptfall/pulse",
+          "count": 2,
+          "uniques": 1
+        },
+        {
+          "path": "/open-agent-ai-security/promptfall/deployments/github-pages",
+          "count": 1,
+          "uniques": 1
+        },
+        {
+          "path": "/open-agent-ai-security/promptfall/graphs/traffic",
+          "count": 1,
+          "uniques": 1
+        }
+      ],
+      "releases": [
+        {
+          "tag": "v1.0.0-beta.1",
+          "date": "2026-07-26"
+        },
+        {
+          "tag": "v1.0.0-beta.2",
+          "date": "2026-07-27"
+        }
+      ]
     }
   }
 }

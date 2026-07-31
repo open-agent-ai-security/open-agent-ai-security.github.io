@@ -28,8 +28,9 @@ if os.path.exists(KEY_DATES):
 
 # (label, repo, color) — colors match PROJECTS in generate.py
 SERIES = [
-    ("Praxen",   "open-agent-ai-security/praxen",   "#ff7a2e"),
-    ("Observra", "open-agent-ai-security/observra", "#37c2f0"),
+    ("Praxen",     "open-agent-ai-security/praxen",     "#ff7a2e"),
+    ("Observra",   "open-agent-ai-security/observra",   "#37c2f0"),
+    ("Promptfall", "open-agent-ai-security/promptfall", "#ffcc33"),
 ]
 
 # Match the report's other line charts (generate.py cumulative_svg/trend_svg):
@@ -53,11 +54,12 @@ def stargazer_times(repo):
 
 
 # Align the x-axis with the report's "Daily views — site" chart, whose window
-# opens when GoatCounter tracking began (2026-06-17). The repos predate that, so
-# stars exist before the window — each line therefore OPENS at its cumulative
-# count as of the window start (not at zero) and climbs from there. This keeps the
-# true star totals (the legend numbers) while matching the report's time window.
-# If the Daily Views window ever moves, update this to match (see generate.py).
+# opens when GoatCounter tracking began (2026-06-17). The older repos predate
+# that, so stars exist before the window — each of THEIR lines OPENS at its
+# cumulative count as of the window start (not at zero) and climbs from there.
+# This keeps the true star totals (the legend numbers) while matching the
+# report's time window. If the Daily Views window ever moves, update this to
+# match (see generate.py).
 WINDOW_START = datetime.datetime(2026, 6, 17)
 
 series, all_dates = [], []
@@ -66,6 +68,13 @@ for label, repo, color in SERIES:
     cum = [(stamps[i], i + 1) for i in range(len(stamps))]     # (star time, running total)
     baseline = sum(1 for s in stamps if s <= WINDOW_START)     # already earned at t0
     pts = [(WINDOW_START, baseline)] + [(dt, v) for dt, v in cum if dt > WINDOW_START]
+    if baseline == 0:
+        # A newer repo with nothing earned yet as of the window start has no
+        # real value to anchor at — drop the synthetic zero point (and any
+        # other zero-value points) so the line only starts once the repo
+        # earns its actual first star, instead of drawing a flat line at zero
+        # across the whole window (or no line at all, for zero stars so far).
+        pts = [(dt, v) for dt, v in pts if v > 0]
     series.append((label, color, pts))
     all_dates += [s for s in stamps if s > WINDOW_START]
 
@@ -161,5 +170,8 @@ with open(OUT, "w", encoding="utf-8") as fh:
     fh.write("".join(svg))
 print(f"Wrote {OUT}  ({os.path.getsize(OUT)} bytes)")
 for label, color, pts in series:
-    print(f"  {label:<10} {pts[-1][1] if pts else 0} stars "
-          f"(opens at {pts[0][1]} on {WINDOW_START:%Y-%m-%d})")
+    if not pts:
+        print(f"  {label:<10} 0 stars (none yet)")
+    else:
+        first_dt, first_v = pts[0]
+        print(f"  {label:<10} {pts[-1][1]} stars (opens at {first_v} on {first_dt:%Y-%m-%d})")

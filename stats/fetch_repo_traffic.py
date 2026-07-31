@@ -29,8 +29,9 @@ OUT = os.path.join(SCRIPT_DIR, "repo-traffic.json")
 
 # project-key → GitHub repo. Keep in sync with REPO in generate.py.
 REPOS = {
-    "praxen":   "open-agent-ai-security/praxen",
-    "observra": "open-agent-ai-security/observra",
+    "praxen":     "open-agent-ai-security/praxen",
+    "observra":   "open-agent-ai-security/observra",
+    "promptfall": "open-agent-ai-security/promptfall",
 }
 
 

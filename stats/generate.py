@@ -104,8 +104,9 @@ OUT = os.path.join(SCRIPT_DIR, "index.html")
 # (key, label, path_prefix, color). Order = display order under Community.
 # Add a project by appending one row; its color themes its bar/section.
 PROJECTS = [
-    ("praxen",   "Praxen",   "/praxen",   "#ff7a2e"),
-    ("observra", "Observra", "/observra", "#37c2f0"),
+    ("praxen",     "Praxen",     "/praxen",     "#ff7a2e"),
+    ("observra",   "Observra",   "/observra",   "#37c2f0"),
+    ("promptfall", "Promptfall", "/promptfall", "#ffcc33"),
 ]
 COMMUNITY = ("community", "Community", "", "#5b8def")  # everything not under a project
 
@@ -113,8 +114,9 @@ COMMUNITY = ("community", "Community", "", "#5b8def")  # everything not under a 
 # at build time; the trend chart is committed as community-stars.svg). A project
 # with no entry here simply doesn't appear in the stars section.
 REPO = {
-    "praxen":   "open-agent-ai-security/praxen",
-    "observra": "open-agent-ai-security/observra",
+    "praxen":     "open-agent-ai-security/praxen",
+    "observra":   "open-agent-ai-security/observra",
+    "promptfall": "open-agent-ai-security/promptfall",
 }
 STARS_SVG = os.path.join(SCRIPT_DIR, "community-stars.svg")  # combined star-history chart
 
