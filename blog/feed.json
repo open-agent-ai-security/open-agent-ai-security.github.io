@@ -6,6 +6,24 @@
   "description": "Announcements, release notes, and project updates from the Open Agent and AI Security Community.",
   "items": [
     {
+      "id": "https://open-agent-ai-security.github.io/blog/steve-common-sense-ai-security/",
+      "url": "https://open-agent-ai-security.github.io/blog/steve-common-sense-ai-security/",
+      "title": "Community Spotlight: It's Time for Common-Sense AI Security",
+      "summary": "Community member Steve Wilson makes the case that AI security doesn't need a new rulebook — it needs the same sandboxing, credential hygiene, and least-privilege discipline the industry already knows, actually applied to agents.",
+      "content_text": "Our community member Steve Wilson has a new piece out on why the scariest AI security headlines, agents escaping sandboxes, chaining a zero-day into privilege escalation, walking off with credentials, and landing inside another company's production systems, aren't really evidence that AI needs exotic new defenses. They're evidence that basic security hygiene is getting skipped. \n His argument: the fixes already exist. Sandboxing, least privilege, credential hygiene, and monitoring aren't AI-specific inventions, they're common-sense practices the industry has known for years. The gap isn't knowledge, it's application to a new class of systems that can act on their own. \n Check it out:  It's Time for Common-Sense AI Security",
+      "date_published": "2026-08-01T00:00:00Z",
+      "authors": [
+        {
+          "name": "Open Agent and AI Security Community"
+        }
+      ],
+      "tags": [
+        "community",
+        "security",
+        "ai"
+      ]
+    },
+    {
       "id": "https://open-agent-ai-security.github.io/blog/vinaya-finbot-sailors/",
       "url": "https://open-agent-ai-security.github.io/blog/vinaya-finbot-sailors/",
       "title": "Community Spotlight: Connecting SAILORS to Praxen",
