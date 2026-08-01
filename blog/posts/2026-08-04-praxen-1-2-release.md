@@ -52,6 +52,24 @@ Praxen is available under the Apache 2.0 license as part of the Open Agent AI Se
 
 ## Get Praxen 1.2
 
-Praxen 1.2 is available now for Claude Code and OpenAI Codex — get it on [GitHub](https://github.com/open-agent-ai-security/praxen).
+Praxen 1.2 installs from the Open Agent AI Security community marketplace — one command to add it, one to install.
+
+**Claude Code**
+
+```bash
+claude plugin marketplace add open-agent-ai-security/plugins
+claude plugin install praxen@open-agent-ai-security
+```
+
+**OpenAI Codex**
+
+```bash
+codex plugin marketplace add open-agent-ai-security/plugins
+codex plugin add praxen@open-agent-ai-security
+```
+
+Then point it at an agent and ask for a Praxen analysis. Full instructions, including the no-marketplace path for any other coding agent, are in the [installation guide](https://open-agent-ai-security.github.io/praxen/guide/installation.html); the source lives on [GitHub](https://github.com/open-agent-ai-security/praxen).
+
+The same marketplace serves every plugin from this community, so anything we publish next is one `install` away.
 
 Try the release, run it against your agents, and let us know what you find.
