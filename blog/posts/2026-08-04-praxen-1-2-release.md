@@ -9,7 +9,7 @@ image: praxen-1.2-release.png
 image_alt: Praxen 1.2 release — 2026 OWASP Top 10 for LLM.
 ---
 
-Today we're releasing **Praxen 1.2**, aligned to the newly published [2026 OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/).
+Today we're releasing **[Praxen](https://open-agent-ai-security.github.io/praxen/) 1.2**, aligned to the newly published [2026 OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/).
 
 The [OWASP GenAI Security Project](https://genai.owasp.org/) — the open, vendor-neutral community that maintains the industry's most widely-adopted LLM risk model — is shipping the 2026 revision of the list, and Praxen 1.2 ships aligned to it from day one.
 
@@ -68,7 +68,7 @@ codex plugin marketplace add open-agent-ai-security/plugins
 codex plugin add praxen@open-agent-ai-security
 ```
 
-Then point it at an agent and ask for a Praxen analysis. Full instructions, including the no-marketplace path for any other coding agent, are in the [installation guide](https://open-agent-ai-security.github.io/praxen/guide/installation.html); the source lives on [GitHub](https://github.com/open-agent-ai-security/praxen).
+Then point it at an agent and ask for a Praxen analysis. Full instructions, including the no-marketplace path for any other coding agent, are in the [installation guide](https://open-agent-ai-security.github.io/praxen/guide/installation.html); the [project home page](https://open-agent-ai-security.github.io/praxen/) has the benchmark results and worked example reports, and the source lives on [GitHub](https://github.com/open-agent-ai-security/praxen).
 
 The same marketplace serves every plugin from this community, so anything we publish next is one `install` away.
 
