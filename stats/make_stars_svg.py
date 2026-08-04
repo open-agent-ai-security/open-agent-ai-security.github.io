@@ -11,10 +11,16 @@ chart. No baked-in title/background — the section <h2> supplies the heading.
 Replaces the star-history.com dependency (rate-limited). Smooth (monotone-clamped
 Catmull-Rom) curves rather than a step staircase, so the trend reads at a glance.
 
-Auth: uses the `gh` CLI (public data, but gh avoids anonymous rate limits).
+Data source: each product repo exports its own stargazer timestamps daily to
+.github/stargazers.json (see that repo's export-stargazers.yml workflow) because
+GitHub restricted the stargazers-listing API to repo admins/collaborators on
+2026-06-30 — the dashboard's cross-repo PAT can no longer call it. We read those
+committed files over raw.githubusercontent.com (public, no auth). Fallback: the
+restricted API via the `gh` CLI, which still works for a locally-authed admin
+(useful before a repo has the export workflow, or for a fresher-than-daily pull).
 Run:  python3 stats/make_stars_svg.py
 """
-import json, subprocess, datetime, os, sys
+import json, subprocess, datetime, os, sys, urllib.request
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(SCRIPT_DIR, "community-stars.svg")
@@ -41,7 +47,22 @@ PW, PH = W - ML - MR, H - MT - MB
 
 
 def stargazer_times(repo):
-    """All starred_at timestamps for a repo (paginated), oldest first."""
+    """All starred_at timestamps for a repo, oldest first.
+
+    Primary: the repo's committed .github/stargazers.json export (public raw
+    fetch — works in CI without any token). Fallback: the admins-only
+    stargazers API via `gh`, for repos without the export yet."""
+    url = f"https://raw.githubusercontent.com/{repo}/main/.github/stargazers.json"
+    try:
+        with urllib.request.urlopen(url, timeout=15) as r:
+            exported = json.load(r)
+        stamps = [datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ")
+                  for s in exported["starred_at"]]
+        print(f"  {repo}: {len(stamps)} stars from committed export "
+              f"(updated {exported.get('updated_utc', '?')})")
+        return sorted(stamps)
+    except Exception as e:
+        print(f"  {repo}: no usable export ({e}); falling back to the stargazers API")
     out = subprocess.run(
         ["gh", "api", "--paginate", "-H", "Accept: application/vnd.github.star+json",
          f"/repos/{repo}/stargazers?per_page=100"],
