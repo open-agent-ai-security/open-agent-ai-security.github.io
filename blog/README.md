@@ -301,7 +301,7 @@ deploy; GitHub Pages just serves whatever's committed.
 - Don't invent a `title`, `author`, or `date` on someone's behalf — ask if
   it's unclear rather than guessing.
 - Match the existing tone: short, factual, dev-facing — see
-  `posts/2026-07-29-observra-1-1-release.md` for the reference voice. Avoid
+  `posts/2026-08-06-observra-1-1-release.md` for the reference voice. Avoid
   overwrought marketing copy unless a post is explicitly meant to be one
   (e.g. a press-release-style release announcement).
 - New posts default to draft (`published` omitted) unless told otherwise —
