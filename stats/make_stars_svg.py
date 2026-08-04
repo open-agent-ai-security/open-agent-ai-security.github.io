@@ -52,17 +52,21 @@ def stargazer_times(repo):
     Primary: the repo's committed .github/stargazers.json export (public raw
     fetch — works in CI without any token). Fallback: the admins-only
     stargazers API via `gh`, for repos without the export yet."""
-    url = f"https://raw.githubusercontent.com/{repo}/main/.github/stargazers.json"
-    try:
-        with urllib.request.urlopen(url, timeout=15) as r:
-            exported = json.load(r)
-        stamps = [datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ")
-                  for s in exported["starred_at"]]
-        print(f"  {repo}: {len(stamps)} stars from committed export "
-              f"(updated {exported.get('updated_utc', '?')})")
-        return sorted(stamps)
-    except Exception as e:
-        print(f"  {repo}: no usable export ({e}); falling back to the stargazers API")
+    # Repos with a protected main (praxen) publish the export on a dedicated
+    # force-pushed branch instead — try main first, then that branch.
+    for branch in ("main", "stargazer-export"):
+        url = f"https://raw.githubusercontent.com/{repo}/{branch}/.github/stargazers.json"
+        try:
+            with urllib.request.urlopen(url, timeout=15) as r:
+                exported = json.load(r)
+            stamps = [datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ")
+                      for s in exported["starred_at"]]
+            print(f"  {repo}: {len(stamps)} stars from committed export on {branch} "
+                  f"(updated {exported.get('updated_utc', '?')})")
+            return sorted(stamps)
+        except Exception:
+            continue
+    print(f"  {repo}: no usable export on any branch; falling back to the stargazers API")
     out = subprocess.run(
         ["gh", "api", "--paginate", "-H", "Accept: application/vnd.github.star+json",
          f"/repos/{repo}/stargazers?per_page=100"],
