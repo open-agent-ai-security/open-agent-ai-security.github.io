@@ -69,10 +69,14 @@ jobs:
       - name: Pull PyPI downloads (no auth)
         run: python3 stats/fetch_pypi_downloads.py || echo "::warning::PyPI pull failed — keeping prior snapshot."
 
-      - name: Refresh star chart (cross-repo stargazers; uses TRAFFIC_PAT)
-        env:
-          GH_TOKEN: ${{ secrets.TRAFFIC_PAT }}
-        run: python3 stats/make_stars_svg.py || echo "::warning::star-chart refresh failed (needs TRAFFIC_PAT — default GITHUB_TOKEN can't read cross-repo stargazers) — keeping prior SVG."
+      # Star timestamps come from each product repo's committed
+      # .github/stargazers.json (exported daily by that repo's own
+      # export-stargazers.yml — a repo's own Actions token still passes
+      # GitHub's 2026-06-30 admins/collaborators-only stargazers restriction,
+      # which broke the old cross-repo TRAFFIC_PAT pull). Public raw fetch,
+      # no auth needed here.
+      - name: Refresh star chart (from per-repo stargazer exports)
+        run: python3 stats/make_stars_svg.py || echo "::warning::star-chart refresh failed — keeping prior SVG."
 
       # ── Cross-repo traffic: needs TRAFFIC_PAT; fails SOFT ────────────────────
       # A missing or unapproved token warns and the job continues, so the no-auth
