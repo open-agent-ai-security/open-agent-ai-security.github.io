@@ -4,7 +4,7 @@ author: Steve Wilson
 date: 2026-08-05
 summary: Our newest open-source project is a browser platformer that teaches the 2026 OWASP Top 10 for LLM Applications, one stomped vulnerability at a time. No install, no account, no homework. Just play.
 tags: release, promptfall, owasp
-published: no
+published: yes
 image: promptfall-launch.jpg
 image_alt: "Promptfall — learn the OWASP Top 10 for LLMs. Ten vulnerabilities. One hero."
 ---

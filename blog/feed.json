@@ -6,6 +6,24 @@
   "description": "Announcements, release notes, and project updates from the Open Agent and AI Security Community.",
   "items": [
     {
+      "id": "https://open-agent-ai-security.github.io/blog/promptfall-launch/",
+      "url": "https://open-agent-ai-security.github.io/blog/promptfall-launch/",
+      "title": "Promptfall: Ten Vulnerabilities. One Hero. Zero Slide Decks.",
+      "summary": "Our newest open-source project is a browser platformer that teaches the 2026 OWASP Top 10 for LLM Applications, one stomped vulnerability at a time. No install, no account, no homework. Just play.",
+      "content_text": "We've shipped a telemetry SDK. We've shipped a security scanner. Today we're shipping... a video game? \n Yes. Meet   Promptfall  , a modern browser platformer that turns the  2026 OWASP Top 10 for LLM Applications  into a playable campaign. It runs right in your browser, on desktop or phone. There's no install, no account, and no backend. Click the link and you're playing. \n The premise \n Prompt Injection, Data Poisoning, Excessive Agency... the OWASP Top 10 for LLMs is essential reading for anyone building with AI. It is also, let's be honest, a document most people skim once and file away. \n So we gave each risk a body, a bad attitude, and a boss level. \n You play as  Praxi  (yes, the Praxen fox, moonlighting from their day job of scanning agents) running a gauntlet of eleven high-tech environments. Each of the first ten levels is one OWASP risk, brought to life as an animated threat you have to stomp. Defeat every threat in a level to drop the force field and reach the exit. \n Sneaky, sneaky education \n Here's the trick: every level hides six educational encounters in the action. A definition, why the risk matters, two real-world examples, and two defenses, all caught mid-jump without ever stopping the game. Each level ends with a quick quiz to lock it in, drawn from a bank of  33 questions . By the time you've cleared LLM05, you actually know what Data and Model Poisoning is, how it happens, and what to do about it. You just also happened to be dodging things while learning it. \n   \n Beat all ten levels and you unlock  The Gauntlet : every threat returns for one final wrap-up run, each carrying a single key insight worth remembering. All told, that's  70 in-game learning opportunities  across the campaign. (We counted. It's in the source code. You can check.) Survive the Gauntlet and you've effectively speed-read the whole Top 10, with better retention than any compliance training we've ever sat through. \n The soundtrack slaps, and it's studying \n Promptfall ships with  12 original songs , one per level plus a title theme and a Gauntlet reprise, and they're not background filler: the lyrics reinforce what each level teaches. Prompt Injection gets \"Borrowed Hands.\" Excessive Agency gets \"Too Much Rope.\" Misinformation gets \"Beautifully Wrong,\" and Improper Output Handling closes on \"Passed Without Question.\" If you catch yourself humming a mitigation strategy three days later, that's the design working. \n The details \n \n  The whole game is open source  (Apache 2.0), like everything we build. Not just \"the engine\": the campaign data, the lesson content, the quiz bank, the art, and the music all live in the  GitHub repo . Peek at how it works, borrow it for a security-training session, or contribute a level idea. \n  Runs anywhere.  The whole game is static files served from GitHub Pages. Desktop gets keyboard controls, mobile gets touch controls, and pausing freezes everything so you can actually read the hints. \n  Privacy-respecting.  Cookieless pageview counters only. We don't record your controls, your progress, or how many times LLM06 got you. (It got us plenty.) \n \n Why a game? \n Because security education mostly fails at the \"anyone voluntarily does it\" step. The OWASP Top 10 for LLMs matters to developers, security teams, students, and honestly anyone deploying AI, and we wanted a way in that doesn't feel like homework. If one person ships a safer agent because a pixel-art vulnerability once chased them across a platform, that's a win. \n  Play it now:  open-agent-ai-security.github.io/promptfall   \n Tell us your Gauntlet time. We won't tell you ours.",
+      "date_published": "2026-08-05T00:00:00Z",
+      "authors": [
+        {
+          "name": "Steve Wilson"
+        }
+      ],
+      "tags": [
+        "release",
+        "promptfall",
+        "owasp"
+      ]
+    },
+    {
       "id": "https://open-agent-ai-security.github.io/blog/praxen-1-2-release/",
       "url": "https://open-agent-ai-security.github.io/blog/praxen-1-2-release/",
       "title": "Praxen 1.2: Now Aligned to the 2026 OWASP Top 10 for LLM Applications",
