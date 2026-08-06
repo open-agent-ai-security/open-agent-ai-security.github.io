@@ -4,7 +4,7 @@ author: Steve Wilson
 date: 2026-08-06
 summary: Observra 1.1 opens its telemetry pipeline to any custom agent framework — no adapter required — plus local storage, a live terminal dashboard, and support for 100+ LLM providers.
 tags: release, observra
-published: no
+published: yes
 image: observra-1.1-release.png
 image_alt: Observra 1.1 release — Bring observability to any AI agent.
 ---
