@@ -29,6 +29,8 @@ Developers can now instrument custom agent stacks while retaining Observra's bui
 
 We have also improved session tracking for existing framework integrations. Multi-step agent runs now maintain more reliable event histories and more accurate cost attribution across the full session.
 
+Teams are already putting this to work, instrumenting agents such as OpenClaw and Hermes with no adapter needed, just `emit()` or a webhook call.
+
 > "Agent frameworks are evolving too quickly for observability to depend on a growing collection of one-off integrations," said **Neville Mascarenhas, lead maintainer of Observra**. "With Observra 1.1, developers can instrument the agent they actually built, using the framework—or no framework—they chose, and still get the same consistent telemetry and security controls."
 
 ## Store everything locally
