@@ -1,11 +1,11 @@
 {
-  "snapshot_utc": "2026-08-07",
+  "snapshot_utc": "2026-08-08",
   "window_days": 14,
   "repos": {
     "praxen": {
       "repo": "open-agent-ai-security/praxen",
       "views": {
-        "count": 261,
+        "count": 253,
         "uniques": 95,
         "days": [
           {
@@ -237,12 +237,17 @@
             "timestamp": "2026-08-06T00:00:00Z",
             "count": 22,
             "uniques": 12
+          },
+          {
+            "timestamp": "2026-08-07T00:00:00Z",
+            "count": 6,
+            "uniques": 4
           }
         ]
       },
       "clones": {
-        "count": 1025,
-        "uniques": 205,
+        "count": 1055,
+        "uniques": 209,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -473,29 +478,29 @@
             "timestamp": "2026-08-06T00:00:00Z",
             "count": 7,
             "uniques": 6
+          },
+          {
+            "timestamp": "2026-08-07T00:00:00Z",
+            "count": 32,
+            "uniques": 9
           }
         ]
       },
       "referrers": [
         {
           "referrer": "open-agent-ai-security.github.io",
-          "count": 106,
-          "uniques": 27
+          "count": 105,
+          "uniques": 26
         },
         {
           "referrer": "Google",
-          "count": 41,
+          "count": 36,
           "uniques": 24
         },
         {
           "referrer": "github.com",
-          "count": 27,
-          "uniques": 13
-        },
-        {
-          "referrer": "exabeam.com",
-          "count": 4,
-          "uniques": 4
+          "count": 29,
+          "uniques": 15
         },
         {
           "referrer": "helpnetsecurity.com",
@@ -503,13 +508,18 @@
           "uniques": 4
         },
         {
-          "referrer": "Bing",
+          "referrer": "exabeam.com",
           "count": 3,
           "uniques": 3
         },
         {
           "referrer": "DuckDuckGo",
           "count": 3,
+          "uniques": 2
+        },
+        {
+          "referrer": "Bing",
+          "count": 2,
           "uniques": 2
         },
         {
@@ -526,7 +536,7 @@
       "paths": [
         {
           "path": "/open-agent-ai-security/praxen",
-          "count": 126,
+          "count": 123,
           "uniques": 83
         },
         {
@@ -536,13 +546,13 @@
         },
         {
           "path": "/open-agent-ai-security/praxen/tree/main",
-          "count": 6,
-          "uniques": 5
+          "count": 5,
+          "uniques": 4
         },
         {
           "path": "/open-agent-ai-security/praxen/tree/main/examples",
-          "count": 6,
-          "uniques": 5
+          "count": 5,
+          "uniques": 4
         },
         {
           "path": "/open-agent-ai-security/praxen/issues",
@@ -551,11 +561,6 @@
         },
         {
           "path": "/open-agent-ai-security/praxen/blob/main/docs/installation.md",
-          "count": 4,
-          "uniques": 3
-        },
-        {
-          "path": "/open-agent-ai-security/praxen/blob/main/docs/quickstart.md",
           "count": 4,
           "uniques": 3
         },
@@ -573,6 +578,11 @@
           "path": "/open-agent-ai-security/praxen/blob/main/README.md",
           "count": 3,
           "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/blob/main/docs/quickstart.md",
+          "count": 3,
+          "uniques": 2
         }
       ],
       "releases": [
@@ -645,8 +655,8 @@
     "observra": {
       "repo": "open-agent-ai-security/observra",
       "views": {
-        "count": 259,
-        "uniques": 62,
+        "count": 264,
+        "uniques": 66,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -877,12 +887,17 @@
             "timestamp": "2026-08-06T00:00:00Z",
             "count": 25,
             "uniques": 17
+          },
+          {
+            "timestamp": "2026-08-07T00:00:00Z",
+            "count": 9,
+            "uniques": 6
           }
         ]
       },
       "clones": {
-        "count": 595,
-        "uniques": 124,
+        "count": 603,
+        "uniques": 130,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -1113,13 +1128,18 @@
             "timestamp": "2026-08-06T00:00:00Z",
             "count": 72,
             "uniques": 26
+          },
+          {
+            "timestamp": "2026-08-07T00:00:00Z",
+            "count": 11,
+            "uniques": 10
           }
         ]
       },
       "referrers": [
         {
           "referrer": "github.com",
-          "count": 35,
+          "count": 32,
           "uniques": 14
         },
         {
@@ -1157,7 +1177,7 @@
         {
           "path": "/open-agent-ai-security/observra",
           "count": 77,
-          "uniques": 45
+          "uniques": 48
         },
         {
           "path": "/open-agent-ai-security/observra/pulls",
@@ -1171,7 +1191,7 @@
         },
         {
           "path": "/open-agent-ai-security/observra/issues/108",
-          "count": 12,
+          "count": 15,
           "uniques": 8
         },
         {
@@ -1180,12 +1200,12 @@
           "uniques": 3
         },
         {
-          "path": "/open-agent-ai-security/observra/issues/102",
-          "count": 6,
+          "path": "/open-agent-ai-security/observra/tree/main",
+          "count": 7,
           "uniques": 2
         },
         {
-          "path": "/open-agent-ai-security/observra/tree/main",
+          "path": "/open-agent-ai-security/observra/issues/102",
           "count": 6,
           "uniques": 2
         },
@@ -1235,8 +1255,8 @@
     "promptfall": {
       "repo": "open-agent-ai-security/promptfall",
       "views": {
-        "count": 92,
-        "uniques": 19,
+        "count": 87,
+        "uniques": 30,
         "days": [
           {
             "timestamp": "2026-07-17T00:00:00Z",
@@ -1342,12 +1362,17 @@
             "timestamp": "2026-08-06T00:00:00Z",
             "count": 28,
             "uniques": 9
+          },
+          {
+            "timestamp": "2026-08-07T00:00:00Z",
+            "count": 12,
+            "uniques": 12
           }
         ]
       },
       "clones": {
-        "count": 467,
-        "uniques": 177,
+        "count": 370,
+        "uniques": 142,
         "days": [
           {
             "timestamp": "2026-07-17T00:00:00Z",
@@ -1453,13 +1478,23 @@
             "timestamp": "2026-08-06T00:00:00Z",
             "count": 2,
             "uniques": 2
+          },
+          {
+            "timestamp": "2026-08-07T00:00:00Z",
+            "count": 3,
+            "uniques": 2
           }
         ]
       },
       "referrers": [
         {
+          "referrer": "alvinashcraft.com",
+          "count": 7,
+          "uniques": 7
+        },
+        {
           "referrer": "github.com",
-          "count": 18,
+          "count": 7,
           "uniques": 5
         },
         {
@@ -1491,8 +1526,8 @@
       "paths": [
         {
           "path": "/open-agent-ai-security/promptfall",
-          "count": 59,
-          "uniques": 18
+          "count": 60,
+          "uniques": 29
         },
         {
           "path": "/open-agent-ai-security/promptfall/pulse",
@@ -1535,7 +1570,7 @@
           "uniques": 1
         },
         {
-          "path": "/open-agent-ai-security/promptfall/deployments/github-pages",
+          "path": "/open-agent-ai-security/promptfall/stargazers",
           "count": 1,
           "uniques": 1
         }
