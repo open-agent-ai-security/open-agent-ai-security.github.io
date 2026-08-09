@@ -6,7 +6,7 @@ summary: Sherri Douville (CEO, Medigram; Chair, TTIC) argues the CISO's job has 
 tags: community, praxen, observra
 published: no
 image: ciso-defensive-captain-medigram.png
-image_alt: "Community Spotlight: The CISO is the defensive captain now, not the defensive coach — Medigram's Darwin posts the highest Praxen behavioral score recorded to date."
+image_alt: "Praxen + Observra — Community Spotlight: The CISO is the defensive captain now, not the defensive coach. Medigram's Darwin posts the highest Praxen behavioral score recorded to date."
 ---
 
 Sherri Douville, CEO of Medigram and Chair of the Trustworthy Technology & Innovation Consortium (TTIC), just published a piece making a sharp argument: the CISO isn't a coach calling plays from the sideline anymore, they're a captain who has to operate on the field. Her line for it: "Configuration has stopped predicting behavior." Documenting what a system is supposed to do, the SOC 2 and HIPAA technical-safeguards way, answers a different question than whether it actually behaves correctly under everything production throws at it.
