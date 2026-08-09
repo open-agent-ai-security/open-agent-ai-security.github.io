@@ -1,10 +1,10 @@
 ---
 title: "Ecosystem Spotlight: CogniSafe Scores AI Safety from Observra Telemetry"
 author: Open Agent and AI Security Community
-date: 2026-08-07
+date: 2026-08-09
 summary: UK-based CogniSafe now ingests Observra telemetry directly into its AI trust and safety platform, scoring agent behavior against the OWASP LLM Top 10 from the events teams already collect.
 tags: community, observra, ecosystem
-published: no
+published: yes
 image: cognisafe-observra.png
 image_alt: "CogniSafe × Observra: Observra telemetry, safety-scored. CogniSafe scores agent behaviour against the OWASP LLM Top 10 from the telemetry you already collect."
 ---
