@@ -6,7 +6,7 @@ summary: UK-based CogniSafe, an AI trust and safety platform, has adopted Observ
 tags: community, observra, ecosystem
 published: yes
 image: cognisafe-observra.png
-image_alt: "CogniSafe × Observra: Observra telemetry, safety-scored."
+image_alt: "CogniSafe × Observra: Built on Observra telemetry."
 ---
 
 One of the best things about building open source is watching other people build on it. Today's example: [CogniSafe](https://cognisafe.uk/), a UK-based AI trust, safety and assurance platform, has published an official [Observra integration](https://docs.cognisafe.uk/integrations/telemetry-ingest) — and specifically chose Observra as the way to get telemetry out of running agents.
