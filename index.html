@@ -35,9 +35,9 @@
   <meta name="twitter:description" content="Securing agentic and AI applications — together.">
   <meta name="twitter:image" content="https://open-agent-ai-security.github.io/assets/community-social.png">
 
-  <!-- Structured data: the community as an Organization, plus its two
-       published projects as SoftwareSourceCode entities so search/AI answer
-       engines can attribute "who publishes Observra/Praxen" correctly (GEO). -->
+  <!-- Structured data: the community as an Organization, plus its published
+       projects as SoftwareSourceCode entities so search/AI answer engines can
+       attribute "who publishes Observra/Praxen/Promptfall" correctly (GEO). -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -69,6 +69,14 @@
         "description": "Agent behavior verifier. Compares an AI agent's declared policy against the available evidence, and reports where observed behavior diverges from declared intent.",
         "url": "https://open-agent-ai-security.github.io/praxen/",
         "codeRepository": "https://github.com/open-agent-ai-security/praxen",
+        "author": { "@id": "https://open-agent-ai-security.github.io/#org" }
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "name": "Promptfall",
+        "description": "A modern browser platformer that teaches the OWASP Top 10 for LLM Applications — ten vulnerabilities as playable levels, no install or account required.",
+        "url": "https://open-agent-ai-security.github.io/promptfall/",
+        "codeRepository": "https://github.com/open-agent-ai-security/promptfall",
         "author": { "@id": "https://open-agent-ai-security.github.io/#org" }
       }
     ]
@@ -265,6 +273,7 @@
     a.pcard:hover .go .arw { transform: translateX(4px); }
     .pcard .go .arw { transition: transform .2s ease; }
     .pcard .go.muted { color: var(--muted-2); }
+    .projects-more { text-align: center; margin: 30px 0 0; color: var(--muted); font-size: 15.5px; }
 
     /* ---------- Get Involved (Join) ---------- */
     .engage { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; max-width: 900px; margin: 0 auto; }
@@ -409,6 +418,7 @@
             <span class="go">Visit Observra <span class="arw">→</span></span>
           </a>
         </div>
+        <p class="projects-more">Beyond the flagships: <a href="https://open-agent-ai-security.github.io/promptfall/">Promptfall</a> in production, and new work incubating on <a href="https://github.com/open-agent-ai-security" target="_blank" rel="noopener">GitHub</a> — see <a href="project-levels/">how we classify project maturity →</a></p>
       </div>
     </section>
 
@@ -445,7 +455,7 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
             </div>
             <h3>Code &amp; issues</h3>
-            <p>Contribute pull requests and file issues on our two open-source projects, right on GitHub.</p>
+            <p>Contribute pull requests and file issues on our open-source projects — from <a href="project-levels/">flagship to incubator</a> — right on GitHub.</p>
             <div class="engage-actions">
               <a class="btn btn-primary" href="https://github.com/open-agent-ai-security/praxen" target="_blank" rel="noopener">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
@@ -519,6 +529,7 @@
           <a href="https://open-agent-ai-security.github.io/praxen/">Praxen</a>
           <a href="https://open-agent-ai-security.github.io/observra/">Observra</a>
           <a href="https://open-agent-ai-security.github.io/promptfall/">Promptfall</a>
+          <a href="project-levels/">Project levels</a>
         </div>
         <div class="foot-col">
           <h4>Community</h4>

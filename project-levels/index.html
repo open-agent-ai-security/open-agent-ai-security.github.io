@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<!--
+  Open Agent and AI Security Community — project levels page.
+  Defines the community's OWASP-style project maturity model (Flagship /
+  Production / Incubator) and records the current classification of every
+  project. Each project repo's README carries a level pill linking here.
+  Self-contained: one file, inline CSS, shares assets/ with the root page.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Levels — Open Agent and AI Security Community</title>
+  <meta name="description" content="How the Open Agent and AI Security Community classifies project maturity: Flagship, Production, and Incubator levels, modeled on the OWASP project lifecycle, and where each project stands today.">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="256x256" href="../assets/favicon-256.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+  <link rel="canonical" href="https://open-agent-ai-security.github.io/project-levels/">
+
+  <!-- Social / link-preview cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Project Levels — Open Agent and AI Security Community">
+  <meta property="og:description" content="Flagship, Production, and Incubator: how the community classifies project maturity, and where each project stands today.">
+  <meta property="og:url" content="https://open-agent-ai-security.github.io/project-levels/">
+  <meta property="og:image" content="https://open-agent-ai-security.github.io/assets/community-social.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Project Levels — Open Agent and AI Security Community">
+  <meta name="twitter:description" content="Flagship, Production, and Incubator: how the community classifies project maturity.">
+  <meta name="twitter:image" content="https://open-agent-ai-security.github.io/assets/community-social.png">
+
+  <!-- Preconnect warms the Google Fonts fetch used by the inline @import below. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <style>
+    /* Fonts + design tokens copied from the root landing page (index.html) so
+       the two pages stay visually identical. */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+    :root {
+      --bg:          #0b0a18;
+      --bg-2:        #0e0d20;
+      --panel:       rgba(255, 255, 255, 0.035);
+      --panel-2:     rgba(255, 255, 255, 0.05);
+      --border:      rgba(255, 255, 255, 0.09);
+      --border-hi:   rgba(131, 102, 245, 0.45);
+      --text:        #e9ecf8;
+      --muted:       #a0a6c0;
+      --muted-2:     #757b9a;
+
+      --violet-deep: #8300d8;
+      --violet:      #8366f5;
+      --violet-2:    #837ffc;
+      --violet-lite: #8389ff;
+
+      --green:       #67d98b;
+      /* Level accents (match the README pill colors) */
+      --lvl-flagship:   #8366f5;
+      --lvl-production: #3fb950;
+      --lvl-incubator:  #d29922;
+
+      --maxw:        1140px;
+      --radius:      16px;
+      --mono:        ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 86px; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      font-size: 17px;
+      overflow-x: hidden;
+    }
+    h1, h2, h3 { font-family: "Space Grotesk", "Inter", sans-serif; letter-spacing: -0.02em; }
+    a { color: var(--violet-2); text-decoration: none; }
+    a:hover { color: var(--violet-lite); }
+    img { max-width: 100%; display: block; }
+
+    .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+    .grad {
+      background: linear-gradient(100deg, var(--violet-lite), var(--violet) 55%, var(--violet-deep));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .eyebrow {
+      text-transform: uppercase; letter-spacing: 0.18em; font-size: 12.5px;
+      font-weight: 600; color: var(--violet-2); margin: 0 0 14px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+      font-weight: 600; font-size: 15px; border-radius: 11px;
+      padding: 11px 20px; border: 1px solid transparent; transition: all .18s ease;
+      font-family: inherit; text-decoration: none;
+    }
+    .btn-ghost { color: var(--text); border-color: var(--border); background: var(--panel); }
+    .btn-ghost:hover { border-color: var(--border-hi); background: var(--panel-2); color: var(--text); }
+
+    /* ---------- Nav (same as root page; brand links back home) ---------- */
+    header.nav {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: rgba(11, 10, 24, 0.72);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 66px; }
+    .brand { display: inline-flex; align-items: center; }
+    .brand img.logo { height: 30px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { color: var(--muted); font-weight: 500; font-size: 15px; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { display: flex; align-items: center; gap: 14px; }
+    .nav-cta .btn { padding: 9px 16px; font-size: 14px; }
+
+    /* ---------- Page hero ---------- */
+    .hero { position: relative; padding: 72px 0 56px; overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; z-index: -2;
+      background:
+        radial-gradient(820px 580px at 76% 12%, rgba(131,102,245,0.20), transparent 62%),
+        radial-gradient(700px 500px at 8% 92%, rgba(131,0,216,0.14), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+    }
+    .hero-inner { text-align: center; max-width: 780px; margin: 0 auto; }
+    .hero h1 { font-size: clamp(30px, 4.2vw, 46px); line-height: 1.08; font-weight: 700; margin: 0 0 18px; }
+    .hero p.lede { font-size: 18.5px; color: var(--muted); max-width: 660px; margin: 0 auto; }
+
+    /* ---------- Section scaffolding ---------- */
+    section { position: relative; }
+    .section-pad { padding: 64px 0; }
+    .section-head { max-width: 720px; margin: 0 auto 44px; text-align: center; }
+    .section-head h2 { font-size: clamp(26px, 3.4vw, 36px); margin: 0 0 12px; font-weight: 700; }
+    .section-head p { color: var(--muted); font-size: 17.5px; margin: 0; }
+    .divider { border-top: 1px solid var(--border); }
+
+    /* ---------- Level cards ---------- */
+    .levels { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px; }
+    .lcard {
+      display: flex; flex-direction: column;
+      background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 30px 28px; transition: border-color .2s ease, background .2s ease;
+    }
+    .lcard:hover { background: var(--panel-2); }
+    .lcard.flagship   { border-top: 3px solid var(--lvl-flagship); }
+    .lcard.production { border-top: 3px solid var(--lvl-production); }
+    .lcard.incubator  { border-top: 3px solid var(--lvl-incubator); }
+    .lcard .pill {
+      align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 6px 12px; border-radius: 999px;
+      margin-bottom: 18px; border: 1px solid;
+    }
+    .lcard.flagship .pill   { color: #b7a7ff; border-color: rgba(131,102,245,0.5);  background: rgba(131,102,245,0.10); }
+    .lcard.production .pill { color: #7ee29b; border-color: rgba(63,185,80,0.5);    background: rgba(63,185,80,0.10); }
+    .lcard.incubator .pill  { color: #ecc25e; border-color: rgba(210,153,34,0.5);   background: rgba(210,153,34,0.10); }
+    .lcard h3 { font-size: 21px; margin: 0 0 10px; font-weight: 600; }
+    .lcard p { margin: 0 0 18px; color: var(--muted); font-size: 15.5px; line-height: 1.62; }
+    .lcard p.criteria { flex: 1; }
+    .lcard .members { border-top: 1px solid var(--border); padding-top: 16px; }
+    .lcard .members .lbl {
+      display: block; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--muted-2); font-weight: 600; margin-bottom: 10px;
+    }
+    .lcard .members a {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-weight: 600; font-size: 15px; margin-right: 16px;
+    }
+    .lcard .members span.none { color: var(--muted-2); font-size: 14.5px; }
+
+    /* ---------- Lifecycle / notes ---------- */
+    .notes { max-width: 820px; margin: 0 auto; }
+    .notes p { color: var(--muted); font-size: 16px; line-height: 1.7; margin: 0 0 18px; }
+    .notes p strong { color: var(--text); font-weight: 600; }
+    .notes p:last-child { margin-bottom: 0; }
+
+    /* ---------- Footer (same as root page) ---------- */
+    footer { border-top: 1px solid var(--border); background: var(--bg-2); padding: 50px 0 38px; }
+    .foot-grid { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; align-items: flex-start; }
+    .foot-brand { max-width: 360px; }
+    .foot-brand img { height: 40px; width: auto; margin-bottom: 16px; }
+    .foot-brand p { color: var(--muted); font-size: 14.5px; margin: 0; }
+    .foot-col h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted-2); margin: 0 0 14px; }
+    .foot-col a { display: block; color: var(--muted); font-size: 14.5px; margin-bottom: 10px; }
+    .foot-col a:hover { color: var(--text); }
+    .foot-bottom { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap;
+      margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--border); color: var(--muted-2); font-size: 13.5px; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 900px) { .levels { grid-template-columns: 1fr; } }
+    @media (max-width: 540px) {
+      body { font-size: 16px; }
+      .nav-links { display: none; }
+      .hero { padding: 52px 0 44px; }
+      .section-pad { padding: 52px 0; }
+      .lcard { padding: 26px 22px; }
+    }
+  </style>
+  <!-- Cookieless web analytics — same GoatCounter + Cloudflare pair as the root page. -->
+  <script data-goatcounter="https://open-agent-ai-security.goatcounter.com/count" async src="../assets/count.js"></script>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "223642421cad463daf91bd9429a5f9a0"}'></script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="../">
+        <img class="logo" src="../assets/community-logo-dark-background.svg" alt="Open Agent &amp; AI Security Community" width="131" height="30">
+      </a>
+      <nav class="nav-links">
+        <a href="../#projects">Projects</a>
+        <a href="../#join">Join</a>
+        <a href="../#mission">Mission &amp; vision</a>
+        <a href="../blog/">Blog</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="https://github.com/open-agent-ai-security" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <p class="eyebrow">How we build</p>
+        <h1>Project <span class="grad">levels</span></h1>
+        <p class="lede">
+          Every project in the community carries a maturity level, so you know what
+          you're adopting before you clone it. Three levels, modeled on the
+          OWASP project lifecycle.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== The three levels ===== -->
+    <section class="section-pad divider" id="levels">
+      <div class="wrap">
+        <div class="levels">
+
+          <div class="lcard flagship">
+            <span class="pill">Flagship</span>
+            <h3>Strategic &amp; mature</h3>
+            <p class="criteria">The community's reference implementations. Flagship
+            projects have sustained maintainer investment, regular versioned releases,
+            full documentation, a stability contract, and real adoption. If you're
+            evaluating the community's work, start here.</p>
+            <div class="members">
+              <span class="lbl">Current flagship projects</span>
+              <a href="https://open-agent-ai-security.github.io/praxen/">Praxen →</a>
+              <a href="https://open-agent-ai-security.github.io/observra/">Observra →</a>
+            </div>
+          </div>
+
+          <div class="lcard production">
+            <span class="pill">Production</span>
+            <h3>Released &amp; maintained</h3>
+            <p class="criteria">Complete and ready for real-world use. Production
+            projects have shipped a stable release and are actively maintained, but
+            are narrower in scope or earlier in their lifecycle than a flagship.</p>
+            <div class="members">
+              <span class="lbl">Current production projects</span>
+              <a href="https://open-agent-ai-security.github.io/promptfall/">Promptfall →</a>
+            </div>
+          </div>
+
+          <div class="lcard incubator">
+            <span class="pill">Incubator</span>
+            <h3>Early &amp; experimental</h3>
+            <p class="criteria">Where new work enters the community. Incubator
+            projects are public so you can evaluate them and shape their direction,
+            but expect breaking changes between versions — don't build production
+            dependencies on them yet.</p>
+            <div class="members">
+              <span class="lbl">Current incubator projects</span>
+              <a href="https://github.com/open-agent-ai-security/socxen">socxen →</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== How projects move ===== -->
+    <section class="section-pad divider" id="lifecycle">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">The lifecycle</p>
+          <h2>How projects move between levels</h2>
+        </div>
+        <div class="notes">
+          <p><strong>New projects enter as incubators.</strong> That's true whether the
+          idea comes from the core team or from a community contribution — everything
+          starts public, experimental, and open to feedback.</p>
+          <p><strong>Incubator → Production</strong> happens when a project ships a
+          stable release with documentation, a version policy, and a demonstrated
+          maintenance commitment — it's something you can rely on for its stated scope.</p>
+          <p><strong>Production → Flagship</strong> reflects sustained investment and
+          adoption: a flagship project is strategic to the community's mission, with an
+          ongoing release cadence, a stability contract, and a track record of
+          responding to issues and contributions.</p>
+          <p>Levels are reviewed as projects evolve and are recorded here. Each
+          project's GitHub README carries a level pill that links back to this page.
+          Shared infrastructure — the
+          <a href="https://github.com/open-agent-ai-security/plugins">plugin marketplace</a>,
+          this website — supports the projects and isn't leveled.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <img src="../assets/community-logo-dark-background.svg" alt="Open Agent and AI Security Community logo">
+          <p>An open, collaborative community securing agentic enterprise applications and advancing the responsible use of AI in security operations.</p>
+        </div>
+        <div class="foot-col">
+          <h4>Projects</h4>
+          <a href="https://open-agent-ai-security.github.io/praxen/">Praxen</a>
+          <a href="https://open-agent-ai-security.github.io/observra/">Observra</a>
+          <a href="https://open-agent-ai-security.github.io/promptfall/">Promptfall</a>
+          <a href="./">Project levels</a>
+        </div>
+        <div class="foot-col">
+          <h4>Community</h4>
+          <a href="../#join">Get involved</a>
+          <a href="https://www.linkedin.com/company/open-agent-and-ai-security-community/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="../#mission">Mission &amp; vision</a>
+          <a href="../stats/">Stats</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>Open Agent and AI Security Community · Open source · built for the community</span>
+        <span>© 2026 Open Agent and AI Security Community</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
