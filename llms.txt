@@ -10,7 +10,7 @@
 - [Observra](https://open-agent-ai-security.github.io/observra/): open-source observability and telemetry framework for AI and agentic systems — deep visibility into agent behavior, execution flows, runtime events, and inter-agent communication. See its own [llms.txt](https://open-agent-ai-security.github.io/observra/llms.txt) for docs/quickstarts.
 - [Praxen](https://open-agent-ai-security.github.io/praxen/): agent behavior verifier. Compares an AI agent's declared policy against the available evidence, and reports where observed behavior diverges from declared intent. See its own [llms.txt](https://open-agent-ai-security.github.io/praxen/llms.txt) for docs/quickstarts.
 - [Promptfall](https://open-agent-ai-security.github.io/promptfall/): a browser platformer that teaches the OWASP Top 10 for LLM Applications — ten vulnerabilities as playable levels, no install or account required.
-- [Project levels](https://open-agent-ai-security.github.io/project-levels/): how the community classifies project maturity (Flagship: Praxen, Observra · Production: Promptfall · Incubator: socxen and new work), modeled on the OWASP project lifecycle.
+- [Project levels](https://open-agent-ai-security.github.io/project-levels/): how the community classifies project maturity (Flagship: Praxen, Observra · Production: Promptfall · Incubator: early-stage work on GitHub), modeled on the OWASP project lifecycle.
 
 ## Blog
 
@@ -21,7 +21,6 @@
 - [Observra on GitHub](https://github.com/open-agent-ai-security/observra)
 - [Praxen on GitHub](https://github.com/open-agent-ai-security/praxen)
 - [Promptfall on GitHub](https://github.com/open-agent-ai-security/promptfall)
-- [socxen on GitHub](https://github.com/open-agent-ai-security/socxen) (incubator)
 - [Community GitHub org](https://github.com/open-agent-ai-security)
 
 ## Optional
