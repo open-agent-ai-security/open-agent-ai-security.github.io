@@ -5,6 +5,8 @@ date: 2026-08-12
 published: no
 summary: A fast-follow to Praxen 1.2 — polish for reports and docs, supply-chain hardening for how we ship, and a verification story about keeping the benchmark honest. Your scores don't move.
 tags: release, praxen
+image: praxen-1-2-1-release.png
+image_alt: Praxen 1.2.1 release — clearer reports, sharper docs, hardened pipeline.
 ---
 
 Last week we shipped [Praxen 1.2](../praxen-1-2-release/), aligned to the 2026 OWASP Top 10 for LLM Applications, and the community response has been great. Today's **Praxen 1.2.1** is the fast follow: everything we polished while 1.2 was landing in your hands.
