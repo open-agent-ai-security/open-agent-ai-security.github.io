@@ -6,6 +6,24 @@
   "description": "Announcements, release notes, and project updates from the Open Agent and AI Security Community.",
   "items": [
     {
+      "id": "https://open-agent-ai-security.github.io/blog/ciso-defensive-captain-medigram/",
+      "url": "https://open-agent-ai-security.github.io/blog/ciso-defensive-captain-medigram/",
+      "title": "Community Spotlight: The CISO Is the Defensive Captain Now",
+      "summary": "Sherri Douville (CEO, Medigram; Chair, TTIC) argues the CISO's job has shifted from documenting controls to verifying behavior, and points to Medigram's Darwin deployment, the highest Praxen behavioral score recorded to date, as the proof.",
+      "content_text": "Sherri Douville, CEO of Medigram and Chair of the Trustworthy Technology &amp; Innovation Consortium (TTIC), just published a piece making a sharp argument: the CISO isn't a coach calling plays from the sideline anymore, they're a captain who has to operate on the field. Her line for it: \"Configuration has stopped predicting behavior.\" Documenting what a system is supposed to do, the SOC 2 and HIPAA technical-safeguards way, answers a different question than whether it actually behaves correctly under everything production throws at it. \n She uses Praxen and Observra as the concrete answer to that gap. Praxen's RAISE checks, domain limitation, knowledge-base balance, zero trust, supply-chain governance, adversarial testing, and continuous monitoring, verify an agent's behavior against what it's authorized to do, and Observra's runtime telemetry keeps that verification running after deployment instead of stopping at ship time. The proof point in her own stack: Medigram's clinical AI deployment, Darwin, posted the highest Praxen behavioral score recorded to date. \n Check it out:  The CISO Is the Defensive Captain Now, Not the Defensive Coach",
+      "date_published": "2026-08-10T00:00:00Z",
+      "authors": [
+        {
+          "name": "Open Agent and AI Security Community"
+        }
+      ],
+      "tags": [
+        "community",
+        "praxen",
+        "observra"
+      ]
+    },
+    {
       "id": "https://open-agent-ai-security.github.io/blog/cognisafe-observra-integration/",
       "url": "https://open-agent-ai-security.github.io/blog/cognisafe-observra-integration/",
       "title": "Ecosystem Spotlight: CogniSafe Scores AI Safety from Observra Telemetry",

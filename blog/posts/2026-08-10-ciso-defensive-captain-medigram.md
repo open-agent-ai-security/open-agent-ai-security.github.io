@@ -4,7 +4,7 @@ author: Open Agent and AI Security Community
 date: 2026-08-10
 summary: Sherri Douville (CEO, Medigram; Chair, TTIC) argues the CISO's job has shifted from documenting controls to verifying behavior, and points to Medigram's Darwin deployment, the highest Praxen behavioral score recorded to date, as the proof.
 tags: community, praxen, observra
-published: no
+published: yes
 image: ciso-defensive-captain-medigram.png
 image_alt: "Praxen + Observra — Community Spotlight: The CISO is the defensive captain now, not the defensive coach. Medigram's Darwin posts the highest Praxen behavioral score recorded to date."
 ---
