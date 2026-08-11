@@ -11,6 +11,12 @@ page's Analytics tabs:
     *_content_<ts>.xls     content    — post engagement time series + per-post
     *_visitors_<ts>.xls    visitors   — page-view traffic + visitor demographics
 
+Each export only covers a rolling ~30-day window, so the time series are MERGED
+across every export in the directory (newest value wins on overlapping dates) —
+keep the old .xls files around, they are the page's history. Demographics and
+the per-post table are point-in-time snapshots and come from the newest export
+only.
+
 Drop the latest set into stats/linkedin-exports/ (gitignored) and run:
 
     python3 stats/make_linkedin.py
@@ -34,18 +40,18 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 LI_BLUE = "#0a66c2"
 
 # ── low-level xls helpers ────────────────────────────────────────────────────
-def _newest(indir, kind):
-    """Most recently modified export of a given kind in `indir`.
+def _exports(indir, kind):
+    """Every export of a given kind in `indir`, sorted oldest → newest by mtime.
 
-    LinkedIn names each file <slug>_<kind>_<timestamp>.xls; we pick by mtime
-    (newest download wins) rather than parsing the name, so a rename or a
-    differently-shaped timestamp can't shadow the actual latest file.
+    LinkedIn names each file <slug>_<kind>_<timestamp>.xls; we order by mtime
+    (newest download last) rather than parsing the name, so a rename or a
+    differently-shaped timestamp can't shadow the actual latest file. The whole
+    list matters: each export is only a ~30-day window, and the union of all of
+    them is the full history.
     """
     hits = set(glob.glob(os.path.join(indir, f"*_{kind}_*.xls"))) | \
            set(glob.glob(os.path.join(indir, f"*{kind}*.xls")))
-    if not hits:
-        return None
-    return max(hits, key=os.path.getmtime)
+    return sorted(hits, key=os.path.getmtime)
 
 
 def _header_row(sheet):
@@ -101,6 +107,23 @@ def series(sheet, *cols):
             continue
         out.append((d,) + tuple(_num(_cell(sheet, r, c)) for c in cols))
     return out
+
+
+def merged_series(files, sheet_name, *cols):
+    """series() unioned across every export, ascending by date.
+
+    Each export is a rolling ~30-day window; iterating oldest → newest and
+    letting the newest export win on overlapping dates rebuilds the full
+    history without double-counting."""
+    by_date = {}
+    for f in files:
+        try:
+            sh = xlrd.open_workbook(f).sheet_by_name(sheet_name)
+        except xlrd.XLRDError:
+            continue          # an old export predating this sheet — skip it
+        for row in series(sh, *cols):
+            by_date[row[0]] = row
+    return [by_date[d] for d in sorted(by_date)]
 
 
 def demographic(sheet):
@@ -467,20 +490,23 @@ h2 .n{color:var(--mut2);font-weight:600;font-size:14px;letter-spacing:0}
   .grid2{columns:1}}"""
 
 
-def build(followers_xls, content_xls, visitors_xls, snapshot):
-    fw = xlrd.open_workbook(followers_xls)
-    cw = xlrd.open_workbook(content_xls)
-    vw = xlrd.open_workbook(visitors_xls)
+def build(followers_xlss, content_xlss, visitors_xlss, snapshot):
+    """Each argument is the full oldest → newest list of exports of that kind:
+    time series merge across all of them; demographics and the per-post table
+    (point-in-time snapshots) read from the newest only."""
+    fw = xlrd.open_workbook(followers_xlss[-1])
+    cw = xlrd.open_workbook(content_xlss[-1])
+    vw = xlrd.open_workbook(visitors_xlss[-1])
 
     # ── followers ────────────────────────────────────────────────────────────
-    fnew = series(fw.sheet_by_name("New followers"), 1, 2, 3, 4)  # spon,org,ai,total
+    fnew = merged_series(followers_xlss, "New followers", 1, 2, 3, 4)  # spon,org,ai,total
     daily_new = [(d, tot) for (d, sp, org, ai, tot) in fnew]
     followers_total = sum(v for _, v in daily_new)
     organic = sum(org for (_, sp, org, ai, tot) in fnew)
     paid = sum(sp + ai for (_, sp, org, ai, tot) in fnew)
 
     # ── content ──────────────────────────────────────────────────────────────
-    met = series(cw.sheet_by_name("Metrics"), 3)  # impressions (total)
+    met = merged_series(content_xlss, "Metrics", 3)  # impressions (total)
     impressions = sum(v for _, v in met)
     ap = cw.sheet_by_name("All posts")
     # The 'All posts' header row starts with 'Post title' (a description line
@@ -506,8 +532,8 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
     best_rate = max(posts, key=lambda p: p["eng"]) if posts else None
 
     # ── visitors ─────────────────────────────────────────────────────────────
-    vm = vw.sheet_by_name("Visitor metrics")
-    vrows = series(vm, 19, 20, 21, 24)  # pv desktop, pv mobile, pv total, uniq total
+    vrows = merged_series(visitors_xlss, "Visitor metrics",
+                          19, 20, 21, 24)  # pv desktop, pv mobile, pv total, uniq total
     pageviews = sum(t for (_, dk, mb, t, u) in vrows)
     uniques = sum(u for (_, dk, mb, t, u) in vrows)
     days_views = [(d, t) for (d, dk, mb, t, u) in vrows]
@@ -533,7 +559,7 @@ def build(followers_xls, content_xls, visitors_xls, snapshot):
              f'tracking the <a href="https://www.linkedin.com/company/'
              f'open-agent-and-ai-security-community/">Open Agent &amp; AI Security '
              f'Community</a> LinkedIn page — our standing record of LinkedIn '
-             f'audience, content, and visitors over time. Latest export covers '
+             f'audience, content, and visitors over time. Combined exports cover '
              f'<b>{win}</b>.</p>')
     P.append('<div class="warn"><b>Not auto-updated</b> — this page is refreshed '
              'periodically from a manual LinkedIn data pull, snapshot '
@@ -618,14 +644,15 @@ def main():
                     help="output HTML path")
     a = ap.parse_args()
 
-    files = {k: _newest(a.exports, k) for k in ("followers", "content", "visitors")}
+    files = {k: _exports(a.exports, k) for k in ("followers", "content", "visitors")}
     missing = [k for k, v in files.items() if not v]
     if missing:
         sys.exit(f"missing LinkedIn export(s) in {a.exports}: {', '.join(missing)}\n"
                  "download all three tabs (Followers / Content / Visitors) and drop "
                  "the .xls files there.")
     for k, v in files.items():
-        print(f"  {k:<10} {os.path.basename(v)}")
+        print(f"  {k:<10} {os.path.basename(v[-1])}  (+{len(v) - 1} older "
+              f"export{'s' if len(v) - 1 != 1 else ''} merged for history)")
 
     snapshot = datetime.date.today()
     try:
