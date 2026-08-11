@@ -12,8 +12,10 @@ page's Analytics tabs:
     *_visitors_<ts>.xls    visitors   — page-view traffic + visitor demographics
 
 Each export only covers a rolling ~30-day window, so the time series are MERGED
-across every export in the directory (newest value wins on overlapping dates) —
-keep the old .xls files around, they are the page's history. Demographics and
+across every export in the directory (newest value wins on overlapping dates).
+The merged series are also persisted to stats/linkedin-merged.json — committed
+alongside linkedin.html — and seeded back in on the next run, so the full
+history survives even if the gitignored .xls exports are lost. Demographics and
 the per-post table are point-in-time snapshots and come from the newest export
 only.
 
@@ -109,13 +111,15 @@ def series(sheet, *cols):
     return out
 
 
-def merged_series(files, sheet_name, *cols):
+def merged_series(files, sheet_name, *cols, seed=None):
     """series() unioned across every export, ascending by date.
 
     Each export is a rolling ~30-day window; iterating oldest → newest and
     letting the newest export win on overlapping dates rebuilds the full
-    history without double-counting."""
-    by_date = {}
+    history without double-counting. `seed` is prior history from
+    linkedin-merged.json ({date: row}); exports override it on overlap, since
+    LinkedIn restates recent days as late data lands."""
+    by_date = dict(seed or {})
     for f in files:
         try:
             sh = xlrd.open_workbook(f).sheet_by_name(sheet_name)
@@ -124,6 +128,40 @@ def merged_series(files, sheet_name, *cols):
         for row in series(sh, *cols):
             by_date[row[0]] = row
     return [by_date[d] for d in sorted(by_date)]
+
+
+MERGED_JSON = os.path.join(HERE, "linkedin-merged.json")
+HISTORY_KINDS = ("followers", "content", "visitors")
+
+
+def load_history():
+    """{kind: {date: row}} from linkedin-merged.json; {} if absent/unreadable."""
+    try:
+        raw = json.load(open(MERGED_JSON, encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    out = {}
+    for kind in HISTORY_KINDS:
+        rows = {}
+        for ds, vals in raw.get(kind, {}).items():
+            try:
+                d = datetime.date.fromisoformat(ds)
+                rows[d] = (d,) + tuple(float(v) for v in vals)
+            except (ValueError, TypeError):
+                continue      # a hand-mangled row shouldn't sink the whole file
+        out[kind] = rows
+    return out
+
+
+def save_history(history):
+    """Persist {kind: [row, ...]} back to linkedin-merged.json (sorted, so the
+    committed diff only ever shows genuinely new/changed days)."""
+    doc = {kind: {row[0].isoformat(): [round(v, 4) for v in row[1:]]
+                  for row in rows}
+           for kind, rows in history.items()}
+    with open(MERGED_JSON, "w", encoding="utf-8") as fh:
+        json.dump(doc, fh, indent=1, sort_keys=True)
+        fh.write("\n")
 
 
 def demographic(sheet):
@@ -490,23 +528,28 @@ h2 .n{color:var(--mut2);font-weight:600;font-size:14px;letter-spacing:0}
   .grid2{columns:1}}"""
 
 
-def build(followers_xlss, content_xlss, visitors_xlss, snapshot):
-    """Each argument is the full oldest → newest list of exports of that kind:
-    time series merge across all of them; demographics and the per-post table
-    (point-in-time snapshots) read from the newest only."""
+def build(followers_xlss, content_xlss, visitors_xlss, snapshot, history=None):
+    """Each xls argument is the full oldest → newest list of exports of that
+    kind: time series merge across all of them, seeded with `history` (the
+    persisted linkedin-merged.json); demographics and the per-post table
+    (point-in-time snapshots) read from the newest only. Returns
+    (html, new_history) — new_history is the merged series to persist."""
+    history = history or {}
     fw = xlrd.open_workbook(followers_xlss[-1])
     cw = xlrd.open_workbook(content_xlss[-1])
     vw = xlrd.open_workbook(visitors_xlss[-1])
 
     # ── followers ────────────────────────────────────────────────────────────
-    fnew = merged_series(followers_xlss, "New followers", 1, 2, 3, 4)  # spon,org,ai,total
+    fnew = merged_series(followers_xlss, "New followers", 1, 2, 3, 4,  # spon,org,ai,total
+                         seed=history.get("followers"))
     daily_new = [(d, tot) for (d, sp, org, ai, tot) in fnew]
     followers_total = sum(v for _, v in daily_new)
     organic = sum(org for (_, sp, org, ai, tot) in fnew)
     paid = sum(sp + ai for (_, sp, org, ai, tot) in fnew)
 
     # ── content ──────────────────────────────────────────────────────────────
-    met = merged_series(content_xlss, "Metrics", 3)  # impressions (total)
+    met = merged_series(content_xlss, "Metrics", 3,  # impressions (total)
+                        seed=history.get("content"))
     impressions = sum(v for _, v in met)
     ap = cw.sheet_by_name("All posts")
     # The 'All posts' header row starts with 'Post title' (a description line
@@ -533,7 +576,8 @@ def build(followers_xlss, content_xlss, visitors_xlss, snapshot):
 
     # ── visitors ─────────────────────────────────────────────────────────────
     vrows = merged_series(visitors_xlss, "Visitor metrics",
-                          19, 20, 21, 24)  # pv desktop, pv mobile, pv total, uniq total
+                          19, 20, 21, 24,  # pv desktop, pv mobile, pv total, uniq total
+                          seed=history.get("visitors"))
     pageviews = sum(t for (_, dk, mb, t, u) in vrows)
     uniques = sum(u for (_, dk, mb, t, u) in vrows)
     days_views = [(d, t) for (d, dk, mb, t, u) in vrows]
@@ -632,7 +676,7 @@ def build(followers_xlss, content_xlss, visitors_xlss, snapshot):
              f'noted, so treat them as directional. Not auto-updated — refreshed '
              f'periodically from a manual data pull. · open-agent-ai-security</div>')
     P.append('</div></body></html>')
-    return "\n".join(P)
+    return "\n".join(P), {"followers": fnew, "content": met, "visitors": vrows}
 
 
 def main():
@@ -655,9 +699,11 @@ def main():
               f"export{'s' if len(v) - 1 != 1 else ''} merged for history)")
 
     snapshot = datetime.date.today()
+    history = load_history()
     try:
-        out_html = build(files["followers"], files["content"],
-                         files["visitors"], snapshot)
+        out_html, new_history = build(files["followers"], files["content"],
+                                      files["visitors"], snapshot,
+                                      history=history)
     except (xlrd.XLRDError, IndexError, KeyError) as e:
         sys.exit(f"couldn't parse a LinkedIn export ({type(e).__name__}: {e}).\n"
                  "LinkedIn may have changed the export layout (sheet/column names) "
@@ -665,6 +711,11 @@ def main():
     with open(a.out, "w", encoding="utf-8") as fh:
         fh.write(out_html)
     print(f"wrote {a.out}  ({len(out_html):,} bytes)")
+    save_history(new_history)
+    days = {k: len(v) for k, v in new_history.items()}
+    print(f"wrote {MERGED_JSON}  "
+          f"({days['followers']}/{days['content']}/{days['visitors']} days of "
+          f"followers/content/visitors history)")
 
 
 if __name__ == "__main__":
