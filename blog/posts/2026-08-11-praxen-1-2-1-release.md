@@ -1,7 +1,7 @@
 ---
 title: Praxen 1.2.1: A Fast Follow — Clearer Reports, Sharper Docs, Hardened Pipeline
 author: Steve Wilson
-date: 2026-08-12
+date: 2026-08-11
 published: yes
 summary: A fast-follow to Praxen 1.2 — polish for reports and docs, supply-chain hardening for how we ship, and a verification story about keeping the benchmark honest. Your scores don't move.
 tags: release, praxen
