@@ -135,7 +135,10 @@ HISTORY_KINDS = ("followers", "content", "visitors")
 
 
 def load_history():
-    """{kind: {date: row}} from linkedin-merged.json; {} if absent/unreadable."""
+    """{kind: {date: row}} from linkedin-merged.json; {} if absent/unreadable.
+    Also carries "posts": {key: post-dict} — the per-post table union, since
+    LinkedIn's 'All posts' sheet is itself a rolling ~30-day window and posts
+    would otherwise vanish from the page as they age out."""
     try:
         raw = json.load(open(MERGED_JSON, encoding="utf-8"))
     except (OSError, ValueError):
@@ -150,15 +153,19 @@ def load_history():
             except (ValueError, TypeError):
                 continue      # a hand-mangled row shouldn't sink the whole file
         out[kind] = rows
+    posts = raw.get("posts", {})
+    out["posts"] = posts if isinstance(posts, dict) else {}
     return out
 
 
 def save_history(history):
-    """Persist {kind: [row, ...]} back to linkedin-merged.json (sorted, so the
-    committed diff only ever shows genuinely new/changed days)."""
+    """Persist {kind: [row, ...]} (+ "posts": {key: dict}) back to
+    linkedin-merged.json (sorted, so the committed diff only ever shows
+    genuinely new/changed days)."""
     doc = {kind: {row[0].isoformat(): [round(v, 4) for v in row[1:]]
                   for row in rows}
-           for kind, rows in history.items()}
+           for kind, rows in history.items() if kind != "posts"}
+    doc["posts"] = history.get("posts", {})
     with open(MERGED_JSON, "w", encoding="utf-8") as fh:
         json.dump(doc, fh, indent=1, sort_keys=True)
         fh.write("\n")
@@ -536,7 +543,6 @@ def build(followers_xlss, content_xlss, visitors_xlss, snapshot, history=None):
     (html, new_history) — new_history is the merged series to persist."""
     history = history or {}
     fw = xlrd.open_workbook(followers_xlss[-1])
-    cw = xlrd.open_workbook(content_xlss[-1])
     vw = xlrd.open_workbook(visitors_xlss[-1])
 
     # ── followers ────────────────────────────────────────────────────────────
@@ -551,26 +557,38 @@ def build(followers_xlss, content_xlss, visitors_xlss, snapshot, history=None):
     met = merged_series(content_xlss, "Metrics", 3,  # impressions (total)
                         seed=history.get("content"))
     impressions = sum(v for _, v in met)
-    ap = cw.sheet_by_name("All posts")
-    # The 'All posts' header row starts with 'Post title' (a description line
-    # sits above it); default to 0 and tolerate an empty sheet (no posts yet).
-    hp = 0
-    for r in range(min(4, ap.nrows)):
-        if str(_cell(ap, r, 0)).strip().lower() == "post title":
-            hp = r
-            break
-    posts = []
-    for r in range(hp + 1, ap.nrows):
-        if not str(_cell(ap, r, 0)).strip():
-            continue
-        posts.append(dict(
-            title=_cell(ap, r, 0), link=_cell(ap, r, 1),
-            date=_cell(ap, r, 5), impr=_num(_cell(ap, r, 9)),
-            views=_num(_cell(ap, r, 10)), clicks=_num(_cell(ap, r, 12)),
-            ctr=_num(_cell(ap, r, 13)), likes=_num(_cell(ap, r, 14)),
-            comments=_num(_cell(ap, r, 15)), reposts=_num(_cell(ap, r, 16)),
-            eng=_num(_cell(ap, r, 18)), ctype=_cell(ap, r, 19)))
-    posts.sort(key=lambda p: -p["impr"])
+    # The 'All posts' sheet is itself a rolling ~30-day window (posts age out of
+    # it just like the time series), so union it across every export — newest
+    # wins per post, seeded from the persisted history — or launch-week posts
+    # silently vanish from the page. Aged-out posts keep their last-known
+    # metrics, frozen at the final export that carried them.
+    by_key = dict(history.get("posts", {}))
+    for f in content_xlss:
+        try:
+            ap = xlrd.open_workbook(f).sheet_by_name("All posts")
+        except xlrd.XLRDError:
+            continue          # an old export predating this sheet — skip it
+        # The header row starts with 'Post title' (a description line sits
+        # above it); default to 0 and tolerate an empty sheet (no posts yet).
+        hp = 0
+        for r in range(min(4, ap.nrows)):
+            if str(_cell(ap, r, 0)).strip().lower() == "post title":
+                hp = r
+                break
+        for r in range(hp + 1, ap.nrows):
+            if not str(_cell(ap, r, 0)).strip():
+                continue
+            p = dict(
+                title=str(_cell(ap, r, 0)), link=str(_cell(ap, r, 1)),
+                date=str(_cell(ap, r, 5)), impr=_num(_cell(ap, r, 9)),
+                views=_num(_cell(ap, r, 10)), clicks=_num(_cell(ap, r, 12)),
+                ctr=_num(_cell(ap, r, 13)), likes=_num(_cell(ap, r, 14)),
+                comments=_num(_cell(ap, r, 15)), reposts=_num(_cell(ap, r, 16)),
+                eng=_num(_cell(ap, r, 18)), ctype=str(_cell(ap, r, 19)))
+            key = p["link"].strip() or f'{p["date"]}|{p["title"][:80]}'
+            by_key[key] = p
+    posts = sorted(by_key.values(), key=lambda p: -p["impr"])
+    posts_history = by_key
     top_reach = posts[0] if posts else None
     best_rate = max(posts, key=lambda p: p["eng"]) if posts else None
 
@@ -614,11 +632,11 @@ def build(followers_xlss, content_xlss, visitors_xlss, snapshot, history=None):
     P.append(f'<div class="card"><b>{followers_total:,.0f}</b>'
              f'<span>Followers{org_note}</span></div>')
     P.append(f'<div class="card"><b>{impressions:,.0f}</b>'
-             f'<span>Post impressions · {len(posts)} post'
+             f'<span>Post impressions · all-time · {len(posts)} post'
              f'{"s" if len(posts) != 1 else ""}</span></div>')
     P.append(f'<div class="card"><b>{pageviews:,.0f} '
-             f'<small>/ {uniques:,.0f} uniq</small></b>'
-             f'<span>Page views / visitors</span></div>')
+             f'<small>/ {uniques:,.0f}</small></b>'
+             f'<span>Page views / visitor-days</span></div>')
     P.append(f'<div class="card"><b>{days_live}</b><span>Active days</span></div>')
     P.append('</div>')
 
@@ -639,12 +657,16 @@ def build(followers_xlss, content_xlss, visitors_xlss, snapshot, history=None):
                        clean=(sheet == "Location")))
     P.append('</div>')
 
-    P.append('<h2>Posts <span class="n">· organic</span></h2>')
+    P.append('<h2>Posts <span class="n">· organic · all-time</span></h2>')
+    P.append('<p class="sub" style="margin-bottom:10px">Union of every export — '
+             'LinkedIn\'s per-post export only covers a rolling ~30-day window, '
+             'so posts older than that keep the last-known metrics from the final '
+             'export that carried them.</p>')
     for p in posts:
         P.append(post_card(p, top_reach, best_rate))
 
     P.append(f'<h2>Page visitors <span class="n">· {pageviews:,.0f} views / '
-             f'{uniques:,.0f} unique</span></h2>')
+             f'{uniques:,.0f} visitor-days</span></h2>')
     views_avg_window = 5
     P.append('<div class="sec" style="padding:16px 18px 10px">')
     P.append(f'<div class="sec-hd">Page views by day '
@@ -671,12 +693,18 @@ def build(followers_xlss, content_xlss, visitors_xlss, snapshot, history=None):
     P.append(f'<div class="foot">Source: LinkedIn analytics exports '
              f'(<b>followers · content · visitors</b>), org page '
              f'<code>open-agent-and-ai-security-community</code>, snapshot '
-             f'{snapshot.strftime("%m/%d/%Y")} · window {win}. Demographic breakdowns '
-             f'cover only LinkedIn-classifiable members and are view-weighted where '
-             f'noted, so treat them as directional. Not auto-updated — refreshed '
-             f'periodically from a manual data pull. · open-agent-ai-security</div>')
+             f'{snapshot.strftime("%m/%d/%Y")} · window {win}. Totals are all-time '
+             f'(the full merged window), so they read higher than LinkedIn\'s own '
+             f'30-day dashboard view. Followers is cumulative new followers from '
+             f'the daily exports; unfollows aren\'t netted out. A visitor-day is '
+             f'one visitor active on one day — repeat visitors count once per day, '
+             f'so it overstates distinct people. Demographic breakdowns cover only '
+             f'LinkedIn-classifiable members and are view-weighted where noted, so '
+             f'treat them as directional. Not auto-updated — refreshed periodically '
+             f'from a manual data pull. · open-agent-ai-security</div>')
     P.append('</div></body></html>')
-    return "\n".join(P), {"followers": fnew, "content": met, "visitors": vrows}
+    return "\n".join(P), {"followers": fnew, "content": met, "visitors": vrows,
+                          "posts": posts_history}
 
 
 def main():
@@ -715,7 +743,7 @@ def main():
     days = {k: len(v) for k, v in new_history.items()}
     print(f"wrote {MERGED_JSON}  "
           f"({days['followers']}/{days['content']}/{days['visitors']} days of "
-          f"followers/content/visitors history)")
+          f"followers/content/visitors history, {days['posts']} posts)")
 
 
 if __name__ == "__main__":
