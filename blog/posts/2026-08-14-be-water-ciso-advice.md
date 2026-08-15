@@ -2,6 +2,7 @@
 title: "Community Spotlight: Be Water, AI Security Advice for CISOs"
 author: Open Agent and AI Security Community
 date: 2026-08-14
+published: yes
 summary: SecureW2's Signal blog sits down with Steve Wilson on the two failure modes CISOs hit with agentic AI, freeze or charge in, and the fundamentals that beat both. The scanner and the monitoring questions he describes are exactly what Praxen and Observra exist to answer.
 tags: community, praxen, observra
 image: be-water-ciso-advice.png

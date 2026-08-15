@@ -6,6 +6,24 @@
   "description": "Announcements, release notes, and project updates from the Open Agent and AI Security Community.",
   "items": [
     {
+      "id": "https://open-agent-ai-security.github.io/blog/be-water-ciso-advice/",
+      "url": "https://open-agent-ai-security.github.io/blog/be-water-ciso-advice/",
+      "title": "Community Spotlight: Be Water, AI Security Advice for CISOs",
+      "summary": "SecureW2's Signal blog sits down with Steve Wilson on the two failure modes CISOs hit with agentic AI, freeze or charge in, and the fundamentals that beat both. The scanner and the monitoring questions he describes are exactly what Praxen and Observra exist to answer.",
+      "content_text": "SecureW2's Signal blog just published a Q&amp;A with Steve Wilson, Praxen's lead maintainer. The frame comes from the sparring mat: beginners freeze, wild men charge in, and both get knocked down. Steve sees the same two failure modes in security teams facing agentic AI. Some freeze, staring at hypothetical superintelligent attackers while their own network sits uncataloged and unmonitored. Others charge in with blanket bans on coding agents, which is pointless, because as he puts it, developer adoption is already 100%: \"I don't even say it rounds off anymore.\" The answer is Bruce Lee's: be water. Stay calm, stay flexible, run your game plan. \n The game plan he lays out is the one this community is building in the open. Vet an agent the way you'd vet any other software joining your network: know its provenance, scan it for vulnerabilities. \"I give you a free scanner, 15 minutes later you'll have an idea what that agent does and doesn't do.\" That scanner is  Praxen , and the \"run it and get scored one to five\" he describes is the RAISE score, the capstone process from his book made executable: limit the agent's domain, give it zero-trust identity, manage its supply chain, red-team it, and monitor it continuously. His honest read on the state of the field applies to our own scans too: \"Even the most robust agents out there fall down.\" \n And the questions he says every CISO should be asking, \"Am I monitoring my agents? Am I baselining them? Am I taking action when they go off the rails?\", are the observability half of the story. Verification can't stop at ship time. That's  Observra 's side of the house: recording what agents actually do in production so the baseline is real behavior, not a config file's promise. \n Read the full Q&amp;A:  \"Be Water\": AI Security Advice for CISOs From the OWASP GenAI Security Project Co-Founder",
+      "date_published": "2026-08-14T00:00:00Z",
+      "authors": [
+        {
+          "name": "Open Agent and AI Security Community"
+        }
+      ],
+      "tags": [
+        "community",
+        "praxen",
+        "observra"
+      ]
+    },
+    {
       "id": "https://open-agent-ai-security.github.io/blog/praxen-1-2-1-release/",
       "url": "https://open-agent-ai-security.github.io/blog/praxen-1-2-1-release/",
       "title": "Praxen 1.2.1: A Fast Follow — Clearer Reports, Sharper Docs, Hardened Pipeline",
