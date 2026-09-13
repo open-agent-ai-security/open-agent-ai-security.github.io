@@ -5,8 +5,8 @@
     "praxen": {
       "repo": "open-agent-ai-security/praxen",
       "views": {
-        "count": 143,
-        "uniques": 58,
+        "count": 147,
+        "uniques": 60,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -417,12 +417,17 @@
             "timestamp": "2026-09-11T00:00:00Z",
             "count": 7,
             "uniques": 5
+          },
+          {
+            "timestamp": "2026-09-12T00:00:00Z",
+            "count": 4,
+            "uniques": 3
           }
         ]
       },
       "clones": {
-        "count": 252,
-        "uniques": 89,
+        "count": 259,
+        "uniques": 91,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -833,6 +838,11 @@
             "timestamp": "2026-09-11T00:00:00Z",
             "count": 7,
             "uniques": 5
+          },
+          {
+            "timestamp": "2026-09-12T00:00:00Z",
+            "count": 24,
+            "uniques": 16
           }
         ]
       },
@@ -853,14 +863,14 @@
           "uniques": 5
         },
         {
+          "referrer": "Google",
+          "count": 8,
+          "uniques": 5
+        },
+        {
           "referrer": "exabeam.com",
           "count": 8,
           "uniques": 3
-        },
-        {
-          "referrer": "Google",
-          "count": 5,
-          "uniques": 4
         },
         {
           "referrer": "com.linkedin.android",
@@ -886,8 +896,8 @@
       "paths": [
         {
           "path": "/open-agent-ai-security/praxen",
-          "count": 79,
-          "uniques": 49
+          "count": 81,
+          "uniques": 50
         },
         {
           "path": "/open-agent-ai-security/praxen/issues",
@@ -905,13 +915,13 @@
           "uniques": 3
         },
         {
-          "path": "/open-agent-ai-security/praxen/blob/main/examples/finbot/WORKER_REMIT.md",
+          "path": "/open-agent-ai-security/praxen/blob/main/docs/installation.md",
           "count": 4,
-          "uniques": 2
+          "uniques": 3
         },
         {
-          "path": "/open-agent-ai-security/praxen/blob/main/docs/installation.md",
-          "count": 3,
+          "path": "/open-agent-ai-security/praxen/blob/main/examples/finbot/WORKER_REMIT.md",
+          "count": 4,
           "uniques": 2
         },
         {
@@ -1013,8 +1023,8 @@
     "observra": {
       "repo": "open-agent-ai-security/observra",
       "views": {
-        "count": 87,
-        "uniques": 46,
+        "count": 85,
+        "uniques": 45,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -1425,12 +1435,17 @@
             "timestamp": "2026-09-11T00:00:00Z",
             "count": 15,
             "uniques": 7
+          },
+          {
+            "timestamp": "2026-09-12T00:00:00Z",
+            "count": 1,
+            "uniques": 1
           }
         ]
       },
       "clones": {
-        "count": 287,
-        "uniques": 43,
+        "count": 305,
+        "uniques": 53,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -1841,14 +1856,19 @@
             "timestamp": "2026-09-11T00:00:00Z",
             "count": 38,
             "uniques": 10
+          },
+          {
+            "timestamp": "2026-09-12T00:00:00Z",
+            "count": 21,
+            "uniques": 13
           }
         ]
       },
       "referrers": [
         {
           "referrer": "github.com",
-          "count": 19,
-          "uniques": 11
+          "count": 18,
+          "uniques": 10
         },
         {
           "referrer": "open-agent-ai-security.github.io",
@@ -1879,8 +1899,8 @@
       "paths": [
         {
           "path": "/open-agent-ai-security/observra",
-          "count": 58,
-          "uniques": 43
+          "count": 56,
+          "uniques": 42
         },
         {
           "path": "/open-agent-ai-security/observra/issues",
@@ -2253,12 +2273,17 @@
             "timestamp": "2026-09-11T00:00:00Z",
             "count": 1,
             "uniques": 1
+          },
+          {
+            "timestamp": "2026-09-12T00:00:00Z",
+            "count": 0,
+            "uniques": 0
           }
         ]
       },
       "clones": {
-        "count": 31,
-        "uniques": 9,
+        "count": 32,
+        "uniques": 10,
         "days": [
           {
             "timestamp": "2026-07-17T00:00:00Z",
@@ -2544,6 +2569,11 @@
             "timestamp": "2026-09-11T00:00:00Z",
             "count": 1,
             "uniques": 1
+          },
+          {
+            "timestamp": "2026-09-12T00:00:00Z",
+            "count": 2,
+            "uniques": 2
           }
         ]
       },
