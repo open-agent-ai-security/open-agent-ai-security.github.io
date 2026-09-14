@@ -5,7 +5,7 @@
     "praxen": {
       "repo": "open-agent-ai-security/praxen",
       "views": {
-        "count": 147,
+        "count": 127,
         "uniques": 60,
         "days": [
           {
@@ -422,12 +422,17 @@
             "timestamp": "2026-09-12T00:00:00Z",
             "count": 4,
             "uniques": 3
+          },
+          {
+            "timestamp": "2026-09-13T00:00:00Z",
+            "count": 4,
+            "uniques": 4
           }
         ]
       },
       "clones": {
-        "count": 259,
-        "uniques": 91,
+        "count": 253,
+        "uniques": 92,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -843,14 +848,19 @@
             "timestamp": "2026-09-12T00:00:00Z",
             "count": 24,
             "uniques": 16
+          },
+          {
+            "timestamp": "2026-09-13T00:00:00Z",
+            "count": 8,
+            "uniques": 8
           }
         ]
       },
       "referrers": [
         {
           "referrer": "github.com",
-          "count": 50,
-          "uniques": 12
+          "count": 29,
+          "uniques": 10
         },
         {
           "referrer": "open-agent-ai-security.github.io",
@@ -896,13 +906,8 @@
       "paths": [
         {
           "path": "/open-agent-ai-security/praxen",
-          "count": 81,
-          "uniques": 50
-        },
-        {
-          "path": "/open-agent-ai-security/praxen/issues",
-          "count": 7,
-          "uniques": 2
+          "count": 75,
+          "uniques": 46
         },
         {
           "path": "/open-agent-ai-security/praxen/blob/main/docs/quickstart.md",
@@ -925,9 +930,9 @@
           "uniques": 2
         },
         {
-          "path": "/open-agent-ai-security/praxen/pulls",
+          "path": "/open-agent-ai-security/praxen/blob/main/docs/usage.md",
           "count": 3,
-          "uniques": 2
+          "uniques": 3
         },
         {
           "path": "/open-agent-ai-security/praxen/tree/main/examples",
@@ -941,6 +946,11 @@
         },
         {
           "path": "/open-agent-ai-security/praxen/blob/main/PRAXEN_SPEC.md",
+          "count": 2,
+          "uniques": 2
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/blob/main/SECURITY.md",
           "count": 2,
           "uniques": 2
         }
@@ -1023,8 +1033,8 @@
     "observra": {
       "repo": "open-agent-ai-security/observra",
       "views": {
-        "count": 85,
-        "uniques": 45,
+        "count": 76,
+        "uniques": 43,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -1440,12 +1450,17 @@
             "timestamp": "2026-09-12T00:00:00Z",
             "count": 1,
             "uniques": 1
+          },
+          {
+            "timestamp": "2026-09-13T00:00:00Z",
+            "count": 1,
+            "uniques": 1
           }
         ]
       },
       "clones": {
-        "count": 305,
-        "uniques": 53,
+        "count": 304,
+        "uniques": 51,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -1861,19 +1876,24 @@
             "timestamp": "2026-09-12T00:00:00Z",
             "count": 21,
             "uniques": 13
+          },
+          {
+            "timestamp": "2026-09-13T00:00:00Z",
+            "count": 6,
+            "uniques": 5
           }
         ]
       },
       "referrers": [
         {
           "referrer": "github.com",
-          "count": 18,
-          "uniques": 10
+          "count": 16,
+          "uniques": 9
         },
         {
           "referrer": "open-agent-ai-security.github.io",
-          "count": 17,
-          "uniques": 11
+          "count": 10,
+          "uniques": 10
         },
         {
           "referrer": "exabeam.com",
@@ -1882,8 +1902,8 @@
         },
         {
           "referrer": "Google",
-          "count": 7,
-          "uniques": 5
+          "count": 8,
+          "uniques": 6
         },
         {
           "referrer": "teams.public.onecdn.static.microsoft",
@@ -1899,13 +1919,8 @@
       "paths": [
         {
           "path": "/open-agent-ai-security/observra",
-          "count": 56,
-          "uniques": 42
-        },
-        {
-          "path": "/open-agent-ai-security/observra/issues",
-          "count": 4,
-          "uniques": 4
+          "count": 53,
+          "uniques": 40
         },
         {
           "path": "/open-agent-ai-security/observra/tree/main",
@@ -1913,9 +1928,9 @@
           "uniques": 2
         },
         {
-          "path": "/open-agent-ai-security/observra/pulls",
+          "path": "/open-agent-ai-security/observra/issues",
           "count": 3,
-          "uniques": 2
+          "uniques": 3
         },
         {
           "path": "/open-agent-ai-security/observra/tree/main/docs/getting-started",
@@ -1928,13 +1943,13 @@
           "uniques": 1
         },
         {
-          "path": "/open-agent-ai-security/observra/tree/main/docs",
+          "path": "/open-agent-ai-security/observra/pulls",
           "count": 2,
           "uniques": 1
         },
         {
-          "path": "/open-agent-ai-security/observra/actions",
-          "count": 1,
+          "path": "/open-agent-ai-security/observra/tree/main/docs",
+          "count": 2,
           "uniques": 1
         },
         {
@@ -1944,6 +1959,11 @@
         },
         {
           "path": "/open-agent-ai-security/observra/blob/main/docs/architecture.md",
+          "count": 1,
+          "uniques": 1
+        },
+        {
+          "path": "/open-agent-ai-security/observra/blob/main/docs/getting-started",
           "count": 1,
           "uniques": 1
         }
@@ -2278,12 +2298,17 @@
             "timestamp": "2026-09-12T00:00:00Z",
             "count": 0,
             "uniques": 0
+          },
+          {
+            "timestamp": "2026-09-13T00:00:00Z",
+            "count": 0,
+            "uniques": 0
           }
         ]
       },
       "clones": {
-        "count": 32,
-        "uniques": 10,
+        "count": 33,
+        "uniques": 11,
         "days": [
           {
             "timestamp": "2026-07-17T00:00:00Z",
@@ -2572,6 +2597,11 @@
           },
           {
             "timestamp": "2026-09-12T00:00:00Z",
+            "count": 2,
+            "uniques": 2
+          },
+          {
+            "timestamp": "2026-09-13T00:00:00Z",
             "count": 2,
             "uniques": 2
           }
