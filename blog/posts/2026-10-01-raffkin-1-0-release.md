@@ -1,6 +1,6 @@
 ---
 title: "Raffkin 1.0: An Agentic SOC Analyst, With a Human in the Loop"
-author: Steve Wilson
+author: Open Agent and AI Security Community
 date: 2026-10-01
 published: no
 summary: Raffkin 1.0 is an open-source agentic SOC skill suite for Exabeam New-Scale. It investigates alerts, triages the case queue and finds noisy detection rules inside Claude Code or OpenAI Codex, and a human approves every consequential action.
