@@ -32,6 +32,7 @@ REPOS = {
     "praxen":     "open-agent-ai-security/praxen",
     "observra":   "open-agent-ai-security/observra",
     "promptfall": "open-agent-ai-security/promptfall",
+    "raffkin":    "open-agent-ai-security/raffkin",
 }
 
 

@@ -37,6 +37,7 @@ SERIES = [
     ("Praxen",     "open-agent-ai-security/praxen",     "#ff7a2e"),
     ("Observra",   "open-agent-ai-security/observra",   "#37c2f0"),
     ("Promptfall", "open-agent-ai-security/promptfall", "#ffcc33"),
+    ("Raffkin",    "open-agent-ai-security/raffkin",    "#2fbf9f"),
 ]
 
 # Match the report's other line charts (generate.py cumulative_svg/trend_svg):

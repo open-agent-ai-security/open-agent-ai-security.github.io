@@ -107,6 +107,7 @@ PROJECTS = [
     ("praxen",     "Praxen",     "/praxen",     "#ff7a2e"),
     ("observra",   "Observra",   "/observra",   "#37c2f0"),
     ("promptfall", "Promptfall", "/promptfall", "#ffcc33"),
+    ("raffkin",    "Raffkin",    "/raffkin",    "#2fbf9f"),
 ]
 COMMUNITY = ("community", "Community", "", "#5b8def")  # everything not under a project
 
@@ -117,6 +118,7 @@ REPO = {
     "praxen":     "open-agent-ai-security/praxen",
     "observra":   "open-agent-ai-security/observra",
     "promptfall": "open-agent-ai-security/promptfall",
+    "raffkin":    "open-agent-ai-security/raffkin",
 }
 STARS_SVG = os.path.join(SCRIPT_DIR, "community-stars.svg")  # combined star-history chart
 
