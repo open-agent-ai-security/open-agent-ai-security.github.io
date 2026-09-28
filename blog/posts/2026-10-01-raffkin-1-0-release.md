@@ -6,7 +6,7 @@ published: no
 summary: Raffkin 1.0 is an open-source agentic SOC skill suite for Exabeam New-Scale. It investigates alerts, triages the case queue and finds noisy detection rules inside Claude Code or OpenAI Codex, and a human approves every consequential action.
 tags: release, raffkin
 image: raffkin-1-0-release.png
-image_alt: Raffkin the raccoon investigator at a laptop with a magnifying glass, beside the Raffkin logo, Version 1.0, and "Production ready. Human in the loop."
+image_alt: Raffkin the raccoon investigator at a laptop with a magnifying glass, beside the Raffkin logo, Version 1.0, and "Hunt the real threats. Leave the noise."
 ---
 
 Today we're releasing **[Raffkin](https://open-agent-ai-security.github.io/raffkin/) 1.0**, an open-source agentic SOC skill suite for Exabeam New-Scale. Raffkin runs inside the coding agent you already use, Claude Code or OpenAI Codex. It takes on the alert, queue and detection work that buries SOC teams, and it leaves every consequential decision with a human.
