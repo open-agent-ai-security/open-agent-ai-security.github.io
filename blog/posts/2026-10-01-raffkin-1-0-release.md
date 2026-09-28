@@ -28,7 +28,6 @@ An attacker can write to your logs: a user-agent string, a case note, a "baselin
 - **Dismissing an alert or closing a case always asks you first.** The gate ships inside the plugin on both hosts: a hook on Claude Code, which holds even when permission prompts are turned off, and approval policy on Codex.
 - **Containment is recommended, never executed.** Isolating a host or disabling an account is denied outright. Raffkin tells you what it would contain and why, and you decide.
 - **Reads are screened, and writes are neutralized.** Hidden instruction-smuggling characters are stripped before the model reasons, and formulas, clickable links and secrets are defanged before anything is written back to Exabeam.
-- **Escalation is budgeted.** On Claude Code, a session can open a case and write notes as an investigation needs, but a session that keeps writing is stopped and asked.
 - **Every call is audited** in a local, metadata-only trail. Nothing phones home.
 
 ## Nothing above is a claim
