@@ -1,5 +1,5 @@
 {
-  "snapshot_utc": "2026-09-28",
+  "snapshot_utc": "2026-09-29",
   "window_days": 14,
   "repos": {
     "praxen": {
@@ -2965,6 +2965,251 @@
           "date": "2026-08-10"
         }
       ]
+    },
+    "raffkin": {
+      "repo": "open-agent-ai-security/raffkin",
+      "views": {
+        "count": 233,
+        "uniques": 42,
+        "days": [
+          {
+            "timestamp": "2026-09-10T00:00:00Z",
+            "count": 40,
+            "uniques": 17
+          },
+          {
+            "timestamp": "2026-09-11T00:00:00Z",
+            "count": 24,
+            "uniques": 7
+          },
+          {
+            "timestamp": "2026-09-12T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-09-13T00:00:00Z",
+            "count": 0,
+            "uniques": 0
+          },
+          {
+            "timestamp": "2026-09-14T00:00:00Z",
+            "count": 54,
+            "uniques": 9
+          },
+          {
+            "timestamp": "2026-09-15T00:00:00Z",
+            "count": 30,
+            "uniques": 6
+          },
+          {
+            "timestamp": "2026-09-16T00:00:00Z",
+            "count": 27,
+            "uniques": 2
+          },
+          {
+            "timestamp": "2026-09-17T00:00:00Z",
+            "count": 11,
+            "uniques": 6
+          },
+          {
+            "timestamp": "2026-09-18T00:00:00Z",
+            "count": 13,
+            "uniques": 5
+          },
+          {
+            "timestamp": "2026-09-19T00:00:00Z",
+            "count": 8,
+            "uniques": 6
+          },
+          {
+            "timestamp": "2026-09-20T00:00:00Z",
+            "count": 4,
+            "uniques": 2
+          },
+          {
+            "timestamp": "2026-09-21T00:00:00Z",
+            "count": 10,
+            "uniques": 5
+          },
+          {
+            "timestamp": "2026-09-22T00:00:00Z",
+            "count": 7,
+            "uniques": 3
+          },
+          {
+            "timestamp": "2026-09-23T00:00:00Z",
+            "count": 5,
+            "uniques": 3
+          }
+        ]
+      },
+      "clones": {
+        "count": 2393,
+        "uniques": 425,
+        "days": [
+          {
+            "timestamp": "2026-09-10T00:00:00Z",
+            "count": 357,
+            "uniques": 81
+          },
+          {
+            "timestamp": "2026-09-11T00:00:00Z",
+            "count": 63,
+            "uniques": 31
+          },
+          {
+            "timestamp": "2026-09-12T00:00:00Z",
+            "count": 8,
+            "uniques": 8
+          },
+          {
+            "timestamp": "2026-09-13T00:00:00Z",
+            "count": 31,
+            "uniques": 15
+          },
+          {
+            "timestamp": "2026-09-14T00:00:00Z",
+            "count": 696,
+            "uniques": 123
+          },
+          {
+            "timestamp": "2026-09-15T00:00:00Z",
+            "count": 256,
+            "uniques": 67
+          },
+          {
+            "timestamp": "2026-09-16T00:00:00Z",
+            "count": 380,
+            "uniques": 89
+          },
+          {
+            "timestamp": "2026-09-17T00:00:00Z",
+            "count": 62,
+            "uniques": 25
+          },
+          {
+            "timestamp": "2026-09-18T00:00:00Z",
+            "count": 173,
+            "uniques": 38
+          },
+          {
+            "timestamp": "2026-09-19T00:00:00Z",
+            "count": 139,
+            "uniques": 34
+          },
+          {
+            "timestamp": "2026-09-20T00:00:00Z",
+            "count": 18,
+            "uniques": 11
+          },
+          {
+            "timestamp": "2026-09-21T00:00:00Z",
+            "count": 73,
+            "uniques": 16
+          },
+          {
+            "timestamp": "2026-09-22T00:00:00Z",
+            "count": 115,
+            "uniques": 33
+          },
+          {
+            "timestamp": "2026-09-23T00:00:00Z",
+            "count": 22,
+            "uniques": 6
+          }
+        ]
+      },
+      "referrers": [
+        {
+          "referrer": "github.com",
+          "count": 43,
+          "uniques": 15
+        },
+        {
+          "referrer": "teams.public.onecdn.static.microsoft",
+          "count": 12,
+          "uniques": 10
+        },
+        {
+          "referrer": "Google",
+          "count": 12,
+          "uniques": 2
+        },
+        {
+          "referrer": "linkedin.com",
+          "count": 2,
+          "uniques": 1
+        },
+        {
+          "referrer": "chatgpt.com",
+          "count": 1,
+          "uniques": 1
+        },
+        {
+          "referrer": "claude.ai",
+          "count": 1,
+          "uniques": 1
+        },
+        {
+          "referrer": "open-agent-ai-security.github.io",
+          "count": 1,
+          "uniques": 1
+        }
+      ],
+      "paths": [
+        {
+          "path": "/open-agent-ai-security/socxen",
+          "count": 95,
+          "uniques": 36
+        },
+        {
+          "path": "/open-agent-ai-security/socxen/issues",
+          "count": 24,
+          "uniques": 5
+        },
+        {
+          "path": "/open-agent-ai-security/socxen/pulls",
+          "count": 22,
+          "uniques": 5
+        },
+        {
+          "path": "/open-agent-ai-security/socxen/tree/main",
+          "count": 8,
+          "uniques": 6
+        },
+        {
+          "path": "/open-agent-ai-security/socxen/blob/main/plugin/docs/installation.md",
+          "count": 5,
+          "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/socxen/pull/252",
+          "count": 4,
+          "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/socxen/tree/main/plugin",
+          "count": 4,
+          "uniques": 2
+        },
+        {
+          "path": "/open-agent-ai-security/socxen/issues/226",
+          "count": 4,
+          "uniques": 1
+        },
+        {
+          "path": "/open-agent-ai-security/socxen/graphs/contributors",
+          "count": 3,
+          "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/socxen/tree/main/evals",
+          "count": 3,
+          "uniques": 3
+        }
+      ],
+      "releases": []
     }
   }
 }
