@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <!--
   Open Agent and AI Security Community — project levels page.
-  Defines the community's OWASP-style project maturity model (Flagship /
-  Production / Incubator) and records the current classification of every
+  Defines the community's open source project maturity model (Lab /
+  Incubator / Graduated) and records the current classification of every
   project. Each project repo's README carries a level pill linking here.
   Self-contained: one file, inline CSS, shares assets/ with the root page.
 -->
@@ -11,7 +11,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Project Levels — Open Agent and AI Security Community</title>
-  <meta name="description" content="How the Open Agent and AI Security Community classifies project maturity: Flagship, Production, and Incubator levels, modeled on the OWASP project lifecycle, and where each project stands today.">
+  <meta name="description" content="How the Open Agent and AI Security Community classifies project maturity: Lab, Incubator, and Graduated levels, modeled on the OWASP project lifecycle, and where each project stands today.">
   <meta name="robots" content="index, follow">
   <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="256x256" href="../assets/favicon-256.png">
@@ -21,12 +21,12 @@
   <!-- Social / link-preview cards -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Project Levels — Open Agent and AI Security Community">
-  <meta property="og:description" content="Flagship, Production, and Incubator: how the community classifies project maturity, and where each project stands today.">
+  <meta property="og:description" content="Lab, Incubator, and Graduated: how the community classifies project maturity, and where each project stands today.">
   <meta property="og:url" content="https://open-agent-ai-security.github.io/project-levels/">
   <meta property="og:image" content="https://open-agent-ai-security.github.io/assets/community-social.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Project Levels — Open Agent and AI Security Community">
-  <meta name="twitter:description" content="Flagship, Production, and Incubator: how the community classifies project maturity.">
+  <meta name="twitter:description" content="Lab, Incubator, and Graduated: how the community classifies project maturity.">
   <meta name="twitter:image" content="https://open-agent-ai-security.github.io/assets/community-social.png">
 
   <!-- Preconnect warms the Google Fonts fetch used by the inline @import below. -->
@@ -56,9 +56,9 @@
 
       --green:       #67d98b;
       /* Level accents (match the README pill colors) */
-      --lvl-flagship:   #8366f5;
-      --lvl-production: #3fb950;
+      --lvl-graduated:  #3fb950;
       --lvl-incubator:  #d29922;
+      --lvl-lab:        #8366f5;
 
       --maxw:        1140px;
       --radius:      16px;
@@ -145,17 +145,17 @@
       padding: 30px 28px; transition: border-color .2s ease, background .2s ease;
     }
     .lcard:hover { background: var(--panel-2); }
-    .lcard.flagship   { border-top: 3px solid var(--lvl-flagship); }
-    .lcard.production { border-top: 3px solid var(--lvl-production); }
+    .lcard.graduated  { border-top: 3px solid var(--lvl-graduated); }
     .lcard.incubator  { border-top: 3px solid var(--lvl-incubator); }
+    .lcard.lab        { border-top: 3px solid var(--lvl-lab); }
     .lcard .pill {
       align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
       text-transform: uppercase; padding: 6px 12px; border-radius: 999px;
       margin-bottom: 18px; border: 1px solid;
     }
-    .lcard.flagship .pill   { color: #b7a7ff; border-color: rgba(131,102,245,0.5);  background: rgba(131,102,245,0.10); }
-    .lcard.production .pill { color: #7ee29b; border-color: rgba(63,185,80,0.5);    background: rgba(63,185,80,0.10); }
+    .lcard.graduated .pill  { color: #7ee29b; border-color: rgba(63,185,80,0.5);    background: rgba(63,185,80,0.10); }
     .lcard.incubator .pill  { color: #ecc25e; border-color: rgba(210,153,34,0.5);   background: rgba(210,153,34,0.10); }
+    .lcard.lab .pill        { color: #b7a7ff; border-color: rgba(131,102,245,0.5);  background: rgba(131,102,245,0.10); }
     .lcard h3 { font-size: 21px; margin: 0 0 10px; font-weight: 600; }
     .lcard p { margin: 0 0 18px; color: var(--muted); font-size: 15.5px; line-height: 1.62; }
     .lcard p.criteria { flex: 1; }
@@ -233,8 +233,10 @@
         <h1>Project <span class="grad">levels</span></h1>
         <p class="lede">
           Every project in the community carries a maturity level, so you know what
-          you're adopting before you clone it. Three levels, modeled on the
-          OWASP project lifecycle.
+          you're adopting before you clone it. Three levels, using the stages
+          open source foundations use to grow a project from a first experiment
+          to a mature release: Lab, Incubator and Graduated, the same path the
+          Apache Software Foundation's Labs and Incubator follow.
         </p>
       </div>
     </section>
@@ -244,28 +246,17 @@
       <div class="wrap">
         <div class="levels">
 
-          <div class="lcard flagship">
-            <span class="pill">Flagship</span>
-            <h3>Strategic &amp; mature</h3>
-            <p class="criteria">The community's reference implementations. Flagship
-            projects have sustained maintainer investment, regular versioned releases,
-            full documentation, a stability contract, and real adoption. If you're
-            evaluating the community's work, start here.</p>
+          <div class="lcard graduated">
+            <span class="pill">Graduated</span>
+            <h3>Stable &amp; maintained</h3>
+            <p class="criteria">Ready to rely on for its stated scope. Graduated
+            projects ship stable, versioned releases with full documentation and a
+            version policy, have active maintainers, and respond to issues and
+            contributions. If you're evaluating the community's work, start here.</p>
             <div class="members">
-              <span class="lbl">Current flagship projects</span>
+              <span class="lbl">Current graduated projects</span>
               <a href="https://open-agent-ai-security.github.io/praxen/">Praxen →</a>
               <a href="https://open-agent-ai-security.github.io/observra/">Observra →</a>
-            </div>
-          </div>
-
-          <div class="lcard production">
-            <span class="pill">Production</span>
-            <h3>Released &amp; maintained</h3>
-            <p class="criteria">Complete and ready for real-world use. Production
-            projects have shipped a stable release and are actively maintained, but
-            are narrower in scope or earlier in their lifecycle than a flagship.</p>
-            <div class="members">
-              <span class="lbl">Current production projects</span>
               <a href="https://open-agent-ai-security.github.io/promptfall/">Promptfall →</a>
               <a href="https://open-agent-ai-security.github.io/raffkin/">Raffkin →</a>
             </div>
@@ -273,14 +264,27 @@
 
           <div class="lcard incubator">
             <span class="pill">Incubator</span>
-            <h3>Early &amp; experimental</h3>
-            <p class="criteria">Where new work enters the community. Incubator
-            projects are public so you can evaluate them and shape their direction,
-            but expect breaking changes between versions — don't build production
-            dependencies on them yet. They live on GitHub only until they
-            graduate.</p>
+            <h3>Growing toward stable</h3>
+            <p class="criteria">A project with named maintainers, a stated scope and
+            a path to a stable release. Incubator projects are usable and worth
+            evaluating, but documentation is still filling in and breaking changes
+            between versions are still possible — don't build production
+            dependencies on them yet.</p>
             <div class="members">
               <span class="lbl">Current incubator projects</span>
+              <span class="none">Spot them by their level pill on <a href="https://github.com/open-agent-ai-security" target="_blank" rel="noopener">GitHub</a></span>
+            </div>
+          </div>
+
+          <div class="lcard lab">
+            <span class="pill">Lab</span>
+            <h3>Early &amp; experimental</h3>
+            <p class="criteria">Where new work enters the community: ideas,
+            prototypes and experiments. Lab projects are open so anyone can try them
+            and shape their direction, but they may change completely, merge into
+            other work or be archived. Treat them as experiments, not dependencies.</p>
+            <div class="members">
+              <span class="lbl">Current lab projects</span>
               <span class="none">Spot them by their level pill on <a href="https://github.com/open-agent-ai-security" target="_blank" rel="noopener">GitHub</a></span>
             </div>
           </div>
@@ -297,20 +301,22 @@
           <h2>How projects move between levels</h2>
         </div>
         <div class="notes">
-          <p><strong>New projects enter as incubators.</strong> That's true whether the
+          <p><strong>New projects enter the Lab.</strong> That's true whether the
           idea comes from the core team or from a community contribution — everything
           starts public, experimental, and open to feedback.</p>
-          <p><strong>Incubator → Production</strong> happens when a project ships a
+          <p><strong>Lab → Incubator</strong> happens when a project has named
+          maintainers, a stated scope, and a credible path to a stable release.</p>
+          <p><strong>Incubator → Graduated</strong> happens when a project ships a
           stable release with documentation, a version policy, and a demonstrated
           maintenance commitment — it's something you can rely on for its stated scope.</p>
-          <p><strong>Production → Flagship</strong> reflects sustained investment and
-          adoption: a flagship project is strategic to the community's mission, with an
-          ongoing release cadence, a stability contract, and a track record of
-          responding to issues and contributions.</p>
-          <p><strong>Visibility follows the level.</strong> Flagship projects are fully
+          <p><strong>Why not "production"?</strong> Production readiness is a promise
+          a vendor makes about a supported, commercial product. An open source project
+          makes a different promise — open code, open process, and a maintained,
+          stable release — so its levels describe the project's maturity, not a
+          support commitment.</p>
+          <p><strong>Visibility follows the level.</strong> Graduated projects are
           represented across the community site — cards, structured metadata, sitemaps,
-          and <a href="../llms.txt">llms.txt</a>. Production projects are included in
-          those discovery surfaces at a minimal level. Incubator projects are
+          and <a href="../llms.txt">llms.txt</a>. Lab and Incubator projects are
           deliberately left out of them: they're discoverable on GitHub, carrying their
           level pill, until they graduate.</p>
           <p>Levels are reviewed as projects evolve and are recorded here. Each
