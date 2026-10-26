@@ -11,7 +11,7 @@
 - [Praxen](https://open-agent-ai-security.github.io/praxen/): agent behavior verifier. Compares an AI agent's declared policy against the available evidence, and reports where observed behavior diverges from declared intent. See its own [llms.txt](https://open-agent-ai-security.github.io/praxen/llms.txt) for docs/quickstarts.
 - [Promptfall](https://open-agent-ai-security.github.io/promptfall/): a browser platformer that teaches the OWASP Top 10 for LLM Applications — ten vulnerabilities as playable levels, no install or account required.
 - [Raffkin](https://open-agent-ai-security.github.io/raffkin/): an agentic SOC skill suite for Exabeam New-Scale — investigates alerts, triages the case queue and finds noisy detection rules, with deterministic guardrails and human approval on every consequential action. A plugin for Claude Code and OpenAI Codex. See its own [llms.txt](https://open-agent-ai-security.github.io/raffkin/llms.txt).
-- [Project levels](https://open-agent-ai-security.github.io/project-levels/): how the community classifies project maturity (Flagship: Praxen, Observra · Production: Promptfall, Raffkin · Incubator: early-stage work on GitHub), modeled on the OWASP project lifecycle.
+- [Project levels](https://open-agent-ai-security.github.io/project-levels/): how the community classifies project maturity, using open source foundation stages (Graduated: Praxen, Observra, Promptfall, Raffkin · Incubator and Lab: early-stage work on GitHub).
 
 ## Blog
 
