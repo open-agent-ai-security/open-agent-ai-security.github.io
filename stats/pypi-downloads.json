@@ -1,5 +1,5 @@
 {
-  "snapshot_utc": "2026-11-08",
+  "snapshot_utc": "2026-11-09",
   "packages": {
     "observra": {
       "package": "observra",
@@ -559,6 +559,10 @@
         {
           "date": "2026-11-07",
           "downloads": 24
+        },
+        {
+          "date": "2026-11-08",
+          "downloads": 8
         }
       ],
       "releases": [
