@@ -1,5 +1,5 @@
 {
-  "snapshot_utc": "2026-11-20",
+  "snapshot_utc": "2026-11-21",
   "window_days": 14,
   "repos": {
     "praxen": {
@@ -1708,8 +1708,8 @@
     "observra": {
       "repo": "open-agent-ai-security/observra",
       "views": {
-        "count": 228,
-        "uniques": 111,
+        "count": 177,
+        "uniques": 61,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -2460,12 +2460,17 @@
             "timestamp": "2026-11-18T00:00:00Z",
             "count": 10,
             "uniques": 7
+          },
+          {
+            "timestamp": "2026-11-19T00:00:00Z",
+            "count": 5,
+            "uniques": 5
           }
         ]
       },
       "clones": {
-        "count": 153,
-        "uniques": 75,
+        "count": 148,
+        "uniques": 69,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -3216,19 +3221,19 @@
             "timestamp": "2026-11-18T00:00:00Z",
             "count": 15,
             "uniques": 11
+          },
+          {
+            "timestamp": "2026-11-19T00:00:00Z",
+            "count": 5,
+            "uniques": 4
           }
         ]
       },
       "referrers": [
         {
-          "referrer": "aocr.org",
-          "count": 49,
-          "uniques": 49
-        },
-        {
           "referrer": "Google",
-          "count": 33,
-          "uniques": 21
+          "count": 35,
+          "uniques": 23
         },
         {
           "referrer": "open-agent-ai-security.github.io",
@@ -3237,30 +3242,30 @@
         },
         {
           "referrer": "teams.public.onecdn.static.microsoft",
-          "count": 15,
-          "uniques": 4
+          "count": 16,
+          "uniques": 5
         },
         {
           "referrer": "github.com",
           "count": 7,
-          "uniques": 6
-        },
-        {
-          "referrer": "exabeam.com",
-          "count": 3,
-          "uniques": 3
+          "uniques": 5
         },
         {
           "referrer": "search.brave.com",
           "count": 3,
+          "uniques": 2
+        },
+        {
+          "referrer": "exabeam.com",
+          "count": 2,
           "uniques": 2
         }
       ],
       "paths": [
         {
           "path": "/open-agent-ai-security/observra",
-          "count": 83,
-          "uniques": 53
+          "count": 82,
+          "uniques": 52
         },
         {
           "path": "/open-agent-ai-security/observra/blob/main/docs/event-schema.md",
@@ -3273,19 +3278,14 @@
           "uniques": 3
         },
         {
-          "path": "/open-agent-ai-security/observra/tree/main",
-          "count": 9,
-          "uniques": 5
-        },
-        {
           "path": "/open-agent-ai-security/observra/blob/main/docs/production-deployment.md",
           "count": 9,
           "uniques": 4
         },
         {
-          "path": "/open-agent-ai-security/observra/issues",
-          "count": 6,
-          "uniques": 6
+          "path": "/open-agent-ai-security/observra/tree/main",
+          "count": 7,
+          "uniques": 3
         },
         {
           "path": "/open-agent-ai-security/observra/tree/main/guide/getting-started",
@@ -3293,19 +3293,24 @@
           "uniques": 4
         },
         {
-          "path": "/open-agent-ai-security/observra/blob/main/docs/getting-started",
-          "count": 4,
-          "uniques": 4
-        },
-        {
-          "path": "/open-agent-ai-security/observra/issues/56",
-          "count": 4,
-          "uniques": 4
-        },
-        {
           "path": "/open-agent-ai-security/observra/blob/main/README.md",
           "count": 3,
           "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/observra/blob/main/docs/architecture.md",
+          "count": 3,
+          "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/observra/blob/main/docs/getting-started",
+          "count": 3,
+          "uniques": 3
+        },
+        {
+          "path": "/open-agent-ai-security/observra/tree/main/guide",
+          "count": 3,
+          "uniques": 2
         }
       ],
       "releases": [
