@@ -1,12 +1,12 @@
 {
-  "snapshot_utc": "2026-11-23",
+  "snapshot_utc": "2026-11-24",
   "window_days": 14,
   "repos": {
     "praxen": {
       "repo": "open-agent-ai-security/praxen",
       "views": {
-        "count": 232,
-        "uniques": 83,
+        "count": 234,
+        "uniques": 87,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -772,12 +772,17 @@
             "timestamp": "2026-11-21T00:00:00Z",
             "count": 8,
             "uniques": 8
+          },
+          {
+            "timestamp": "2026-11-22T00:00:00Z",
+            "count": 8,
+            "uniques": 6
           }
         ]
       },
       "clones": {
-        "count": 357,
-        "uniques": 95,
+        "count": 373,
+        "uniques": 105,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -1543,6 +1548,11 @@
             "timestamp": "2026-11-21T00:00:00Z",
             "count": 48,
             "uniques": 13
+          },
+          {
+            "timestamp": "2026-11-22T00:00:00Z",
+            "count": 27,
+            "uniques": 16
           }
         ]
       },
@@ -1554,8 +1564,8 @@
         },
         {
           "referrer": "Google",
-          "count": 12,
-          "uniques": 11
+          "count": 14,
+          "uniques": 13
         },
         {
           "referrer": "open-agent-ai-security.github.io",
@@ -1591,23 +1601,23 @@
       "paths": [
         {
           "path": "/open-agent-ai-security/praxen",
-          "count": 64,
-          "uniques": 41
+          "count": 65,
+          "uniques": 42
         },
         {
           "path": "/open-agent-ai-security/praxen/tree/main/docs",
+          "count": 6,
+          "uniques": 6
+        },
+        {
+          "path": "/open-agent-ai-security/praxen/blob/main/docs/installation.md",
           "count": 5,
-          "uniques": 5
+          "uniques": 4
         },
         {
           "path": "/open-agent-ai-security/praxen/pull/179",
           "count": 4,
           "uniques": 4
-        },
-        {
-          "path": "/open-agent-ai-security/praxen/blob/main/docs/installation.md",
-          "count": 4,
-          "uniques": 3
         },
         {
           "path": "/open-agent-ai-security/praxen/blob/main/graphics/praxen-banner.png",
@@ -1719,7 +1729,7 @@
       "repo": "open-agent-ai-security/observra",
       "views": {
         "count": 167,
-        "uniques": 57,
+        "uniques": 56,
         "days": [
           {
             "timestamp": "2026-06-22T00:00:00Z",
@@ -2485,11 +2495,16 @@
             "timestamp": "2026-11-21T00:00:00Z",
             "count": 1,
             "uniques": 1
+          },
+          {
+            "timestamp": "2026-11-22T00:00:00Z",
+            "count": 1,
+            "uniques": 1
           }
         ]
       },
       "clones": {
-        "count": 159,
+        "count": 163,
         "uniques": 70,
         "days": [
           {
@@ -3256,6 +3271,11 @@
             "timestamp": "2026-11-21T00:00:00Z",
             "count": 11,
             "uniques": 8
+          },
+          {
+            "timestamp": "2026-11-22T00:00:00Z",
+            "count": 8,
+            "uniques": 6
           }
         ]
       },
@@ -3282,7 +3302,7 @@
         },
         {
           "referrer": "search.brave.com",
-          "count": 3,
+          "count": 4,
           "uniques": 2
         },
         {
@@ -3295,7 +3315,7 @@
         {
           "path": "/open-agent-ai-security/observra",
           "count": 76,
-          "uniques": 47
+          "uniques": 46
         },
         {
           "path": "/open-agent-ai-security/observra/blob/main/docs/event-schema.md",
@@ -4023,12 +4043,17 @@
             "timestamp": "2026-11-21T00:00:00Z",
             "count": 0,
             "uniques": 0
+          },
+          {
+            "timestamp": "2026-11-22T00:00:00Z",
+            "count": 0,
+            "uniques": 0
           }
         ]
       },
       "clones": {
-        "count": 43,
-        "uniques": 13,
+        "count": 33,
+        "uniques": 12,
         "days": [
           {
             "timestamp": "2026-07-17T00:00:00Z",
@@ -4669,6 +4694,11 @@
             "timestamp": "2026-11-21T00:00:00Z",
             "count": 4,
             "uniques": 2
+          },
+          {
+            "timestamp": "2026-11-22T00:00:00Z",
+            "count": 1,
+            "uniques": 1
           }
         ]
       },
@@ -5071,12 +5101,17 @@
             "timestamp": "2026-11-21T00:00:00Z",
             "count": 0,
             "uniques": 0
+          },
+          {
+            "timestamp": "2026-11-22T00:00:00Z",
+            "count": 0,
+            "uniques": 0
           }
         ]
       },
       "clones": {
-        "count": 471,
-        "uniques": 117,
+        "count": 511,
+        "uniques": 118,
         "days": [
           {
             "timestamp": "2026-09-10T00:00:00Z",
@@ -5442,6 +5477,11 @@
             "timestamp": "2026-11-21T00:00:00Z",
             "count": 75,
             "uniques": 20
+          },
+          {
+            "timestamp": "2026-11-22T00:00:00Z",
+            "count": 69,
+            "uniques": 12
           }
         ]
       },
